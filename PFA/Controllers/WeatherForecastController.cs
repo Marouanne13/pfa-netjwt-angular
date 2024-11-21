@@ -9,7 +9,7 @@ namespace PFA.Controllers
 
         private static readonly string[] Summaries = new[]
         {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "mohamed", "Scorching"
+            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "mehdi", "Scorching"
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
