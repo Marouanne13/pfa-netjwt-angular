@@ -16,9 +16,7 @@ namespace PFA.Data
         }
 
         public DbSet<User> Users { get; set; }
-
-
-
+        public DbSet<Destination> Destinations { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Admin>(entity =>
@@ -37,6 +35,8 @@ namespace PFA.Data
                 entity.Property(a => a.EstActif).HasDefaultValue(true);
             });
         }
+
+
     }
 
 }
