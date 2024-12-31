@@ -1,7 +1,5 @@
-﻿using PFA.Data;
-using PFA.Models;
-using System.Collections.Generic;
-using System.Linq;
+﻿using PFA.Models;
+using PFA.Data;
 
 namespace PFA.Services
 {
