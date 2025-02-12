@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PFA.Data;
 
@@ -11,9 +12,11 @@ using PFA.Data;
 namespace PFA.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250212160956_Hebergement")]
+    partial class Hebergement
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -301,7 +304,7 @@ namespace PFA.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Restaurant", b =>
+            modelBuilder.Entity("Restaurants", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -356,66 +359,7 @@ namespace PFA.Migrations
 
                     b.HasIndex("UtilisateurId");
 
-                    b.ToTable("Restaurant");
-                });
-
-            modelBuilder.Entity("Transport", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Capacite")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("DateCreation")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("EstDisponible")
-                        .HasColumnType("bit");
-
-                    b.Property<TimeSpan>("HeureArrivee")
-                        .HasColumnType("time");
-
-                    b.Property<TimeSpan>("HeureDepart")
-                        .HasColumnType("time");
-
-                    b.Property<string>("ModeDeTransport")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("NomCompagnie")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("NumeroImmatriculation")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NumeroServiceClient")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("Prix")
-                        .HasColumnType("float");
-
-                    b.Property<int>("TypeTransportId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UtilisateurId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TypeTransportId");
-
-                    b.HasIndex("UtilisateurId");
-
-                    b.ToTable("Transport");
+                    b.ToTable("Restaurants");
                 });
 
             modelBuilder.Entity("TypeActivite", b =>
@@ -445,24 +389,6 @@ namespace PFA.Migrations
                     b.ToTable("TypeActivite");
                 });
 
-            modelBuilder.Entity("TypeTransport", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TypeTransport");
-                });
-
             modelBuilder.Entity("PFA.Models.Activite", b =>
                 {
                     b.HasOne("PFA.Models.Destination", "Destination")
@@ -481,32 +407,13 @@ namespace PFA.Migrations
                         .HasForeignKey("UserId");
                 });
 
-            modelBuilder.Entity("Restaurant", b =>
+            modelBuilder.Entity("Restaurants", b =>
                 {
                     b.HasOne("PFA.Models.User", "Utilisateur")
                         .WithMany()
                         .HasForeignKey("UtilisateurId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Utilisateur");
-                });
-
-            modelBuilder.Entity("Transport", b =>
-                {
-                    b.HasOne("TypeTransport", "TypeTransport")
-                        .WithMany()
-                        .HasForeignKey("TypeTransportId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PFA.Models.User", "Utilisateur")
-                        .WithMany()
-                        .HasForeignKey("UtilisateurId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("TypeTransport");
 
                     b.Navigation("Utilisateur");
                 });

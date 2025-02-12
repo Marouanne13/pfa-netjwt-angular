@@ -5,12 +5,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace PFA.Migrations
 {
-    /// <inheritdoc />
     public partial class AddTableToDb : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            // Créer la table Admins
             migrationBuilder.CreateTable(
                 name: "Admins",
                 columns: table => new
@@ -37,11 +36,32 @@ namespace PFA.Migrations
                 {
                     table.PrimaryKey("PK_Admins", x => x.Id);
                 });
+
+            // Insérer les données dans la table Admins
+            migrationBuilder.InsertData(
+                table: "Admins",
+                columns: new[] { "Id", "Nom", "Email", "MotDePasse", "NumeroDeTelephone", "Adresse", "DateDeCreation", "DerniereConnexion", "EstActif", "Role" },
+                values: new object[,]
+                {
+                    { 1, "Mahdi", "Mahdi123@gmail.com", "123456789", "0612345678", "Adresse Admin 1", DateTime.Now, DateTime.Now, true, "Gérer les voyages" },
+                    { 2, "Emjad", "Emjad123@gmail.com", "123456789", "0623456789", "Adresse Admin 2", DateTime.Now, DateTime.Now, true, "Gérer les activités" },
+                    { 3, "Amine", "Amine123@gmail.com", "123456789", "0634567890", "Adresse Admin 3", DateTime.Now, DateTime.Now, true, "Gérer les paiements" },
+                    { 4, "Asmae", "Asmae123@gmail.com", "123456789", "0645678901", "Adresse Admin 4", DateTime.Now, DateTime.Now, true, "Gérer les restaurants" },
+                    { 5, "Marouane", "maroaune123@gmail.com", "hashedpassword5", "0656789012", "Adresse Admin 5", DateTime.Now, DateTime.Now, true, "Gérer les clients" }
+                }
+            );
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            // Supprimer les administrateurs ajoutés
+            migrationBuilder.DeleteData(
+                table: "Admins",
+                keyColumn: "Id",
+                keyValues: new object[] { 1, 2, 3, 4, 5 }
+            );
+
+            // Supprimer la table Admins
             migrationBuilder.DropTable(
                 name: "Admins");
         }

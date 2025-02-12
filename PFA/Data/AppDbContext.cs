@@ -17,6 +17,12 @@ namespace PFA.Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<Destination> Destinations { get; set; }
+        public DbSet<Activite> Activites { get; set; }
+        public DbSet<TypeActivite> TypeActivite { get; set; }
+        public DbSet<Restaurant> Restaurant { get; set; }
+        public DbSet<Transport> Transport { get; set; }
+        public DbSet<TypeTransport> TypeTransport { get; set; }
+        public DbSet<Hebergement> Hebergement { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Admin>(entity =>
