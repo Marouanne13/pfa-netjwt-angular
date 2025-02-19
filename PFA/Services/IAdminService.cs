@@ -5,7 +5,7 @@ namespace PFA.Services
     public interface IAdminService
     {
         IEnumerable<Admin> GetAllAdmins();
-        void CreateAdmin(Admin admin);
+        Task<Admin> CreateAdmin(Admin admin); // 🔹 Ajouter un admin
     }
 
 }
