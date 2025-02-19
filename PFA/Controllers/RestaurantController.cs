@@ -38,17 +38,17 @@ namespace PFA.Controllers
 
         // 📌 3️⃣ Ajouter un restaurant
         [HttpPost]
-        public async Task<ActionResult<Restaurant>> AjouterRestaurant(Restaurant restaurant)
+        public async Task<ActionResult<Restaurant>> AjouterRestaurant([FromBody] Restaurant restaurant)
         {
             var nouveauRestaurant = await _restaurantService.AjouterRestaurant(restaurant);
             return CreatedAtAction(nameof(GetRestaurant), new { id = nouveauRestaurant.Id }, nouveauRestaurant);
         }
 
-        // 📌 4️⃣ Mettre à jour un restaurant
+        // 📌 4️⃣ Modifier un restaurant
         [HttpPut("{id}")]
-        public async Task<IActionResult> MettreAJourRestaurant(int id, Restaurant restaurant)
+        public async Task<IActionResult> ModifierRestaurant(int id, [FromBody] Restaurant restaurant)
         {
-            var result = await _restaurantService.MettreAJourRestaurant(id, restaurant);
+            var result = await _restaurantService.ModifierRestaurant(id, restaurant);
             if (!result)
                 return NotFound("Restaurant introuvable.");
 

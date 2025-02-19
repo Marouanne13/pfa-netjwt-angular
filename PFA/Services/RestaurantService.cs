@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using PFA.Models;
 using PFA.Data;
+using PFA.Models;
 
 namespace PFA.Services
 {
@@ -17,52 +16,63 @@ namespace PFA.Services
             _context = context;
         }
 
-        // 📌 1️⃣ Ajouter un restaurant
+        // 📌 Ajouter un restaurant
         public async Task<Restaurant> AjouterRestaurant(Restaurant restaurant)
         {
-            _context.Restaurant.Add(restaurant);
+            if (restaurant == null) return null;
+
+            _context.Restaurants.Add(restaurant);
             await _context.SaveChangesAsync();
             return restaurant;
         }
 
-        // 📌 2️⃣ Obtenir la liste des restaurants
+        // 📌 Obtenir tous les restaurants
         public async Task<List<Restaurant>> ObtenirRestaurants()
         {
-            return await _context.Restaurant.Include(r => r.Utilisateur).ToListAsync();
+            return await _context.Restaurants
+                .Include(r => r.Utilisateur)
+                .ToListAsync();
         }
 
-        // 📌 3️⃣ Obtenir un restaurant par ID
+        // 📌 Obtenir un restaurant par ID
         public async Task<Restaurant> ObtenirRestaurantParId(int id)
         {
-            return await _context.Restaurant.Include(r => r.Utilisateur)
-                                             .FirstOrDefaultAsync(r => r.Id == id);
+            return await _context.Restaurants
+                .Include(r => r.Utilisateur)
+                .FirstOrDefaultAsync(r => r.Id == id);
         }
 
-        // 📌 4️⃣ Mettre à jour un restaurant
-        public async Task<bool> MettreAJourRestaurant(int id, Restaurant restaurantMisAJour)
+        // 📌 Modifier un restaurant
+        public async Task<bool> ModifierRestaurant(int id, Restaurant restaurantMisAJour)
         {
-            var restaurant = await _context.Restaurant.FindAsync(id);
-            if (restaurant == null)
-                return false;
+            if (restaurantMisAJour == null) return false;
+
+            var restaurant = await _context.Restaurants.FindAsync(id);
+            if (restaurant == null) return false;
 
             restaurant.Nom = restaurantMisAJour.Nom;
             restaurant.TypeCuisine = restaurantMisAJour.TypeCuisine;
             restaurant.Adresse = restaurantMisAJour.Adresse;
             restaurant.NumeroTelephone = restaurantMisAJour.NumeroTelephone;
+            restaurant.LivraisonDisponible = restaurantMisAJour.LivraisonDisponible;
+            restaurant.ReservationEnLigne = restaurantMisAJour.ReservationEnLigne;
+            restaurant.EstOuvert24h = restaurantMisAJour.EstOuvert24h;
+            restaurant.NombreEtoiles = restaurantMisAJour.NombreEtoiles;
+            restaurant.Description = restaurantMisAJour.Description;
+            restaurant.ImageUrl = restaurantMisAJour.ImageUrl;
 
-            _context.Restaurant.Update(restaurant);
+            _context.Restaurants.Update(restaurant);
             await _context.SaveChangesAsync();
             return true;
         }
 
-        // 📌 5️⃣ Supprimer un restaurant
+        // 📌 Supprimer un restaurant
         public async Task<bool> SupprimerRestaurant(int id)
         {
-            var restaurant = await _context.Restaurant.FindAsync(id);
-            if (restaurant == null)
-                return false;
+            var restaurant = await _context.Restaurants.FindAsync(id);
+            if (restaurant == null) return false;
 
-            _context.Restaurant.Remove(restaurant);
+            _context.Restaurants.Remove(restaurant);
             await _context.SaveChangesAsync();
             return true;
         }

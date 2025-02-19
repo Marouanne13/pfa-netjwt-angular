@@ -1,9 +1,13 @@
-﻿using PFA.Models;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using PFA.Data;
+using PFA.Models;
 
 namespace PFA.Services
 {
-    public class AdminService : IAdminService
+    public class AdminService
     {
         private readonly AppDbContext _context;
 
@@ -12,12 +16,14 @@ namespace PFA.Services
             _context = context;
         }
 
-        public IEnumerable<Admin> GetAllAdmins() => _context.Admins.ToList();
-
-        public void CreateAdmin(Admin admin)
+        // 📌 Vérifier si l'admin a le bon rôle
+        public async Task<bool> HasRole(int adminId, string requiredRole)
         {
-            _context.Admins.Add(admin);
-            _context.SaveChanges();
+            var admin = await _context.Admins.FindAsync(adminId);
+            if (admin == null)
+                return false;
+
+            return admin.Role == requiredRole || admin.Role == "SuperAdmin"; // "SuperAdmin" a tous les droits
         }
     }
 }

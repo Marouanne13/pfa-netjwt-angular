@@ -1,0 +1,7 @@
+<h2>Liste des Restaurants</h2>
+<p *ngIf="restaurants.length === 0">Aucun restaurant trouvé.</p>
+<ul>
+  <li *ngFor="let restaurant of restaurants">
+    <strong>{{ restaurant.nom }}</strong> - {{ restaurant.typeCuisine }}
+  </li>
+</ul>

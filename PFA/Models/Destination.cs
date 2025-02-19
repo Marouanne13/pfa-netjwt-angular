@@ -4,17 +4,17 @@
     {
         public int Id { get; set; } // Identifiant unique
 
-        public string Nom { get; set; } // Nom de la destination (par exemple : Casablanca, Marrakech)
+        public string Nom { get; set; } = string.Empty; // Nom de la destination (par exemple : Casablanca, Marrakech)
 
-        public string Description { get; set; } // Description de la destination
+        public string Description { get; set; } = string.Empty; // Description de la destination
 
-        public string Region { get; set; } // Région de la ville au Maroc (ex : Casablanca-Settat, Marrakech-Safi)
+        public string Region { get; set; } = string.Empty;// Région de la ville au Maroc (ex : Casablanca-Settat, Marrakech-Safi)
 
-        public double Latitude { get; set; } // Coordonnée Latitude
+        public double Latitude { get; set; }  // Coordonnée Latitude
 
         public double Longitude { get; set; } // Coordonnée Longitude
 
-        public string ImageUrl { get; set; } // URL de l'image représentant la destination
+        public string ImageUrl { get; set; } = string.Empty; // URL de l'image représentant la destination
 
         public bool EstPopulaire { get; set; } // Indicateur si la destination est populaire (true/false)
 
