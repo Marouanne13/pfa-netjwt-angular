@@ -14,10 +14,10 @@ namespace PFA.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly AppDbContext _context;  // ✅ Correction du contexte
         private readonly IConfiguration _configuration;
 
-        public AuthController(ApplicationDbContext context, IConfiguration configuration)
+        public AuthController(AppDbContext context, IConfiguration configuration)
         {
             _context = context;
             _configuration = configuration;
@@ -27,22 +27,18 @@ namespace PFA.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
-            // 🔹 Vérifier si tous les champs sont remplis
             if (string.IsNullOrWhiteSpace(model.Nom) || string.IsNullOrWhiteSpace(model.Email) ||
                 string.IsNullOrWhiteSpace(model.Password) || string.IsNullOrWhiteSpace(model.Role))
             {
                 return BadRequest("Tous les champs sont obligatoires.");
             }
 
-            // 🔹 Vérifier si l'email est valide
             if (!model.Email.Contains("@"))
                 return BadRequest("Email invalide.");
 
-            // 🔹 Vérifier si l'email existe déjà
             if (await _context.Admins.AnyAsync(a => a.Email == model.Email))
                 return BadRequest("Cet email est déjà utilisé.");
 
-            // 🔹 Vérifier la longueur du mot de passe
             if (model.Password.Length < 6)
                 return BadRequest("Le mot de passe doit contenir au moins 6 caractères.");
 
@@ -68,31 +64,26 @@ namespace PFA.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
-            // Vérifier si l'email existe en base
             var admin = await _context.Admins.FirstOrDefaultAsync(a => a.Email == model.Email);
             if (admin == null)
                 return Unauthorized("Email ou mot de passe incorrect.");
 
-            // Vérifier si le mot de passe stocké est bien haché (sinon, c'est un ancien compte avec un mot de passe en clair)
             if (!admin.MotDePasse.StartsWith("$2"))
             {
                 return BadRequest("Le mot de passe en base de données n'est pas sécurisé. Veuillez le réinitialiser.");
             }
 
-            // Vérifier si le mot de passe entré correspond au mot de passe haché
             if (!BCrypt.Net.BCrypt.Verify(model.Password, admin.MotDePasse))
                 return Unauthorized("Email ou mot de passe incorrect.");
 
-            // Générer le token JWT
             var token = GenerateJwtToken(admin);
 
-            // 🔹 Log du token pour vérifier son contenu
-            Console.WriteLine($"Token généré: {token}");
+            Console.WriteLine($"✅ Token généré: {token}"); // 🔹 Log du token pour le debug
 
             return Ok(new
             {
                 Token = token,
-                Role = admin.Role // 🔹 Ajout du rôle dans la réponse pour Angular
+                Role = admin.Role
             });
         }
 
@@ -107,8 +98,8 @@ namespace PFA.Controllers
             {
                 new Claim(ClaimTypes.NameIdentifier, admin.Id.ToString()),
                 new Claim(ClaimTypes.Email, admin.Email),
-                new Claim(ClaimTypes.Role, admin.Role), // ✅ Ajout du rôle
-                new Claim("role", admin.Role) // ✅ Ajout du rôle sous un autre format
+                new Claim(ClaimTypes.Role, admin.Role), // ✅ Ajout du rôle dans ClaimTypes.Role
+                new Claim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", admin.Role) // ✅ Ajout correct du rôle pour Angular
             };
 
             var token = new JwtSecurityToken(

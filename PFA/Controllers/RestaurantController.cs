@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using PFA.Models;
 using PFA.Services;
+using PFA.Data; // Si nécessaire
+using Microsoft.EntityFrameworkCore;
+
 
 namespace PFA.Controllers
 {
@@ -12,12 +12,12 @@ namespace PFA.Controllers
     {
         private readonly RestaurantService _restaurantService;
 
-        public RestaurantController(RestaurantService restaurantService)
+        public RestaurantController()
         {
-            _restaurantService = restaurantService;
+            // ⚠️ Initialisation manuelle sans injection de dépendance
+            _restaurantService = new RestaurantService(new AppDbContext(new DbContextOptions<AppDbContext>()));
         }
 
-        // 📌 1️⃣ Obtenir tous les restaurants
         [HttpGet]
         public async Task<ActionResult<List<Restaurant>>> GetRestaurants()
         {
@@ -25,7 +25,6 @@ namespace PFA.Controllers
             return Ok(restaurants);
         }
 
-        // 📌 2️⃣ Obtenir un restaurant par ID
         [HttpGet("{id}")]
         public async Task<ActionResult<Restaurant>> GetRestaurant(int id)
         {
@@ -36,26 +35,38 @@ namespace PFA.Controllers
             return Ok(restaurant);
         }
 
-        // 📌 3️⃣ Ajouter un restaurant
         [HttpPost]
         public async Task<ActionResult<Restaurant>> AjouterRestaurant([FromBody] Restaurant restaurant)
         {
+            if (restaurant == null)
+                return BadRequest("Les données du restaurant sont invalides.");
+
+            if (string.IsNullOrEmpty(restaurant.Nom) || string.IsNullOrEmpty(restaurant.Adresse))
+                return BadRequest("Le nom et l'adresse sont obligatoires.");
+
+            if (restaurant.UtilisateurId == null)
+                return BadRequest("L'utilisateur est obligatoire.");
+
             var nouveauRestaurant = await _restaurantService.AjouterRestaurant(restaurant);
             return CreatedAtAction(nameof(GetRestaurant), new { id = nouveauRestaurant.Id }, nouveauRestaurant);
         }
 
-        // 📌 4️⃣ Modifier un restaurant
         [HttpPut("{id}")]
-        public async Task<IActionResult> ModifierRestaurant(int id, [FromBody] Restaurant restaurant)
+        public async Task<IActionResult> MettreAJourRestaurant(int id, [FromBody] Restaurant restaurant)
         {
-            var result = await _restaurantService.ModifierRestaurant(id, restaurant);
+            if (id != restaurant.Id)
+                return BadRequest("L'ID fourni ne correspond pas à celui du restaurant.");
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await _restaurantService.MettreAJourRestaurant(id, restaurant);
             if (!result)
                 return NotFound("Restaurant introuvable.");
 
             return NoContent();
         }
 
-        // 📌 5️⃣ Supprimer un restaurant
         [HttpDelete("{id}")]
         public async Task<IActionResult> SupprimerRestaurant(int id)
         {

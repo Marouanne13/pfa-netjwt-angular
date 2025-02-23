@@ -1,0 +1,54 @@
+.container {
+    width: 50%;
+    margin: auto;
+    text-align: center;
+  }
+  
+  .btn {
+    padding: 8px 12px;
+    margin: 5px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .btn-ajouter {
+    background-color: green;
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
+  }
+  
+  .restaurant-list {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .restaurant-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8f9fa;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .actions {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .btn-modifier {
+    background-color: #ffc107;
+    color: black;
+    border-radius: 5px;
+  }
+  
+  .btn-supprimer {
+    background-color: #dc3545;
+    color: white;
+    border-radius: 5px;
+  }
+  

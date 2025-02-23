@@ -14,6 +14,10 @@ public class Activite
     [MaxLength(500)]
     public string Description { get; set; } // Description détaillée de l'activité
 
+
+    [MaxLength(500)]
+    public string Type { get; set; } // type détaillée de l'activité
+
     [Required]
     public double Prix { get; set; } // Prix en devise locale
 

@@ -1,0 +1,135 @@
+/* 🎨 Image de fond avec flou */
+.register-body {
+    background: url('1.png') no-repeat center center/cover;
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden; /* ✅ Empêche le débordement */
+}
+
+/* ✅ Couche sombre + Flou pour améliorer la lisibilité */
+.register-body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3); /* Couche sombre */
+    backdrop-filter: blur(8px); /* Flou sur l’arrière-plan */
+}
+
+/* 🎯 📌 Ajustement du Formulaire (Card) */
+.card {
+    width: 450px; /* ✅ Augmentation de la largeur */
+    max-height: 90vh; /* ✅ Limite la hauteur pour éviter le scroll */
+    overflow-y: auto; /* ✅ Active le scroll interne si nécessaire */
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.15); /* ✅ Transparence améliorée */
+    padding: 30px;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease-in-out;
+    backdrop-filter: blur(12px); /* ✅ Effet verre amélioré */
+}
+
+/* ✅ Effet hover */
+.card:hover {
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.4);
+    transform: scale(1.02);
+}
+
+/* 📌 Titre du formulaire */
+h2 {
+    font-weight: bold;
+    color: #fff; /* ✅ Texte blanc */
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+/* 📌 Style des Labels */
+.form-label {
+    font-weight: bold;
+    color: #eee; /* ✅ Texte plus clair */
+    font-size: 15px;
+    margin-bottom: 5px;
+    display: block;
+}
+
+/* 📌 Champs Input */
+.form-control {
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    height: 45px;
+    font-size: 15px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    transition: all 0.3s ease-in-out;
+    backdrop-filter: blur(10px);
+}
+
+/* ✅ Hover et Focus */
+.form-control:hover {
+    border-color: #fff;
+}
+
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0px 0px 10px rgba(0, 123, 255, 0.5);
+}
+
+/* Placeholder en blanc */
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* 📌 Bouton d'Inscription */
+.btn-primary {
+    background-color: rgba(0, 123, 255, 0.8);
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: bold;
+    width: 100%;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* ✅ Effet Hover */
+.btn-primary:hover {
+    background-color: rgba(0, 123, 255, 1);
+    transform: scale(1.05);
+    box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* 📌 Lien "Se connecter" */
+.text-decoration-none {
+    color: #fff;
+    font-weight: bold;
+    transition: color 0.3s ease-in-out;
+    font-size: 15px;
+}
+
+/* ✅ Effet Hover sur le lien */
+.text-decoration-none:hover {
+    color: #aad4ff;
+    text-decoration: underline;
+}
+
+/* ✅ Espacement des éléments */
+.mb-3 {
+    margin-bottom: 14px;
+}
+
+/* ✅ Évite que le formulaire colle aux bords */
+.container {
+    padding: 20px;
+}

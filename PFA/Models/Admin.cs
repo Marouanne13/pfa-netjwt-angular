@@ -14,10 +14,6 @@
         public string UrlPhotoProfil { get; set; } = string.Empty;
         public string Adresse { get; set; } = string.Empty;
 
-        // ❌ Suppression des colonnes obsolètes :
-        // public bool PeutGererUtilisateurs { get; set; } = false;
-        // public bool PeutGererActivites { get; set; } = false;
-        // public bool PeutGererPaiements { get; set; } = false;
-        // public bool PeutGererDestinations { get; set; } = false;
+        
     }
 }

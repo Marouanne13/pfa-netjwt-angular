@@ -1,0 +1,27 @@
+<h1>Bienvenue dans l'application de planification de voyage</h1>
+
+<button (click)="ajouterRestaurant()" style="margin-bottom: 10px; background-color: green; color: white; padding: 10px; border: none; cursor: pointer;">
+  Ajouter un Restaurant
+</button>
+
+<div *ngIf="restaurants.length > 0; else noRestaurants">
+  <table border="1" cellspacing="0" cellpadding="10">
+    <tr>
+      <th>Nom</th>
+      <th>Adresse</th>
+      <th>Actions</th>
+    </tr>
+    <tr *ngFor="let restaurant of restaurants">
+      <td>{{ restaurant.nom }}</td>
+      <td>{{ restaurant.adresse }}</td>
+      <td>
+        <button (click)="modifierRestaurant(restaurant.id)">Modifier</button>
+        <button (click)="supprimerRestaurant(restaurant.id)">Supprimer</button>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<ng-template #noRestaurants>
+  <p>Aucun restaurant disponible.</p>
+</ng-template>

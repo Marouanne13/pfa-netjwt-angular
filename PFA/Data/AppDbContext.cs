@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PFA.Models;
-
+using PFA.Data; // Assurez-vous que cet import est présent
 namespace PFA.Data
 {
     public class AppDbContext : DbContext
@@ -9,11 +9,8 @@ namespace PFA.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Destination> Destinations { get; set; }
         public DbSet<Activite> Activites { get; set; }
-        public DbSet<TypeActivite> TypeActivite { get; set; }
-        public DbSet<Restaurant> Restaurants { get; set; }
-
-
-
+ 
+        public DbSet<Restaurant> Restaurant { get; set; }
         public DbSet<Transport> Transports { get; set; }
         public DbSet<TypeTransport> TypeTransports { get; set; }
         public DbSet<Hebergement> Hebergements { get; set; }
@@ -36,15 +33,23 @@ namespace PFA.Data
                 entity.Property(a => a.UrlPhotoProfil).HasMaxLength(500);
                 entity.Property(a => a.Adresse).HasMaxLength(200);
 
-                // ✅ Supprimer toute référence aux colonnes obsolètes
-                // entity.Property(a => a.PeutGererUtilisateurs).HasDefaultValue(false);
-                // entity.Property(a => a.PeutGererActivites).HasDefaultValue(false);
-                // entity.Property(a => a.PeutGererPaiements).HasDefaultValue(false);
-                // entity.Property(a => a.PeutGererDestinations).HasDefaultValue(false);
+                // ✅ Empêcher les doublons d'email
+                entity.HasIndex(a => a.Email).IsUnique();
 
                 entity.Property(a => a.DateDeCreation).HasDefaultValueSql("GETDATE()");
                 entity.Property(a => a.EstActif).HasDefaultValue(true);
             });
+
+            base.OnModelCreating(modelBuilder);
+        }
+
+        // 🔹 Configuration de la connexion SQL Server
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=PFA;Trusted_Connection=True;Encrypt=false");
+            }
         }
     }
 }

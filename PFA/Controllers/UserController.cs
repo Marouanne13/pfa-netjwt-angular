@@ -1,67 +1,139 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using PFA.Data;
 using PFA.Models;
-using PFA.Services;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using BCrypt.Net;
 
-[ApiController]
-[Route("api/[controller]")]
-public class UserController : ControllerBase
+namespace PFA.Controllers
 {
-    private readonly UserService _userService;
-
-    public UserController(UserService userService)
+    [Route("api/user")]
+    [ApiController]
+    public class UserController : ControllerBase
     {
-        _userService = userService;
-    }
+        private readonly AppDbContext _context;
+        private readonly IConfiguration _configuration;
 
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<User>>> GetUsers()
-    {
-        var users = await _userService.GetAllUsersAsync();
-        return Ok(users);
-    }
-
-    [HttpGet("{id}")]
-    public async Task<ActionResult<User>> GetUser(int id)
-    {
-        var user = await _userService.GetUserByIdAsync(id);
-        if (user == null)
+        public UserController(AppDbContext context, IConfiguration configuration)
         {
-            return NotFound();
-        }
-        return Ok(user);
-    }
-
-    [HttpPost]
-    public async Task<ActionResult<User>> CreateUser(User user)
-    {
-        await _userService.CreateUserAsync(user);
-        return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
-    }
-
-    [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateUser(int id, User user)
-    {
-        if (id != user.Id)
-        {
-            return BadRequest();
+            _context = context;
+            _configuration = configuration;
         }
 
-        await _userService.UpdateUserAsync(user);
-        return NoContent();
-    }
-
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteUser(int id)
-    {
-        var exists = await _userService.UserExistsAsync(id);
-        if (!exists)
+        // ✅ INSCRIPTION
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterUserModel model)
         {
-            return NotFound();
+            // 📌 Vérification des champs obligatoires
+            if (string.IsNullOrWhiteSpace(model.Nom) || string.IsNullOrWhiteSpace(model.Email) ||
+                string.IsNullOrWhiteSpace(model.Password) || string.IsNullOrWhiteSpace(model.Telephone) ||
+                string.IsNullOrWhiteSpace(model.Adresse) || string.IsNullOrWhiteSpace(model.Genre) ||
+                model.DateDeNaissance == default)
+            {
+                return BadRequest("Tous les champs sont obligatoires.");
+            }
+
+            // 📌 Vérification de l'email
+            if (!model.Email.Contains("@"))
+                return BadRequest("Email invalide.");
+
+            // 📌 Vérifier si l'email existe déjà
+            if (await _context.Users.AnyAsync(u => u.Email == model.Email))
+                return BadRequest("Cet email est déjà utilisé.");
+
+            // 📌 Vérification de la longueur du mot de passe
+            if (model.Password.Length < 6)
+                return BadRequest("Le mot de passe doit contenir au moins 6 caractères.");
+
+            // 📌 Hachage du mot de passe
+            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.Password, workFactor: 12);
+
+            var user = new User
+            {
+                Nom = model.Nom,
+                Email = model.Email,
+                MotDePasse = hashedPassword,
+                Telephone = model.Telephone,
+                Adresse = model.Adresse,
+                DateDeNaissance = model.DateDeNaissance,
+                Genre = model.Genre,
+                DateDeCreation = DateTime.UtcNow,
+                EstActif = true
+            };
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { Message = "Utilisateur enregistré avec succès" });
         }
 
-        await _userService.DeleteUserAsync(id);
-        return NoContent();
+        // ✅ CONNEXION
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginUserModel model)
+        {
+            if (string.IsNullOrWhiteSpace(model.Email) || string.IsNullOrWhiteSpace(model.Password))
+                return BadRequest("L'email et le mot de passe sont obligatoires.");
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == model.Email);
+            if (user == null)
+                return Unauthorized("Email ou mot de passe incorrect.");
+
+            if (!BCrypt.Net.BCrypt.Verify(model.Password, user.MotDePasse))
+                return Unauthorized("Email ou mot de passe incorrect.");
+
+            var token = GenerateJwtToken(user);
+
+            return Ok(new
+            {
+                Token = token,
+                Email = user.Email
+            });
+        }
+
+        // ✅ GÉNÉRATION DU TOKEN JWT
+        private string GenerateJwtToken(User user)
+        {
+            var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? "SuperSecretKey123456");
+            var issuer = _configuration["Jwt:Issuer"] ?? "https://localhost:5278";
+            var audience = _configuration["Jwt:Audience"] ?? "https://localhost:5278";
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Email, user.Email)
+            };
+
+            var token = new JwtSecurityToken(
+                issuer: issuer,
+                audience: audience,
+                claims: claims,
+                expires: DateTime.UtcNow.AddHours(3),
+                signingCredentials: new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+    }
+
+    // ✅ Modèle pour l'inscription (tous les champs obligatoires)
+    public class RegisterUserModel
+    {
+        public string Nom { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public string Telephone { get; set; }
+        public string Adresse { get; set; }
+        public DateTime DateDeNaissance { get; set; }
+        public string Genre { get; set; }
+    }
+
+    // ✅ Modèle pour la connexion (champs obligatoires)
+    public class LoginUserModel
+    {
+        public string Email { get; set; }
+        public string Password { get; set; }
     }
 }

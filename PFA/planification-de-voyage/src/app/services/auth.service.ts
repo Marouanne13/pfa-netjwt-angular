@@ -76,7 +76,7 @@ export class AuthService {
     return this.roleSubject.asObservable();
   }
 
-  // 🔹 Redirection en fonction du rôle (corrigé)
+  // 🔹 Redirection en fonction du rôle (Mise à jour avec /restaurant-list et nouveaux rôles)
   redirectUser() {
     const role = localStorage.getItem('role'); // ✅ Lire le rôle depuis localStorage
 
@@ -89,10 +89,11 @@ export class AuthService {
     }
 
     let targetRoute = '/login'; // 🔹 Par défaut, retour à login
-    if (role === 'Gérer les voyages') targetRoute = '/voyages';
+    if (role === 'Gérer les voyages') targetRoute = '/gestion-voyages';
     else if (role === 'Gérer les activités') targetRoute = '/activites';
-    else if (role === 'Gérer les restaurants') targetRoute = '/restaurants';
+    else if (role === 'Gérer les restaurants') targetRoute = '/restaurant-list'; // 🔹 Changement ici
     else if (role === 'Gérer les clients') targetRoute = '/clients';
+    else if (role === 'Gérer les transports') targetRoute = '/transports'; // 🔹 Nouveau rôle ajouté
 
     console.log('🚀 Redirection vers:', targetRoute);
     this.router.navigate([targetRoute]).then(success => {

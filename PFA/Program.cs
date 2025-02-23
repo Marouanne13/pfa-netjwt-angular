@@ -8,8 +8,9 @@ using PFA.Data;
 var builder = WebApplication.CreateBuilder(args);
 
 // 📌 Configuration de la base de données SQL Server
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 
 // 📌 Configuration de CORS (pour autoriser Angular)
 builder.Services.AddCors(options =>

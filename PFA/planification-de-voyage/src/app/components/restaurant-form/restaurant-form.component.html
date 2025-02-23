@@ -1,0 +1,42 @@
+<h2>{{ restaurantId ? 'Modifier' : 'Ajouter' }} un Restaurant</h2>
+
+<form (ngSubmit)="submit()">
+  <label>Nom:</label>
+  <input type="text" [(ngModel)]="restaurant.nom" name="nom" required />
+
+  <label>Type de Cuisine:</label>
+  <input type="text" [(ngModel)]="restaurant.typeCuisine" name="typeCuisine" required />
+
+  <label>Adresse:</label>
+  <input type="text" [(ngModel)]="restaurant.adresse" name="adresse" required />
+
+  <label>Numéro de téléphone:</label>
+  <input type="text" [(ngModel)]="restaurant.numeroTelephone" name="numeroTelephone" required />
+
+  <label>Nombre d'Étoiles:</label>
+  <input type="number" [(ngModel)]="restaurant.nombreEtoiles" name="nombreEtoiles" required min="1" max="5" />
+
+  <label>Description:</label>
+  <textarea [(ngModel)]="restaurant.description" name="description"></textarea>
+
+  <label>Image:</label>
+  <input type="file" (change)="onFileSelected($event)" accept="image/*" />
+  <img *ngIf="imagePreview" [src]="imagePreview" alt="Aperçu de l'image" width="150" />
+  
+  <label>
+    <input type="checkbox" [(ngModel)]="restaurant.livraisonDisponible" name="livraisonDisponible" />
+    Livraison Disponible
+  </label>
+
+  <label>
+    <input type="checkbox" [(ngModel)]="restaurant.reservationEnLigne" name="reservationEnLigne" />
+    Réservation en Ligne
+  </label>
+
+  <label>
+    <input type="checkbox" [(ngModel)]="restaurant.estOuvert24h" name="estOuvert24h" />
+    Ouvert 24h/24
+  </label>
+
+  <button type="submit">{{ restaurantId ? 'Modifier' : 'Ajouter' }}</button>
+</form>
