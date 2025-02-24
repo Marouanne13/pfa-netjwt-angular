@@ -31,6 +31,25 @@
     </tbody>
   </table>
 
-  <h2 class="text-center">➕ Ajouter une Activité</h2>
-  <button class="btn btn-secondary" (click)="resetForm()">Annuler</button>
+  <h2 class="text-center">➕ {{ editingActivite ? 'Modifier' : 'Ajouter' }} une Activité</h2>
+
+  <form (ngSubmit)="addOrUpdateActivite()">
+    <input type="text" placeholder="Nom" [(ngModel)]="formActivite.nom" name="nom" required>
+    <input type="text" placeholder="Description" [(ngModel)]="formActivite.description" name="description" required>
+    <input type="text" placeholder="Type" [(ngModel)]="formActivite.type" name="type" required>
+    <input type="number" placeholder="Prix" [(ngModel)]="formActivite.prix" name="prix" required>
+    <input type="number" placeholder="Durée" [(ngModel)]="formActivite.duree" name="duree" required>
+    <input type="text" placeholder="Emplacement" [(ngModel)]="formActivite.emplacement" name="emplacement" required>
+    <input type="datetime-local" placeholder="Date Début" [(ngModel)]="formActivite.dateDebut" name="dateDebut" required>
+    <input type="datetime-local" placeholder="Date Fin" [(ngModel)]="formActivite.dateFin" name="dateFin" required>
+    <input type="text" placeholder="Coordonnées Contact" [(ngModel)]="formActivite.coordonneesContact" name="coordonneesContact" required>
+
+    <label>Destination :</label>
+    <select [(ngModel)]="formActivite.destinationId" name="destinationId">
+      <option *ngFor="let dest of destinations" [value]="dest.id">{{ dest.nom }}</option>
+    </select>
+    
+    <button class="btn btn-primary">{{ editingActivite ? 'Mettre à jour' : 'Ajouter' }}</button>
+    <button type="button" class="btn btn-secondary" (click)="resetForm()">Annuler</button>
+  </form>
 </div>
