@@ -10,7 +10,18 @@ form {
     box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.1);
     background-color: #f9f9f9;
 }
-
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+  }
+  
+  .checkbox-group label {
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
 /* Style des labels */
 label {
     font-weight: bold;

@@ -22,21 +22,24 @@
   <label>Image:</label>
   <input type="file" (change)="onFileSelected($event)" accept="image/*" />
   <img *ngIf="imagePreview" [src]="imagePreview" alt="Aperçu de l'image" width="150" />
-  
-  <label>
-    <input type="checkbox" [(ngModel)]="restaurant.livraisonDisponible" name="livraisonDisponible" />
-    Livraison Disponible
-  </label>
 
-  <label>
-    <input type="checkbox" [(ngModel)]="restaurant.reservationEnLigne" name="reservationEnLigne" />
-    Réservation en Ligne
-  </label>
+  <label>Livraison Disponible:</label>
+  <select [(ngModel)]="restaurant.livraisonDisponible" name="livraisonDisponible">
+    <option [ngValue]="true">Oui</option>
+    <option [ngValue]="false">Non</option>
+  </select>
 
-  <label>
-    <input type="checkbox" [(ngModel)]="restaurant.estOuvert24h" name="estOuvert24h" />
-    Ouvert 24h/24
-  </label>
+  <label>Réservation en Ligne:</label>
+  <select [(ngModel)]="restaurant.reservationEnLigne" name="reservationEnLigne">
+    <option [ngValue]="true">Oui</option>
+    <option [ngValue]="false">Non</option>
+  </select>
+
+  <label>Ouvert 24h/24:</label>
+  <select [(ngModel)]="restaurant.estOuvert24h" name="estOuvert24h">
+    <option [ngValue]="true">Oui</option>
+    <option [ngValue]="false">Non</option>
+  </select>
 
   <button type="submit">{{ restaurantId ? 'Modifier' : 'Ajouter' }}</button>
 </form>

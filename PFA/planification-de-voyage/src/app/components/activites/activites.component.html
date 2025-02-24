@@ -1,49 +1,36 @@
-<h2>Liste des Activités</h2>
-<table class="table table-bordered">
-  <thead>
-    <tr>
-      <th>Nom</th>
-      <th>Description</th>
-      <th>Type</th>
-      <th>Prix (DH)</th>
-      <th>Durée (min)</th>
-      <th>Emplacement</th>
-      <th>Date Début</th>
-      <th>Date Fin</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let activite of activites">
-      <td><input [(ngModel)]="activite.nom"></td>
-      <td><input [(ngModel)]="activite.description"></td>
-      <td><input [(ngModel)]="activite.type"></td>
-      <td><input type="number" [(ngModel)]="activite.prix"></td>
-      <td><input type="number" [(ngModel)]="activite.duree"></td>
-      <td><input [(ngModel)]="activite.emplacement"></td>
-      <td><input type="datetime-local" [(ngModel)]="activite.dateDebut"></td>
-      <td><input type="datetime-local" [(ngModel)]="activite.dateFin"></td>
-      <td>
-        <button class="btn btn-success" (click)="updateActivite(activite)">Modifier</button>
-        <button class="btn btn-danger" (click)="deleteActivite(activite.id)">Supprimer</button>
-      </td>
-    </tr>
-  </tbody>
-</table>
+<div class="container">
+  <h2 class="text-center">📋 Liste des Activités</h2>
 
-<h2>Ajouter une Activité</h2>
-<div>
-  <input type="text" placeholder="Nom" [(ngModel)]="newActivite.nom" required>
-  <input type="text" placeholder="Description" [(ngModel)]="newActivite.description" required>
-  <input type="text" placeholder="Type" [(ngModel)]="newActivite.type" required>
-  <input type="number" placeholder="Prix" [(ngModel)]="newActivite.prix" required>
-  <input type="number" placeholder="Durée" [(ngModel)]="newActivite.duree" required>
-  <input type="text" placeholder="Emplacement" [(ngModel)]="newActivite.emplacement" required>
-  <input type="datetime-local" placeholder="Date Début" [(ngModel)]="newActivite.dateDebut" required>
-  <input type="datetime-local" placeholder="Date Fin" [(ngModel)]="newActivite.dateFin" required>
-  <input type="text" placeholder="Coordonnées Contact" [(ngModel)]="newActivite.coordonneesContact" required>
-  <input type="number" placeholder="Nombre Max Participants" [(ngModel)]="newActivite.nombreMaxParticipants" required>
-  <input type="checkbox" [(ngModel)]="newActivite.estDisponible"> Disponible
-  <input type="number" placeholder="ID Destination" [(ngModel)]="newActivite.destinationId" required>
-  <button class="btn btn-primary" (click)="addActivite()">Ajouter</button>
+  <table class="table table-bordered text-center" *ngIf="activites.length > 0">
+    <thead class="table-dark">
+      <tr>
+        <th>Nom</th>
+        <th>Description</th>
+        <th>Type</th>
+        <th>Prix</th>
+        <th>Durée</th>
+        <th>Emplacement</th>
+        <th>Disponible</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let activite of activites">
+        <td>{{ activite.nom }}</td>
+        <td>{{ activite.description }}</td>
+        <td>{{ activite.type }}</td>
+        <td>{{ activite.prix }} DH</td>
+        <td>{{ activite.duree }} min</td>
+        <td>{{ activite.emplacement }}</td>
+        <td>{{ activite.estDisponible ? '✅ Oui' : '❌ Non' }}</td>
+        <td>
+          <button class="btn btn-warning btn-sm" (click)="startEdit(activite)">Modifier</button>
+          <button class="btn btn-danger btn-sm" (click)="deleteActivite(activite.id!)">Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 class="text-center">➕ Ajouter une Activité</h2>
+  <button class="btn btn-secondary" (click)="resetForm()">Annuler</button>
 </div>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace PFA.Models;
 public class Activite
@@ -44,7 +45,8 @@ public class Activite
     [Required]
     public string CoordonneesContact { get; set; } // Coordonnées de l'organisateur (email, téléphone)
 
-    [ForeignKey("Destination")]
+    [ForeignKey("Destinations")]
     public int DestinationId { get; set; }
-    public Destination Destination { get; set; } // Lien avec une destination
+    [JsonIgnore]
+    public Destination? Destination { get; set; } // ← Rendre nullable (?)
 }

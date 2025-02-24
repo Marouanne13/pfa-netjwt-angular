@@ -89,6 +89,7 @@ namespace PFA.Controllers
             return Ok(new
             {
                 Token = token,
+                UserId = user.Id,
                 Email = user.Email
             });
         }

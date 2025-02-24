@@ -1,124 +1,108 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActiviteService } from '../../services/activite.service';
+import { ActiviteService, Activite, Destination } from '../../services/activite.service';
 
 @Component({
   selector: 'app-activites',
   standalone: true,
   templateUrl: './activites.component.html',
   styleUrls: ['./activites.component.css'],
-  imports: [CommonModule, FormsModule] // ✅ Assure que FormsModule est bien importé pour `ngModel`
+  imports: [CommonModule, FormsModule]
 })
-export class ActivitesComponent {
-  activites: any[] = [];
-  newActivite: any = {
-    nom: '',
-    description: '',
-    type: '',
-    prix: null,
-    duree: null,
-    emplacement: '',
-    evaluation: 0,
-    nombreMaxParticipants: 0,
-    estDisponible: true,
-    dateDebut: '',
-    dateFin: '',
-    coordonneesContact: '',
-    destinationId: null
-  };
+export class ActivitesComponent implements OnInit {
+  activites: Activite[] = [];
+  destinations: Destination[] = [];
+  newActivite: Activite = this.getDefaultActivite();
+  editingActivite: Activite | null = null;
 
-  constructor(private activiteService: ActiviteService) {
+  constructor(private activiteService: ActiviteService) {}
+
+  ngOnInit(): void {
     this.loadActivites();
+    this.loadDestinations();
   }
 
-  // ✅ Charger toutes les activités
-  loadActivites() {
+  getDefaultActivite(): Activite {
+    return {
+      nom: '',
+      description: '',
+      type: '',
+      prix: 0,
+      duree: 0,
+      emplacement: '',
+      evaluation: 0,
+      nombreMaxParticipants: 0,
+      estDisponible: true,
+      dateDebut: '',
+      dateFin: '',
+      coordonneesContact: '',
+      destinationId: 0
+    };
+  }
+
+  resetForm(): void {
+    this.newActivite = this.getDefaultActivite();
+    this.editingActivite = null;
+  }
+
+  loadActivites(): void {
     this.activiteService.getActivites().subscribe({
-      next: (data) => {
+      next: (data: Activite[]) => {
         this.activites = data;
       },
       error: (error) => {
-        console.error("❌ Erreur lors du chargement des activités :", error);
-        alert("❌ Problème lors du chargement des activités !");
+        console.error("❌ Erreur de chargement :", error);
       }
     });
   }
 
-  // ✅ Ajouter une activité avec validation des champs
-  addActivite() {
-    if (!this.validateActivite(this.newActivite)) return;
-  
-    // ✅ Formatage des dates avant l'envoi
-    this.newActivite.dateDebut = this.formatDate(this.newActivite.dateDebut);
-    this.newActivite.dateFin = this.formatDate(this.newActivite.dateFin);
-  
+  loadDestinations(): void {
+    this.activiteService.getDestinations().subscribe({
+      next: (data: Destination[]) => {
+        this.destinations = data;
+      },
+      error: (error) => {
+        console.error("❌ Erreur chargement destinations :", error);
+      }
+    });
+  }
+
+  addActivite(): void {
     this.activiteService.addActivite(this.newActivite).subscribe({
       next: () => {
-        alert("✅ Activité ajoutée avec succès !");
-        this.newActivite = {}; // Réinitialisation du formulaire
+        alert("✅ Activité ajoutée !");
+        this.resetForm();
         this.loadActivites();
       },
-      error: (error) => {
-        console.error("❌ Erreur lors de l'ajout :", error);
-        alert("❌ Erreur lors de l'ajout de l'activité !");
-      }
+      error: (error) => console.error("❌ Erreur ajout :", error)
     });
   }
-  
-  formatDate(dateString: string): string {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toISOString().slice(0, 19); // Format "YYYY-MM-DDTHH:mm:ss"
-  }
-  
-  
-  // ✅ Modifier une activité
-  updateActivite(activite: any) {
-    if (!this.validateActivite(activite)) return;
 
-    this.activiteService.updateActivite(activite.id, activite).subscribe({
+  startEdit(activite: Activite): void {
+    this.editingActivite = { ...activite }; // Copie pour éviter modification directe
+  }
+
+  updateActivite(): void {
+    if (!this.editingActivite) return;
+    this.activiteService.updateActivite(this.editingActivite.id!, this.editingActivite).subscribe({
       next: () => {
         alert("✅ Activité mise à jour !");
+        this.resetForm();
         this.loadActivites();
       },
-      error: (error) => {
-        console.error("❌ Erreur de mise à jour :", error);
-        alert("❌ Échec de la mise à jour !");
-      }
+      error: (error) => console.error("❌ Erreur mise à jour :", error)
     });
   }
 
-  // ✅ Supprimer une activité
-  deleteActivite(id: number) {
-    if (!confirm("⚠️ Êtes-vous sûr de vouloir supprimer cette activité ?")) return;
-
+  deleteActivite(id: number): void {
+    if (!confirm("⚠️ Confirmer la suppression ?")) return;
     this.activiteService.deleteActivite(id).subscribe({
       next: () => {
         alert("✅ Activité supprimée !");
         this.loadActivites();
       },
-      error: (error) => {
-        console.error("❌ Erreur de suppression :", error);
-        alert("❌ Impossible de supprimer cette activité !");
-      }
+      error: (error) => console.error("❌ Erreur suppression :", error)
     });
-  }
-
-  // ✅ Vérification des champs obligatoires
-  validateActivite(activite: any): boolean {
-    if (!activite.nom || !activite.description || !activite.type ||
-        activite.prix == null || activite.duree == null ||
-        !activite.emplacement || !activite.dateDebut || !activite.dateFin ||
-        !activite.coordonneesContact || activite.destinationId == null) {
-      alert("❌ Tous les champs sont obligatoires !");
-      return false;
-    }
-
-    // ✅ Conversion des dates en format ISO avant envoi au backend
-    activite.dateDebut = new Date(activite.dateDebut).toISOString();
-    activite.dateFin = new Date(activite.dateFin).toISOString();
-
-    return true;
   }
 }

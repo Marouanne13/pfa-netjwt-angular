@@ -14,27 +14,38 @@ import { UserService } from '../../services/user.service';
 export class LoginUserComponent {
   email: string = '';
   password: string = '';
+  isLoading: boolean = false; // ✅ Pour empêcher plusieurs clics
+  errorMessage: string = ''; // ✅ Pour afficher les erreurs
+  userId: number | null = null; // ✅ Stocker l'ID utilisateur après connexion
 
   constructor(private userService: UserService, private router: Router) {}
 
   onLogin() {
     if (!this.email || !this.password) {
-      alert('❌ Veuillez remplir tous les champs.');
+      this.errorMessage = '❌ Veuillez remplir tous les champs.';
       return;
     }
+
+    this.isLoading = true;
+    this.errorMessage = '';
 
     this.userService.login({ email: this.email, password: this.password }).subscribe({
       next: (response) => {
         console.log('✅ Connexion réussie :', response);
-        
-        this.userService.saveToken(response.token); // ✅ Stocker le token
 
-        // ✅ Rediriger vers la page "home" après connexion réussie
-        this.router.navigate(['/home']);
+        // ✅ Stocker le token et l'ID utilisateur
+        this.userService.saveToken(response.token, response.userId);
+        this.userId = response.userId; // ✅ Afficher l'ID utilisateur
+
+        // ✅ Rediriger vers "home" après 2 secondes
+        setTimeout(() => this.router.navigate(['/home']), 2000);
       },
       error: (err) => {
         console.error('❌ Erreur de connexion :', err);
-        alert('Échec de connexion. Vérifiez vos identifiants.');
+        this.errorMessage = 'Échec de connexion. Vérifiez vos identifiants.';
+      },
+      complete: () => {
+        this.isLoading = false;
       }
     });
   }

@@ -1,25 +1,42 @@
 <div class="container login-container">
-    <div class="card shadow-lg p-4">
-      <h2 class="text-center mb-4">Connexion</h2>
-  
-      <form (submit)="onLogin()" class="needs-validation" novalidate>
-        <div class="mb-3">
-          <label class="form-label">Email :</label>
-          <input type="email" class="form-control" [(ngModel)]="email" name="email" required>
-        </div>
-  
-        <div class="mb-3">
-          <label class="form-label">Mot de passe :</label>
-          <input type="password" class="form-control" [(ngModel)]="password" name="password" required>
-        </div>
-  
-        <button type="submit" class="btn btn-primary w-100">Se connecter</button>
-      </form>
-  
-      <p class="text-center mt-3">
-        Pas encore de compte ? 
-        <a routerLink="/register" class="text-decoration-none">Inscrivez-vous</a>
-      </p>
+  <div class="card shadow-lg p-4">
+    <h2 class="text-center mb-4">Connexion</h2>
+
+    <!-- ✅ Afficher un message de chargement -->
+    <div *ngIf="isLoading" class="text-center text-primary">
+      🔄 Connexion en cours...
+    </div>
+
+    <!-- ✅ Afficher une erreur de connexion -->
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      ❌ {{ errorMessage }}
+    </div>
+
+    <form (ngSubmit)="onLogin()" class="needs-validation">
+      <div class="mb-3">
+        <label class="form-label">Email :</label>
+        <input type="email" class="form-control" [(ngModel)]="email" name="email" required>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Mot de passe :</label>
+        <input type="password" class="form-control" [(ngModel)]="password" name="password" required>
+      </div>
+
+      <!-- ✅ Désactiver le bouton si en cours de connexion -->
+      <button type="submit" class="btn btn-primary w-100" [disabled]="isLoading">
+        Se connecter
+      </button>
+    </form>
+
+    <p class="text-center mt-3">
+      Pas encore de compte ? 
+      <a routerLink="/register" class="text-decoration-none">Inscrivez-vous</a>
+    </p>
+
+    <!-- ✅ Afficher l'ID utilisateur après connexion -->
+    <div *ngIf="userId !== null" class="alert alert-success mt-3">
+      ✅ Connexion réussie ! Votre ID utilisateur est : <strong>{{ userId }}</strong>
     </div>
   </div>
-  
+</div>

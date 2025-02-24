@@ -12,7 +12,7 @@ namespace PFA.Data
  
         public DbSet<Restaurant> Restaurant { get; set; }
         public DbSet<Transport> Transports { get; set; }
-        public DbSet<TypeTransport> TypeTransports { get; set; }
+   
         public DbSet<Hebergement> Hebergements { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options)

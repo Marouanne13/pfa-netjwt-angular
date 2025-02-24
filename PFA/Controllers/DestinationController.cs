@@ -1,52 +1,99 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using PFA.Data;
 using PFA.Models;
-using PFA.Services;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
-[ApiController]
-[Route("api/[controller]")]
-public class DestinationController : ControllerBase
+namespace PFA.Controllers
 {
-    private readonly DestinationService _destinationService;
-
-    public DestinationController(DestinationService destinationService)
+    [Route("api/[controller]")]
+    [ApiController]
+    public class DestinationsController : ControllerBase
     {
-        _destinationService = destinationService;
-    }
+        private readonly AppDbContext _context;
 
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<Destination>>> GetAllDestinations()
-    {
-        var destinations = await _destinationService.GetAllDestinationsAsync();
-        return Ok(destinations);
-    }
+        public DestinationsController(AppDbContext context)
+        {
+            _context = context;
+        }
 
-    [HttpGet("region/{region}")]
-    public async Task<ActionResult<IEnumerable<Destination>>> GetDestinationsByRegion(string region)
-    {
-        var destinations = await _destinationService.GetDestinationsByRegionAsync(region);
-        return Ok(destinations);
-    }
+        // ✅ 📌 Récupérer toutes les destinations
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Destination>>> GetDestinations()
+        {
+            return await _context.Destinations.ToListAsync();
+        }
 
-    [HttpGet("popular")]
-    public async Task<ActionResult<IEnumerable<Destination>>> GetPopularDestinations()
-    {
-        var destinations = await _destinationService.GetPopularDestinationsAsync();
-        return Ok(destinations);
-    }
+        // ✅ 📌 Récupérer une destination par ID
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Destination>> GetDestination(int id)
+        {
+            var destination = await _context.Destinations.FindAsync(id);
 
-    [HttpPost]
-    public async Task<IActionResult> CreateDestination(Destination destination)
-    {
-        await _destinationService.CreateDestinationAsync(destination);
-        return CreatedAtAction(nameof(GetAllDestinations), new { id = destination.Id }, destination);
-    }
+            if (destination == null)
+            {
+                return NotFound();
+            }
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteDestination(int id)
-    {
-        await _destinationService.DeleteDestinationAsync(id);
-        return NoContent();
+            return destination;
+        }
+
+        // ✅ 📌 Ajouter une nouvelle destination
+        [HttpPost]
+        public async Task<ActionResult<Destination>> PostDestination(Destination destination)
+        {
+            _context.Destinations.Add(destination);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetDestination), new { id = destination.Id }, destination);
+        }
+
+        // ✅ 📌 Modifier une destination
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutDestination(int id, Destination destination)
+        {
+            if (id != destination.Id)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(destination).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Destinations.Any(e => e.Id == id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        // ✅ 📌 Supprimer une destination
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteDestination(int id)
+        {
+            var destination = await _context.Destinations.FindAsync(id);
+            if (destination == null)
+            {
+                return NotFound();
+            }
+
+            _context.Destinations.Remove(destination);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }

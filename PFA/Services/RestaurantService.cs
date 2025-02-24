@@ -41,8 +41,14 @@ namespace PFA.Services
         }
 
         // 📌 4️⃣ Mettre à jour un restaurant
+        // 📌 4️⃣ Mettre à jour un restaurant
         public async Task<bool> MettreAJourRestaurant(int id, Restaurant restaurantMisAJour)
         {
+            if (id != restaurantMisAJour.Id)
+            {
+                throw new ArgumentException("L'ID fourni ne correspond pas à celui du restaurant.");
+            }
+
             var restaurant = await _context.Restaurant.FindAsync(id);
             if (restaurant == null)
                 return false;
@@ -51,6 +57,12 @@ namespace PFA.Services
             restaurant.TypeCuisine = restaurantMisAJour.TypeCuisine;
             restaurant.Adresse = restaurantMisAJour.Adresse;
             restaurant.NumeroTelephone = restaurantMisAJour.NumeroTelephone;
+            restaurant.NombreEtoiles = restaurantMisAJour.NombreEtoiles;
+            restaurant.Description = restaurantMisAJour.Description;
+            restaurant.ImageUrl = restaurantMisAJour.ImageUrl;
+            restaurant.LivraisonDisponible = restaurantMisAJour.LivraisonDisponible;
+            restaurant.ReservationEnLigne = restaurantMisAJour.ReservationEnLigne;
+            restaurant.EstOuvert24h = restaurantMisAJour.EstOuvert24h;
 
             _context.Restaurant.Update(restaurant);
             await _context.SaveChangesAsync();
