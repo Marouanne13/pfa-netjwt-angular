@@ -38,7 +38,7 @@ export class LoginUserComponent {
         this.userId = response.userId; // ✅ Afficher l'ID utilisateur
 
         // ✅ Rediriger vers "home" après 2 secondes
-        setTimeout(() => this.router.navigate(['/home']), 2000);
+        setTimeout(() => this.router.navigate(['about']), 2000);
       },
       error: (err) => {
         console.error('❌ Erreur de connexion :', err);

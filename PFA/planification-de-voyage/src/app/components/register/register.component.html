@@ -1,40 +1,133 @@
+
+<header class="th-header header-layout1">
+  <div class="header-top">
+      <div class="container th-container">
+          <div class="row justify-content-center justify-content-xl-between align-items-center">
+              <div class="col-auto d-none d-md-block">
+                  <div class="header-links">
+                      <ul>
+                          <li class="d-none d-xl-inline-block"><i class="fa-sharp fa-regular  fa-location-dot"></i>
+                              <span>45 New Eskaton Road, Austria</span>
+                          </li>
+                          <li class="d-none d-xl-inline-block"><i class="fa-regular fa-clock"></i>
+                              <span>Sun to Friday: 8.00 am - 7.00 pm</span>
+                          </li>
+                      </ul>
+                  </div>
+              </div>
+              <div class="col-auto">
+                  <div class="header-right">
+                      <div class="currency-menu">
+                          <img src="../../../assets/img/icon/dollar.svg" alt="">
+                          <select class="form-select nice-select">
+                              <option selected="">USD</option>
+                              <option>CNY</option>
+                              <option>EUR</option>
+                              <option>AUD</option>
+                          </select>
+                      </div>
+
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+  <div class="sticky-wrapper">
+      <!-- Main Menu Area -->
+      <div class="menu-area">
+          <div class="container th-container">
+              <div class="row align-items-center justify-content-between">
+                  <div class="col-auto">
+                      <div class="header-logo">
+                          <a href="loginUser"><img src="../../../assets/img/logo.svg" alt="Tourm"></a>
+                      </div>
+                  </div>
+                  <div class="col-auto me-xl-auto">
+                      <nav class="main-menu d-none d-xl-inline-block">
+                          <ul>
+
+                              <li><a href="loginUser">login client</a></li>
+
+                              <li class="menu-item-has-children">
+                                  <a href="register">Service</a>
+
+                              </li>
+
+                              <li class="menu-item-has-children">
+                                  <a href="#">Pages</a>
+                                  <ul class="sub-menu">
+
+                                  </ul>
+
+                              </li>
+                              <li class="menu-item-has-children">
+                                  <a href="register">Blog</a>
+
+                              </li>
+                              <li>
+                                  <a href="login">Admin</a>
+                              </li>
+                          </ul>
+                      </nav>
+                      <button type="button" class="th-menu-toggle d-block d-xl-none"><i class="far fa-bars"></i></button>
+                  </div>
+                  <div class="col-auto d-none d-xl-block">
+                    <div class="header-button">
+                      <a href="contact.html" class="th-btn style3 th-icon">Book Now</a>
+
+
+              </div>
+                  </div>
+              </div>
+          </div>
+          <div class="logo-bg" data-mask-src="assets/img/logo_bg_mask.png"></div>
+      </div>
+  </div>
+</header>
+
+
+
+
+
+
+
 <body class="register-body">
     <div class="container d-flex justify-content-center align-items-center vh-100">
       <div class="card shadow-lg p-4 w-50">
           <div class="card-body">
               <h2 class="text-center mb-4 fw-bold">Inscription</h2>
-  
+
               <form (submit)="onRegister()" class="needs-validation" novalidate>
                   <div class="mb-3">
                       <label class="form-label fw-bold">Nom :</label>
                       <input type="text" class="form-control" [(ngModel)]="nom" name="nom" required>
                   </div>
-  
+
                   <div class="mb-3">
                       <label class="form-label fw-bold">Email :</label>
                       <input type="email" class="form-control" [(ngModel)]="email" name="email" required>
                   </div>
-  
+
                   <div class="mb-3">
                       <label class="form-label fw-bold">Mot de passe :</label>
                       <input type="password" class="form-control" [(ngModel)]="password" name="password" required>
                   </div>
-  
+
                   <div class="mb-3">
                       <label class="form-label fw-bold">Téléphone :</label>
                       <input type="text" class="form-control" [(ngModel)]="telephone" name="telephone" required>
                   </div>
-  
+
                   <div class="mb-3">
                       <label class="form-label fw-bold">Adresse :</label>
                       <input type="text" class="form-control" [(ngModel)]="adresse" name="adresse" required>
                   </div>
-  
+
                   <div class="mb-3">
                       <label class="form-label fw-bold">Date de Naissance :</label>
                       <input type="date" class="form-control" [(ngModel)]="dateDeNaissance" name="dateDeNaissance" required>
                   </div>
-  
+
                   <div class="mb-3">
                       <label class="form-label fw-bold">Genre :</label>
                       <select class="form-select" [(ngModel)]="genre" name="genre" required>
@@ -43,10 +136,10 @@
                           <option value="Autre">Autre</option>
                       </select>
                   </div>
-  
+
                   <button type="submit" class="btn btn-primary btn-lg w-100 shadow">S'inscrire</button>
               </form>
-  
+
               <p class="text-center mt-3">
                   Déjà inscrit ?
                   <button (click)="goToLogin()" class="btn btn-outline-primary btn-sm">
@@ -57,4 +150,3 @@
       </div>
     </div>
   </body>
-  

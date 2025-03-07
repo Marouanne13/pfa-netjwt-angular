@@ -1,11 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
+import { gsap } from 'gsap';
+import { FooterComponent } from "../../footer/footer.component";
+import { HeaderComponent } from "../../header/header.component";
 
 @Component({
   selector: 'app-home',
-  imports: [],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.css'
+  styleUrls: ['./home.component.css'],
+  imports: [FooterComponent, HeaderComponent]
 })
-export class HomeComponent {
-
-}
+export class HomeComponent  { };
+  
