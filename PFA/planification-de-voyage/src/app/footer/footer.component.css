@@ -1,0 +1,10 @@
+a {
+    cursor: pointer;
+    text-decoration: none;
+    color: blue;
+  }
+  
+  a:hover {
+    color: darkblue;
+  }
+  

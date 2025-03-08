@@ -19,7 +19,7 @@
     13. Filter
     14. Counter Up
     15. Shape Mockup
-    16. Progress Bar Animation 
+    16. Progress Bar Animation
     17. Countdown
     18. Image to SVG Code
     00. Woocommerce Toggle
@@ -35,7 +35,7 @@
         $(".preloader").fadeOut();
     });
 
-    // $('select').niceSelect(); 
+    // $('select').niceSelect();
     if ($('.nice-select').length) {
         $('.nice-select').niceSelect();
     }
@@ -164,7 +164,7 @@
                     scrollTop: target.offset().top - 10
                     }, 1000);
                 };
-    
+
                 });
             });
             })
@@ -172,7 +172,7 @@
     };
     onePageNav('.onepage-nav');
     onePageNav('.scroll-down');
-    //one page sticky menu  
+    //one page sticky menu
     $(window).on('scroll', function(){
         if ($('.onepage-nav').length > 0) {
         };
@@ -354,7 +354,7 @@
             swiper: swiper,
         },
         loop: true,
-        effect: "fade", 
+        effect: "fade",
         autoplay: {
             delay: 6000,
             disableOnInteraction: false
@@ -588,7 +588,7 @@
         showNextdestination();
     });
 
-    /*   offer-deals start */ 
+    /*   offer-deals start */
 
     // $('#offerDeals').on('show.bs.collapse', function (event) {
     //     var activeIndex = $(event.target).closest('.accordion-item').index();
@@ -596,22 +596,22 @@
     //     $('.th-accordion_images img').eq(activeIndex).addClass('active');
     //     $('.th-accordion_images img').mouseenter('hover');
     //     $('.th-accordion_images img').eq(activeIndex).addClass('hover');
-       
-    // });  
-   
+
+    // });
+
 
      // Show the first tab and hide the rest
      $('.accordion-item-wrapp li:first-child').addClass('active');
      $('.according-img-tab').hide();
      $('.according-img-tab:first').show();
- 
+
      // Click function
      $('.accordion-item-wrapp .accordion-item-content').mouseenter(function(){
      $('.accordion-item-wrapp .accordion-item-content').removeClass('active');
      // $(this).addClass('active');
      $('.according-img-tab').hide();
-     
-     var activeTab = $(this).find('.accordion-tab-item').attr('data-bs-target'); 
+
+     var activeTab = $(this).find('.accordion-tab-item').attr('data-bs-target');
      $(activeTab).fadeIn();
      return false;
      });
@@ -622,7 +622,7 @@
         $('.hover-item').removeClass('item-active');
         $(this).addClass('item-active');
     });
-  /* testimonial end --------------------*/ 
+  /* testimonial end --------------------*/
 
 
 
@@ -978,7 +978,7 @@
     let posX = 0,
         posY = 0,
         mouseX = 0,
-        mouseY = 0; 
+        mouseY = 0;
 
     TweenMax.to({}, 0.02, {
         repeat: -1,
@@ -1120,7 +1120,7 @@
     animateElements();
     $(window).scroll(animateElements);
 
-     /*----------- 15. Filter ----------*/  
+     /*----------- 15. Filter ----------*/
      $(".filter-active").imagesLoaded(function () {
         var $filter = ".filter-active",
             $filterItem = ".filter-item",
@@ -1294,7 +1294,7 @@
     }
 
     /* ==================================================
-#  Load More 
+#  Load More
 ===============================================*/
 
 $(function () {
@@ -1338,7 +1338,7 @@ $(".to").text("$" + $(".price_slider").slider("values", 1));
 //     };
 
 
-// })(jQuery); 
+// })(jQuery);
 
 // (function ($) {
 
@@ -1410,7 +1410,7 @@ $(".to").text("$" + $(".price_slider").slider("values", 1));
         });
     }
 
-    $(".svg-img").inlineSvg(); 
+    $(".svg-img").inlineSvg();
 
 
     //Image Reveal Animation
@@ -1441,7 +1441,7 @@ $(".to").text("$" + $(".price_slider").slider("values", 1));
         });
     }
 
-   
+
     /*----------- 00. Woocommerce Toggle ----------*/
     // Ship To Different Address
     $("#ship-to-different-address-checkbox").on("change", function () {
@@ -1537,17 +1537,17 @@ $(".to").text("$" + $(".price_slider").slider("values", 1));
 
 
 
-    
 
-    // /*----------- 00. Right Click Disable ----------*/ 
+
+    // /*----------- 00. Right Click Disable ----------*/
     //   window.addEventListener('contextmenu', function (e) {
     //     // do something here...
-    //     e.preventDefault();  
-    //   }, false); 
- 
-    // /*----------- 00. Inspect Element Disable ----------*/   
-    //   document.onkeydown = function (e) { 
-    //     if (event.keyCode == 123) {  
+    //     e.preventDefault();
+    //   }, false);
+
+    // /*----------- 00. Inspect Element Disable ----------*/
+    //   document.onkeydown = function (e) {
+    //     if (event.keyCode == 123) {
     //       return false;
     //     }
     //     if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) {
@@ -1559,9 +1559,9 @@ $(".to").text("$" + $(".price_slider").slider("values", 1));
     //     if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) {
     //       return false;
     //     }
-    //     if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) {  
+    //     if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) {
     //       return false;
-    //     } 
-    //   }   
+    //     }
+    //   }
 
 })(jQuery);
