@@ -41,6 +41,7 @@ namespace PFA.Data
             });
 
             base.OnModelCreating(modelBuilder);
+
         }
 
         // 🔹 Configuration de la connexion SQL Server
