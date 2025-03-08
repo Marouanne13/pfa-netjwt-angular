@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PFA.Data;
 
@@ -11,9 +12,11 @@ using PFA.Data;
 namespace PFA.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250226180105_AddPanierTable")]
+    partial class AddPanierTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -220,9 +223,6 @@ namespace PFA.Migrations
                     b.Property<DateTime>("DateCreation")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("DestinationId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Nom")
                         .IsRequired()
                         .HasMaxLength(150)
@@ -246,9 +246,12 @@ namespace PFA.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("DestinationId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Hebergements");
                 });
@@ -480,13 +483,13 @@ namespace PFA.Migrations
 
             modelBuilder.Entity("PFA.Models.Hebergement", b =>
                 {
-                    b.HasOne("PFA.Models.Destination", "Destination")
+                    b.HasOne("PFA.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("DestinationId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Destination");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("PFA.Models.Transport", b =>

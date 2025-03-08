@@ -1,0 +1,7 @@
+<h1>Hébergements à {{ nomDestination }}</h1>
+<div *ngFor="let hebergement of hebergements">
+  <h2>{{ hebergement.nom }}</h2>
+  <p><strong>Adresse :</strong> {{ hebergement.adresse }}</p>
+  <p><strong>Prix :</strong> {{ hebergement.prixParNuit }} MAD</p>
+  <button (click)="goToActivites()">Voir les activités</button>
+</div>

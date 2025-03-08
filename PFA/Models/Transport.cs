@@ -1,45 +1,49 @@
-﻿using PFA.Models;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-public class Transport
+namespace PFA.Models
 {
-    [Key]
-    public int Id { get; set; } // Identifiant unique
+    public class Transport
+    {
+        [Key]
+        public int Id { get; set; }
 
-    [Required]
-    public int Capacite { get; set; } // Capacité maximale du transport (nombre de places disponibles)
+        [Required]
+        public int Capacite { get; set; }
 
-    [Required]
-    public bool EstDisponible { get; set; } // Indique si le transport est actuellement disponible
+        [Required]
+        public bool EstDisponible { get; set; }
 
-    [Required]
-    public int TypeTransportId { get; set; } // Clé étrangère vers le type de transport
- 
-    [Required]
-    public int UtilisateurId { get; set; } // Clé étrangère vers l'utilisateur
-    public User Utilisateur { get; set; } // Relation avec l'utilisateur
+        [Required]
+        [MaxLength(100)]
+        public string TypeTransport { get; set; }
 
-    [Required]
-    public double Prix { get; set; } // Prix du transport (en devise locale)
+        [Required]
+        public int UtilisateurId { get; set; }
 
-    public DateTime DateCreation { get; set; } = DateTime.UtcNow; // Date de création de l'enregistrement
+        [ForeignKey("UtilisateurId")]
+        public User Utilisateur { get; set; }
+        
+        [Required]
+        public double Prix { get; set; }
 
-    // 📌 NOUVEAUX ATTRIBUTS :
+        public DateTime DateCreation { get; set; } = DateTime.UtcNow;
 
-    [Required]
-    [MaxLength(100)]
-    public string NomCompagnie { get; set; } // Nom de la compagnie de transport
+        [Required]
+        [MaxLength(100)]
+        public string NomCompagnie { get; set; }
 
-    [Required]
-    [MaxLength(50)]
-    public string ModeDeTransport { get; set; } // Type de transport (ex: "Bus", "Train", "Taxi", "Avion")
+        [Required]
+        [MaxLength(50)]
+        public string ModeDeTransport { get; set; }
 
-    public string NumeroImmatriculation { get; set; } // Numéro d'immatriculation du véhicule
+        public string NumeroImmatriculation { get; set; }
 
-    public TimeSpan HeureDepart { get; set; } // Heure de départ prévue
+        public TimeSpan HeureDepart { get; set; }
 
-    public TimeSpan HeureArrivee { get; set; } // Heure d'arrivée prévue
-    public string NumeroServiceClient { get; set; } // Numéro de contact pour le service client
+        public TimeSpan HeureArrivee { get; set; }
+
+        public string NumeroServiceClient { get; set; }
+    }
 }

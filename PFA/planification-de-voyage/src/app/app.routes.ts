@@ -10,12 +10,11 @@ import { GestionVoyagesComponent } from './components/gestion-voyages/gestion-vo
 import { AuthGuard } from './guards/auth.guard';
 import { RegisterComponent } from './components/register/register.component';
 import { HomeComponent } from './components/home/home.component';
-
+import { DestinationComponent } from './components/destinations/destination.component';
+import { HebergementsComponent } from './components/hebergements/hebergements.component';
 import { RestaurantFormComponent } from './components/restaurant-form/restaurant-form.component';
 import { RestaurantListComponent } from './components/restaurant-list/restaurant-list.component'; // ✅ Liste des restaurants
 import { AboutComponent } from './components/about/about.component';
-
-
 
 
 
@@ -34,7 +33,6 @@ export const routes: Routes = [
   { path: 'clients', component: ClientsComponent, canActivate: [AuthGuard] },
   { path: 'transports', component: TransportsComponent, canActivate: [AuthGuard] }, // ✅ Transport
   { path: 'gestion-voyages', component: GestionVoyagesComponent, canActivate: [AuthGuard] }, // ✅ Gestion des voyages
-  { path: '', redirectTo: '/home', pathMatch: 'full' },
-  { path: 'about', component: AboutComponent , canActivate: [AuthGuard]},
-  { path: '**', redirectTo: '/home' },
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: '**', redirectTo: '/login' } // Redirection pour toute page inconnue
 ];

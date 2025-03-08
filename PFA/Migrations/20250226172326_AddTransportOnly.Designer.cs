@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PFA.Data;
 
@@ -11,9 +12,11 @@ using PFA.Data;
 namespace PFA.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250226172326_AddTransportOnly")]
+    partial class AddTransportOnly
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,53 @@ namespace PFA.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Hebergement", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Adresse")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<int>("ClassementEtoiles")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateCreation")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Nom")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("NumeroTelephone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PetitDejeunerInclus")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Piscine")
+                        .HasColumnType("bit");
+
+                    b.Property<double>("PrixParNuit")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Hebergements");
+                });
 
             modelBuilder.Entity("PFA.Models.Activite", b =>
                 {
@@ -201,58 +251,6 @@ namespace PFA.Migrations
                     b.ToTable("Destinations");
                 });
 
-            modelBuilder.Entity("PFA.Models.Hebergement", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Adresse")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<int>("ClassementEtoiles")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("DateCreation")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("DestinationId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Nom")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
-                    b.Property<string>("NumeroTelephone")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PetitDejeunerInclus")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("Piscine")
-                        .HasColumnType("bit");
-
-                    b.Property<double>("PrixParNuit")
-                        .HasColumnType("float");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DestinationId");
-
-                    b.ToTable("Hebergements");
-                });
-
             modelBuilder.Entity("PFA.Models.Transport", b =>
                 {
                     b.Property<int>("Id")
@@ -396,8 +394,6 @@ namespace PFA.Migrations
 
                     b.HasIndex("TransportId");
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("Paniers");
                 });
 
@@ -478,17 +474,6 @@ namespace PFA.Migrations
                         .HasForeignKey("UserId");
                 });
 
-            modelBuilder.Entity("PFA.Models.Hebergement", b =>
-                {
-                    b.HasOne("PFA.Models.Destination", "Destination")
-                        .WithMany()
-                        .HasForeignKey("DestinationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Destination");
-                });
-
             modelBuilder.Entity("PFA.Models.Transport", b =>
                 {
                     b.HasOne("PFA.Models.User", "Utilisateur")
@@ -510,7 +495,7 @@ namespace PFA.Migrations
                         .WithMany()
                         .HasForeignKey("DestinationId");
 
-                    b.HasOne("PFA.Models.Hebergement", "Hebergements")
+                    b.HasOne("Hebergement", "Hebergement")
                         .WithMany()
                         .HasForeignKey("HebergementId");
 
@@ -522,23 +507,15 @@ namespace PFA.Migrations
                         .WithMany()
                         .HasForeignKey("TransportId");
 
-                    b.HasOne("PFA.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Activite");
 
                     b.Navigation("Destination");
 
-                    b.Navigation("Hebergements");
+                    b.Navigation("Hebergement");
 
                     b.Navigation("Restaurant");
 
                     b.Navigation("Transport");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Restaurant", b =>

@@ -1,0 +1,6 @@
+<h1>Destinations</h1>
+<div *ngFor="let destination of destinations">
+  <h2>{{ destination.nom }}</h2>
+  <p>{{ destination.description }}</p>
+  <button (click)="goToHebergements(destination.nom)">Voir les hébergements</button>
+</div>

@@ -1,32 +1,41 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
-public class Hebergement
+namespace PFA.Models
 {
-    [Key]
-    public int Id { get; set; } // Identifiant unique
+    public class Hebergement
 
-    [Required, MaxLength(150)]
-    public string Nom { get; set; } // Nom de l’hébergement (ex: "Hôtel Atlas", "Villa Luxe")
+    {
+        [Key]
+        public int Id { get; set; } // Identifiant unique
 
-    [Required, MaxLength(100)]
-    public string Type { get; set; } // Type d’hébergement ("Hôtel", "Appartement", "Airbnb", "Villa")
+        [Required, MaxLength(150)]
+        public string Nom { get; set; }
 
-    [Required, MaxLength(250)]
-    public string Adresse { get; set; } // Adresse complète
+        [Required, MaxLength(100)]
+        public string Type { get; set; }
 
-    [Required]
-    public double PrixParNuit { get; set; } // Prix par nuit en devise locale
+        [Required, MaxLength(250)]
+        public string Adresse { get; set; }
 
-    public DateTime DateCreation { get; set; } = DateTime.UtcNow; // Date de création
+        [Required]
+        public double PrixParNuit { get; set; }
 
-    // 📌 NOUVEAUX ATTRIBUTS :
+        public DateTime DateCreation { get; set; } = DateTime.UtcNow;
 
-    public int ClassementEtoiles { get; set; } // Classement en étoiles (1 à 5 étoiles)
-    public bool PetitDejeunerInclus { get; set; } // Indique si le petit-déjeuner est inclus
+        // 📌 NOUVEAUX ATTRIBUTS :
 
-    public bool Piscine { get; set; } // Indique si une piscine est disponible
-    public string NumeroTelephone { get; set; } // Numéro de contact
+        public int ClassementEtoiles { get; set; }
+        public bool PetitDejeunerInclus { get; set; }
 
+        public bool Piscine { get; set; }
+        public string NumeroTelephone { get; set; }
+        public int DestinationId { get; set; }
+
+        [JsonIgnore]
+        public virtual Destination Destination { get; set; }
+
+    }
 }
