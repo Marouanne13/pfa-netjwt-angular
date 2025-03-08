@@ -10,9 +10,12 @@ import { GestionVoyagesComponent } from './components/gestion-voyages/gestion-vo
 import { AuthGuard } from './guards/auth.guard';
 import { RegisterComponent } from './components/register/register.component';
 import { HomeComponent } from './components/home/home.component';
-
+import { DestinationComponent } from './components/destinations/destination.component';
+import { HebergementsComponent } from './components/hebergements/hebergements.component';
 import { RestaurantFormComponent } from './components/restaurant-form/restaurant-form.component';
 import { RestaurantListComponent } from './components/restaurant-list/restaurant-list.component'; // ✅ Liste des restaurants
+import { ActivitesUserComponent } from './components/activitesUser/activitesUser.component';
+
 
 export const routes: Routes = [
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
@@ -26,7 +29,16 @@ export const routes: Routes = [
   { path: 'restaurant-list', component: RestaurantListComponent, canActivate: [AuthGuard] }, // ✅ Nouvelle route pour liste des restaurants
   { path: 'clients', component: ClientsComponent, canActivate: [AuthGuard] },
   { path: 'transports', component: TransportsComponent, canActivate: [AuthGuard] }, // ✅ Transport
-  { path: 'gestion-voyages', component: GestionVoyagesComponent, canActivate: [AuthGuard] }, // ✅ Gestion des voyages
+  { path: 'gestion-voyages', component: GestionVoyagesComponent, canActivate: [AuthGuard] }, 
+  { path: 'destinations', component: DestinationComponent , canActivate: [AuthGuard]  },// ✅ Gestion des voyages
   { path: '', redirectTo: '/login', pathMatch: 'full' },
-  { path: '**', redirectTo: '/login' } // Redirection pour toute page inconnue
+  { path: 'destinations', component: DestinationComponent },
+  { path: 'hebergements/:nom', component: HebergementsComponent },
+  { path: 'activites/:nom', component: ActivitesUserComponent },
+  { path: '', redirectTo: '/destinations', pathMatch: 'full' }
+
+
+
+
+ // { path: '**', redirectTo: '/login' }, // Redirection pour toute page inconnue
 ];

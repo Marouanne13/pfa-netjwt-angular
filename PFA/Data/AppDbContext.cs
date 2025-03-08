@@ -5,6 +5,7 @@ namespace PFA.Data
 {
     public class AppDbContext : DbContext
     {
+        public DbSet<Panier> Paniers { get; set; }
         public DbSet<Admin> Admins { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Destination> Destinations { get; set; }
@@ -12,7 +13,7 @@ namespace PFA.Data
  
         public DbSet<Restaurant> Restaurant { get; set; }
         public DbSet<Transport> Transports { get; set; }
-   
+
         public DbSet<Hebergement> Hebergements { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options)
