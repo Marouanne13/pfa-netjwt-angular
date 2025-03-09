@@ -17,6 +17,8 @@ import { AboutComponent } from './components/about/about.component';
 import { ActivitesUserComponent  } from './components/activitesUser/activitesUser.component';
 import { DestinationComponent } from './components/destinations/destination.component';
 import { HebergementsComponent } from './components/hebergements/hebergements.component';
+import { UserMessageComponent } from './components/user-message/user-message.component';
+import { AdminMessagesComponent } from './components/admin-messages/admin-messages.component';
 
 
 
@@ -39,5 +41,7 @@ export const routes: Routes = [
   { path: 'destinations', component: DestinationComponent },
   { path: 'hebergements/:nom', component: HebergementsComponent },
   { path: 'activites/:nom', component: ActivitesUserComponent },
+  { path: 'user-messages', component: UserMessageComponent },
+  { path: 'admin-messages', component: AdminMessagesComponent },
   { path: '**', redirectTo: '/home' }
 ];
