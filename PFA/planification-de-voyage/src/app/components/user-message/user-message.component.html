@@ -1,0 +1,18 @@
+<div class="chat-bar">
+    <h3>Messagerie</h3>
+  
+    <!-- Liste des messages -->
+    <div class="messages">
+      <div *ngFor="let msg of messages" [class]="msg.expediteurId === userId ? 'message user' : 'message admin'">
+        <p>{{ msg.contenu }}</p>
+        <small>{{ msg.dateEnvoi | date:'short' }}</small> <!-- ✅ Formatage de la date -->
+      </div>
+    </div>
+  
+    <!-- Champ d'envoi de message -->
+    <div class="input-container">
+      <input [(ngModel)]="newMessage" placeholder="Écrire un message..." />
+      <button (click)="sendMessage()">Envoyer</button>
+    </div>
+  </div>
+  

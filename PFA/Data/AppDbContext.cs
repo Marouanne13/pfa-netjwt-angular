@@ -15,6 +15,7 @@ namespace PFA.Data
    
         public DbSet<Hebergement> Hebergements { get; set; }
 
+        public DbSet<Message> Messages { get; set; }
         public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)
         {
@@ -22,6 +23,7 @@ namespace PFA.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+           
             modelBuilder.Entity<Admin>(entity =>
             {
                 entity.HasKey(a => a.Id);

@@ -4,9 +4,10 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using PFA.Data;
+using PFA.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Services.AddScoped<MessageService>();
 // 📌 Configuration de la base de données SQL Server
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

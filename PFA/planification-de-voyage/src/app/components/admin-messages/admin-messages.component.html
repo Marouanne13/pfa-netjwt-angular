@@ -1,0 +1,16 @@
+<div class="admin-panel">
+    <h2>Messages des Utilisateurs</h2>
+
+    <ul>
+        <li *ngFor="let msg of messages" (click)="selectUser(msg.expediteurId)">
+            <strong>{{ msg.expediteurType }} (ID: {{ msg.expediteurId }}) :</strong> {{ msg.contenu }}
+        </li>
+    </ul>
+
+    <!-- Interface de réponse -->
+    <div *ngIf="selectedUserId">
+        <h3>Répondre à l'utilisateur {{ selectedUserId }}</h3>
+        <input [(ngModel)]="responseMessage" placeholder="Écrire une réponse...">
+        <button (click)="sendResponse()">Envoyer</button>
+    </div>
+</div>

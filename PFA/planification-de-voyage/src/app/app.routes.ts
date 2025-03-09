@@ -15,6 +15,10 @@ import { RestaurantFormComponent } from './components/restaurant-form/restaurant
 import { RestaurantListComponent } from './components/restaurant-list/restaurant-list.component'; // ✅ Liste des restaurants
 import { AboutComponent } from './components/about/about.component';
 
+import { UserMessageComponent } from './components/user-message/user-message.component';
+import { AdminMessagesComponent } from './components/admin-messages/admin-messages.component';
+import { AppComponent } from './app.component';
+
 
 
 
@@ -36,5 +40,7 @@ export const routes: Routes = [
   { path: 'gestion-voyages', component: GestionVoyagesComponent, canActivate: [AuthGuard] }, // ✅ Gestion des voyages
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: 'about', component: AboutComponent , canActivate: [AuthGuard]},
+  { path: 'user-messages', component: UserMessageComponent },
+  { path: 'admin-messages', component: AdminMessagesComponent },
   { path: '**', redirectTo: '/home' },
 ];
