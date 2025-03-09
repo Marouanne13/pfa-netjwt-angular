@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PFA.Data;
 
@@ -11,9 +12,11 @@ using PFA.Data;
 namespace PFA.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250306220357_AddHebergementTable")]
+    partial class AddHebergementTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -229,8 +232,8 @@ namespace PFA.Migrations
                         .HasColumnType("nvarchar(150)");
 
                     b.Property<string>("NumeroTelephone")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("PetitDejeunerInclus")
                         .HasColumnType("bit");
@@ -510,7 +513,7 @@ namespace PFA.Migrations
                         .WithMany()
                         .HasForeignKey("DestinationId");
 
-                    b.HasOne("PFA.Models.Hebergement", "Hebergement")
+                    b.HasOne("PFA.Models.Hebergement", "Hebergements")
                         .WithMany()
                         .HasForeignKey("HebergementId");
 
@@ -532,7 +535,7 @@ namespace PFA.Migrations
 
                     b.Navigation("Destination");
 
-                    b.Navigation("Hebergement");
+                    b.Navigation("Hebergements");
 
                     b.Navigation("Restaurant");
 

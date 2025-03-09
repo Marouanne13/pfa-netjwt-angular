@@ -11,6 +11,7 @@ import { AboutComponent } from "./components/about/about.component";
 @Component({
   selector: 'app-root',
   standalone: true,
+
   imports: [RouterModule, FooterComponent, HeaderComponent, HomeComponent, AboutComponent], // ✅ Ajout du module de routing
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']

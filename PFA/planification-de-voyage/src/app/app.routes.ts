@@ -14,13 +14,9 @@ import { HomeComponent } from './components/home/home.component';
 import { RestaurantFormComponent } from './components/restaurant-form/restaurant-form.component';
 import { RestaurantListComponent } from './components/restaurant-list/restaurant-list.component'; // ✅ Liste des restaurants
 import { AboutComponent } from './components/about/about.component';
-
-import { UserMessageComponent } from './components/user-message/user-message.component';
-import { AdminMessagesComponent } from './components/admin-messages/admin-messages.component';
-import { AppComponent } from './app.component';
-
-
-
+import { ActivitesUserComponent  } from './components/activitesUser/activitesUser.component';
+import { DestinationComponent } from './components/destinations/destination.component';
+import { HebergementsComponent } from './components/hebergements/hebergements.component';
 
 
 
@@ -40,7 +36,8 @@ export const routes: Routes = [
   { path: 'gestion-voyages', component: GestionVoyagesComponent, canActivate: [AuthGuard] }, // ✅ Gestion des voyages
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: 'about', component: AboutComponent , canActivate: [AuthGuard]},
-  { path: 'user-messages', component: UserMessageComponent },
-  { path: 'admin-messages', component: AdminMessagesComponent },
-  { path: '**', redirectTo: '/home' },
+  { path: 'destinations', component: DestinationComponent },
+  { path: 'hebergements/:nom', component: HebergementsComponent },
+  { path: 'activites/:nom', component: ActivitesUserComponent },
+  { path: '**', redirectTo: '/home' }
 ];

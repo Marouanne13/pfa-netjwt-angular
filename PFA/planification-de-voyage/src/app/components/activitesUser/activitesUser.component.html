@@ -1,0 +1,14 @@
+<h1>Activités pour {{ nomDestination }}</h1>
+<div *ngIf="activites.length > 0; else noActivites">
+  <div *ngFor="let activite of activites" class="card">
+    <h2>{{ activite.nom }}</h2>
+    <p><strong>Description :</strong> {{ activite.description }}</p>
+    <p><strong>Prix :</strong> {{ activite.prix }} MAD</p>
+    <p><strong>Durée :</strong> {{ activite.duree }} minutes</p>
+    <p><strong>Emplacement :</strong> {{ activite.emplacement }}</p>
+  </div>
+</div>
+
+<ng-template #noActivites>
+  <p>Aucune activité trouvée pour cette destination.</p>
+</ng-template>

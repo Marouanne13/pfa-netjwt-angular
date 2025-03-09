@@ -83,4 +83,7 @@ export class ActiviteService {
     console.error("❌ Erreur HTTP :", error);
     return throwError(() => new Error('Erreur serveur, réessayez plus tard.'));
   }
+  getActivitesParDestination(nomDestination: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/destination/${nomDestination}`);
+  }
 }

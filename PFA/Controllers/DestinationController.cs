@@ -31,13 +31,10 @@ namespace PFA.Controllers
         public async Task<ActionResult<Destination>> GetDestination(int id)
         {
             var destination = await _context.Destinations.FindAsync(id);
-
             if (destination == null)
-            {
-                return NotFound();
-            }
+                return NotFound("Destination non trouvée");
 
-            return destination;
+            return Ok(destination);
         }
 
         // ✅ 📌 Ajouter une nouvelle destination
@@ -55,9 +52,7 @@ namespace PFA.Controllers
         public async Task<IActionResult> PutDestination(int id, Destination destination)
         {
             if (id != destination.Id)
-            {
-                return BadRequest();
-            }
+                return BadRequest("L'ID ne correspond pas");
 
             _context.Entry(destination).State = EntityState.Modified;
 
@@ -68,13 +63,9 @@ namespace PFA.Controllers
             catch (DbUpdateConcurrencyException)
             {
                 if (!_context.Destinations.Any(e => e.Id == id))
-                {
-                    return NotFound();
-                }
+                    return NotFound("Destination non trouvée");
                 else
-                {
                     throw;
-                }
             }
 
             return NoContent();
@@ -86,9 +77,7 @@ namespace PFA.Controllers
         {
             var destination = await _context.Destinations.FindAsync(id);
             if (destination == null)
-            {
-                return NotFound();
-            }
+                return NotFound("Destination non trouvée");
 
             _context.Destinations.Remove(destination);
             await _context.SaveChangesAsync();

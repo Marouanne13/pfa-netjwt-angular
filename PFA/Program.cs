@@ -12,6 +12,14 @@ builder.Services.AddScoped<MessageService>();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Durée de session (30 min ici)
+    options.Cookie.HttpOnly = true; // Sécuriser les cookies
+    options.Cookie.IsEssential = true; // Nécessaire pour fonctionner même si l'utilisateur refuse les cookies non essentiels
+});
+
 
 // 📌 Configuration de CORS (pour autoriser Angular)
 builder.Services.AddCors(options =>
@@ -98,6 +106,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseRouting();
+app.UseSession();
 app.UseCors("AllowAll"); // ✅ Activation de CORS ici
 app.UseAuthentication();
 app.UseAuthorization();
