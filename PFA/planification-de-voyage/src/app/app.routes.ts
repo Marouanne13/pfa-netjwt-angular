@@ -19,8 +19,6 @@ import { DestinationComponent } from './components/destinations/destination.comp
 import { HebergementsComponent } from './components/hebergements/hebergements.component';
 
 
-
-
 export const routes: Routes = [
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
   { path: 'register', component: RegisterComponent },
