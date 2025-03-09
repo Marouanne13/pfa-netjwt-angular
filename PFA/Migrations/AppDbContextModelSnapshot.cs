@@ -229,8 +229,8 @@ namespace PFA.Migrations
                         .HasColumnType("nvarchar(150)");
 
                     b.Property<string>("NumeroTelephone")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<bool>("PetitDejeunerInclus")
                         .HasColumnType("bit");
@@ -510,7 +510,7 @@ namespace PFA.Migrations
                         .WithMany()
                         .HasForeignKey("DestinationId");
 
-                    b.HasOne("PFA.Models.Hebergement", "Hebergements")
+                    b.HasOne("PFA.Models.Hebergement", "Hebergement")
                         .WithMany()
                         .HasForeignKey("HebergementId");
 
@@ -532,7 +532,7 @@ namespace PFA.Migrations
 
                     b.Navigation("Destination");
 
-                    b.Navigation("Hebergements");
+                    b.Navigation("Hebergement");
 
                     b.Navigation("Restaurant");
 

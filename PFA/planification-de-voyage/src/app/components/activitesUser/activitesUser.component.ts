@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ActiviteService } from '../../services/activite.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-activites-user',
   standalone: true,
   templateUrl: './activitesUser.component.html',
-  styleUrls: ['./activitesUser.component.css']
+  styleUrls: ['./activitesUser.component.css'],
+  imports: [CommonModule] // Ajoute ceci pour activer *ngIf et *ngFor
 })
 export class ActivitesUserComponent implements OnInit {
   activites: any[] = [];

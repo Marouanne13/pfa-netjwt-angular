@@ -1,8 +1,10 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+
+#nullable disable
 
 namespace PFA.Migrations
 {
+    /// <inheritdoc />
     public partial class AddHebergementTable : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -11,18 +13,18 @@ namespace PFA.Migrations
                 name: "Hebergements",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Nom = table.Column<string>(nullable: false),
-                    Type = table.Column<string>(nullable: false),
-                    Adresse = table.Column<string>(nullable: false),
-                    PrixParNuit = table.Column<double>(nullable: false),
-                    DateCreation = table.Column<DateTime>(nullable: false, defaultValueSql: "GETUTCDATE()"),
-                    ClassementEtoiles = table.Column<int>(nullable: false),
-                    PetitDejeunerInclus = table.Column<bool>(nullable: false),
-                    Piscine = table.Column<bool>(nullable: false),
-                    NumeroTelephone = table.Column<string>(nullable: true),
-                    DestinationId = table.Column<int>(nullable: false)
+                    Nom = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Adresse = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
+                    PrixParNuit = table.Column<double>(type: "float", nullable: false),
+                    DateCreation = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    ClassementEtoiles = table.Column<int>(type: "int", nullable: false),
+                    PetitDejeunerInclus = table.Column<bool>(type: "bit", nullable: false),
+                    Piscine = table.Column<bool>(type: "bit", nullable: false),
+                    NumeroTelephone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    DestinationId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -43,7 +45,8 @@ namespace PFA.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(name: "Hebergements");
+            migrationBuilder.DropTable(
+                name: "Hebergements");
         }
     }
 }

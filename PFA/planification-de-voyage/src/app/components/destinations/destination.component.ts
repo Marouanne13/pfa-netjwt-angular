@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-destination',
   standalone: true,
   templateUrl: './destination.component.html',
-  styleUrls: ['./destination.component.css']
+  styleUrls: ['./destination.component.css'],
+    imports: [CommonModule] // Ajoute ceci pour activer *ngIf et *ngFor
 })
 export class DestinationComponent {
   destinations = [

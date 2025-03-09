@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 // 📌 Configuration de la base de données SQL Server
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddScoped<HebergementService>();
+
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
