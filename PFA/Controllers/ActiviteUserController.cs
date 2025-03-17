@@ -19,16 +19,23 @@ namespace PFA.Controllers
             _context = context;
         }
 
-        // ✅ 📌 Récupérer toutes les activités disponibles
-        [HttpGet("all")]
-        public async Task<ActionResult<IEnumerable<Activite>>> GetAllActivites()
+        // ✅ 📌 Récupérer toutes les activités d'une destination spécifique
+        [HttpGet("par-destination/{destinationId}")]
+        public async Task<IActionResult> GetActivitesParDestination(int destinationId)
         {
-            var activites = await _context.Activites.ToListAsync();
-            if (activites == null || !activites.Any())
-                return NotFound("Aucune activité disponible.");
+            var activites = await _context.Activites
+                .Where(a => a.DestinationId == destinationId) // 🔥 Filtrer par destination
+                .ToListAsync();
+
+            if (!activites.Any())
+            {
+                return NotFound($"Aucune activité trouvée pour la destination ID {destinationId}");
+            }
 
             return Ok(activites);
         }
+
+
 
         // ✅ 📌 Récupérer une activité par ID
         [HttpGet("{id}")]
@@ -39,20 +46,6 @@ namespace PFA.Controllers
                 return NotFound($"Aucune activité trouvée avec l'ID {id}.");
 
             return Ok(activite);
-        }
-
-        // ✅ 📌 Récupérer les activités d'une destination spécifique
-        [HttpGet("destination/{destinationId}")]
-        public async Task<ActionResult<IEnumerable<Activite>>> GetActivitesByDestination(int destinationId)
-        {
-            var activites = await _context.Activites
-                .Where(a => a.DestinationId == destinationId)
-                .ToListAsync();
-
-            if (activites == null || !activites.Any())
-                return NotFound($"Aucune activité trouvée pour la destination ID {destinationId}.");
-
-            return Ok(activites);
         }
     }
 }

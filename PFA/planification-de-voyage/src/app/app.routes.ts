@@ -19,6 +19,8 @@ import { DestinationComponent } from './components/destinations/destination.comp
 import { HebergementsComponent } from './components/hebergements/hebergements.component';
 import { UserMessageComponent } from './components/user-message/user-message.component';
 import { AdminMessagesComponent } from './components/admin-messages/admin-messages.component';
+import { RestaurantUserComponent } from './components/restaurant-user/restaurant-user.component';
+
 
 
 
@@ -39,9 +41,11 @@ export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: 'about', component: AboutComponent , canActivate: [AuthGuard]},
   { path: 'destinations', component: DestinationComponent },
-  { path: 'hebergements/:nom', component: HebergementsComponent },
-  { path: 'activites/:nom', component: ActivitesUserComponent },
+  { path: 'hebergements', component: HebergementsComponent },
+  { path: 'activitesUser/:destinationId', component: ActivitesUserComponent },
   { path: 'user-messages', component: UserMessageComponent },
   { path: 'admin-messages', component: AdminMessagesComponent },
+  { path: 'restaurant-user', component: RestaurantUserComponent },
+
   { path: '**', redirectTo: '/home' }
 ];

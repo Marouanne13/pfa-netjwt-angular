@@ -1,7 +1,14 @@
-<h1>Hébergements à {{ nomDestination }}</h1>
-<div *ngFor="let hebergement of hebergements">
-  <h2>{{ hebergement.nom }}</h2>
-  <p><strong>Adresse :</strong> {{ hebergement.adresse }}</p>
-  <p><strong>Prix :</strong> {{ hebergement.prixParNuit }} MAD</p>
-  <button (click)="goToActivites()">Voir les activités</button>
+<h2 class="title">Choisissez votre hébergement</h2>
+
+<div class="hebergement-container">
+  <div *ngFor="let hebergement of hebergements" class="hebergement-card">
+    <h3>{{ hebergement.nom }}</h3>
+    <p>{{ hebergement.description }}</p>
+    <p><strong>Prix :</strong> {{ hebergement.prixParNuit }} MAD/nuit</p>
+    <p><strong>Adresse :</strong> {{ hebergement.adresse }}</p>
+
+    <button (click)="choisirHebergement(hebergement.id)" class="btn-choisir">
+      Choisir
+    </button>
+  </div>
 </div>

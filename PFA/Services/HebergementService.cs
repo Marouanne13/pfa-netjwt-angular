@@ -16,15 +16,38 @@ public class HebergementService
     // ✅ 📌 Récupérer tous les hébergements
     public async Task<List<Hebergement>> GetAllHebergements()
     {
-        return await _context.Hebergements.ToListAsync();
+        return await _context.Hebergements.AsNoTracking().ToListAsync();
     }
 
     // ✅ 📌 Récupérer un hébergement par ID
-    public async Task<Hebergement> GetHebergementById(int id)
+    public async Task<Hebergement?> GetHebergementById(int id)
     {
-        return await _context.Hebergements.FirstOrDefaultAsync(h => h.Id == id);
+        return await _context.Hebergements
+            .AsNoTracking()
+            .FirstOrDefaultAsync(h => h.Id == id);
     }
 
+    // ✅ 📌 Récupérer les hébergements d'une destination spécifique
+    public async Task<List<Hebergement>> GetHebergementsParDestination(int destinationId)
+    {
+        return await _context.Hebergements
+            .AsNoTracking()
+            .Where(h => h.DestinationId == destinationId)
+            .ToListAsync();
+    }
+
+    // ✅ 📌 Ajouter un hébergement
+    public async Task<Hebergement> AjouterHebergement(Hebergement hebergement)
+    {
+        // Vérifier si la destination existe avant d'ajouter l'hébergement
+        var destinationExiste = await _context.Destinations.FindAsync(hebergement.DestinationId);
+        if (destinationExiste == null)
+            throw new Exception($"La destination avec ID {hebergement.DestinationId} n'existe pas.");
+
+        _context.Hebergements.Add(hebergement);
+        await _context.SaveChangesAsync();
+        return hebergement;
+    }
 
     // ✅ 📌 Modifier un hébergement
     public async Task<bool> ModifierHebergement(int id, Hebergement hebergement)
