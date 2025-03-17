@@ -253,6 +253,39 @@ namespace PFA.Migrations
                     b.ToTable("Hebergements");
                 });
 
+            modelBuilder.Entity("PFA.Models.Message", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Contenu")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DateEnvoi")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DestinataireId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("EstLu")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ExpediteurId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ExpediteurType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Messages");
+                });
+
             modelBuilder.Entity("PFA.Models.Transport", b =>
                 {
                     b.Property<int>("Id")
@@ -266,6 +299,9 @@ namespace PFA.Migrations
 
                     b.Property<DateTime>("DateCreation")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("DestinationId")
+                        .HasColumnType("int");
 
                     b.Property<bool>("EstDisponible")
                         .HasColumnType("bit");
@@ -287,11 +323,9 @@ namespace PFA.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("NumeroImmatriculation")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NumeroServiceClient")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("Prix")
@@ -302,12 +336,9 @@ namespace PFA.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int>("UtilisateurId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("UtilisateurId");
+                    b.HasIndex("DestinationId");
 
                     b.ToTable("Transports");
                 });
@@ -491,13 +522,13 @@ namespace PFA.Migrations
 
             modelBuilder.Entity("PFA.Models.Transport", b =>
                 {
-                    b.HasOne("PFA.Models.User", "Utilisateur")
+                    b.HasOne("PFA.Models.Destination", "Destination")
                         .WithMany()
-                        .HasForeignKey("UtilisateurId")
+                        .HasForeignKey("DestinationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Utilisateur");
+                    b.Navigation("Destination");
                 });
 
             modelBuilder.Entity("Panier", b =>
