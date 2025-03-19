@@ -10,19 +10,19 @@ public class Panier
 
     // 🔹 Clé étrangère vers User
     [Required]
-    [ForeignKey("User")]
+    [ForeignKey("Users")]
     public int UserId { get; set; }
 
-    [ForeignKey("Destination")]
+    [ForeignKey("Destinations")]
     public int? DestinationId { get; set; }
 
-    [ForeignKey("Hebergement")]
+    [ForeignKey("Hebergements")]
     public int? HebergementId { get; set; }
 
-    [ForeignKey("Activite")]
+    [ForeignKey("Activites")]
     public int? ActiviteId { get; set; }
 
-    [ForeignKey("Transport")]
+    [ForeignKey("Transports")]
     public int? TransportId { get; set; }
 
     [ForeignKey("Restaurant")]

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { RestaurantUserService } from '../../services/restaurant-user.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-
+import { routes } from '../../app.routes';
 
 
 @Component({
@@ -16,7 +16,8 @@ export class RestaurantUserComponent implements OnInit {
 
   constructor(
     private restaurantService: RestaurantUserService,
-    private router: Router
+    private router: Router,
+ 
   ) {}
 
   ngOnInit() {
@@ -41,5 +42,8 @@ export class RestaurantUserComponent implements OnInit {
     
     // Redirection vers une autre page après le choix du restaurant
     this.router.navigate(['/transport']);
+  }
+  choisirTransport() {
+    this.router.navigate(['/transport-user']);
   }
 }

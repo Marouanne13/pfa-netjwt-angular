@@ -19,11 +19,11 @@ import { DestinationComponent } from './components/destinations/destination.comp
 import { HebergementsComponent } from './components/hebergements/hebergements.component';
 import { UserMessageComponent } from './components/user-message/user-message.component';
 import { AdminMessagesComponent } from './components/admin-messages/admin-messages.component';
-
+import { RestaurantUserComponent } from './components/restaurant-user/restaurant-user.component';
+import { PanierUserComponent } from './components/panier.user/panier-user.component';
 import { TransportListComponent } from './components/transport-list/transport-list.component';
 import { TransportsComponent } from './components/transports/transports.component';
-
-
+import { TransportUserComponent } from './components/transport-user/transport-user.component';
 
 
 
@@ -43,13 +43,15 @@ export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: 'about', component: AboutComponent , canActivate: [AuthGuard]},
   { path: 'destinations', component: DestinationComponent },
-  { path: 'hebergements/:nom', component: HebergementsComponent },
-  { path: 'activites/:nom', component: ActivitesUserComponent },
+  { path: 'hebergements', component: HebergementsComponent },
+  { path: 'activitesUser/:destinationId', component: ActivitesUserComponent },
+  { path: 'restaurant-user', component: RestaurantUserComponent },
+  { path: 'transport-user', component: TransportUserComponent },
+  { path: 'panier-user', component: PanierUserComponent },
+  
   { path: 'user-messages', component: UserMessageComponent },
   { path: 'admin-messages', component: AdminMessagesComponent },
-  { path: 'transports', component: TransportsComponent, canActivate: [AuthGuard] }, // ✅ Transport
-  { path: 'transport-list', component: TransportListComponent },
- 
- 
+  
+
   { path: '**', redirectTo: '/home' }
 ];
