@@ -1,0 +1,14 @@
+<div class="container">
+  <h2>Transports disponibles 🚍</h2>
+  
+  <div *ngFor="let transport of transports" class="transport-card">
+    <h3>{{ transport.nomCompagnie }}</h3>
+    <p><strong>Départ :</strong> {{ transport.heureDepart }}</p>
+    <p><strong>Arrivée :</strong> {{ transport.heureArrivee }}</p>
+    <p><strong>Prix :</strong> {{ transport.prix }} MAD</p>
+    
+    <button (click)="ajouterToutAuPanier()" class="btn btn-success">
+      Confirmer et Ajouter au Panier
+    </button>
+  </div>
+</div>

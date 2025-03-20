@@ -1,0 +1,19 @@
+<h2>Liste des Transports</h2>
+<table border="1">
+  <tr>
+    <th>Type</th>
+    <th>Compagnie</th>
+    <th>Prix</th>
+    <th>Heure Départ</th>
+    <th>Heure Arrivée</th>
+    <th>Disponible</th>
+  </tr>
+  <tr *ngFor="let transport of transports">
+    <td>{{ transport.typeTransport }}</td>
+    <td>{{ transport.nomCompagnie }}</td>
+    <td>{{ transport.prix }} DH</td>
+    <td>{{ transport.heureDepart }}</td>
+    <td>{{ transport.heureArrivee }}</td>
+    <td>{{ transport.estDisponible ? 'Oui' : 'Non' }}</td>
+  </tr>
+</table>

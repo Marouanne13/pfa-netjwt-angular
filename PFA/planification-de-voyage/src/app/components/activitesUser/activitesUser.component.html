@@ -1,14 +1,17 @@
-<h1>Activités pour {{ nomDestination }}</h1>
-<div *ngIf="activites.length > 0; else noActivites">
-  <div *ngFor="let activite of activites" class="card">
-    <h2>{{ activite.nom }}</h2>
-    <p><strong>Description :</strong> {{ activite.description }}</p>
+<h2 class="title">Activités disponibles</h2>
+
+<div class="activites-container">
+  <div *ngFor="let activite of activites" class="activite-card">
+    <h3>{{ activite.nom }}</h3>
+    <p>{{ activite.description }}</p>
+    <p><strong>Durée :</strong> {{ activite.duree }} heures</p>
     <p><strong>Prix :</strong> {{ activite.prix }} MAD</p>
-    <p><strong>Durée :</strong> {{ activite.duree }} minutes</p>
-    <p><strong>Emplacement :</strong> {{ activite.emplacement }}</p>
+
+    <button (click)="choisirActivite(activite.id)" class="btn-choisir">
+      Choisir cette activité
+    </button>
+    <button (click)="voirRestaurants()" class="btn-restaurants">
+      Voir les restaurants
+    </button>
   </div>
 </div>
-
-<ng-template #noActivites>
-  <p>Aucune activité trouvée pour cette destination.</p>
-</ng-template>

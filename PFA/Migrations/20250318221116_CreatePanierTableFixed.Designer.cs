@@ -12,8 +12,8 @@ using PFA.Data;
 namespace PFA.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250226172326_AddTransportOnly")]
-    partial class AddTransportOnly
+    [Migration("20250318221116_CreatePanierTableFixed")]
+    partial class CreatePanierTableFixed
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,53 +24,6 @@ namespace PFA.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("Hebergement", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Adresse")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<int>("ClassementEtoiles")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("DateCreation")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Nom")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
-                    b.Property<string>("NumeroTelephone")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PetitDejeunerInclus")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("Piscine")
-                        .HasColumnType("bit");
-
-                    b.Property<double>("PrixParNuit")
-                        .HasColumnType("float");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Hebergements");
-                });
 
             modelBuilder.Entity("PFA.Models.Activite", b =>
                 {
@@ -251,6 +204,91 @@ namespace PFA.Migrations
                     b.ToTable("Destinations");
                 });
 
+            modelBuilder.Entity("PFA.Models.Hebergement", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Adresse")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<int>("ClassementEtoiles")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateCreation")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DestinationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Nom")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("NumeroTelephone")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<bool>("PetitDejeunerInclus")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Piscine")
+                        .HasColumnType("bit");
+
+                    b.Property<double>("PrixParNuit")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DestinationId");
+
+                    b.ToTable("Hebergements");
+                });
+
+            modelBuilder.Entity("PFA.Models.Message", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Contenu")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DateEnvoi")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DestinataireId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("EstLu")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ExpediteurId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ExpediteurType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Messages");
+                });
+
             modelBuilder.Entity("PFA.Models.Transport", b =>
                 {
                     b.Property<int>("Id")
@@ -264,6 +302,9 @@ namespace PFA.Migrations
 
                     b.Property<DateTime>("DateCreation")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("DestinationId")
+                        .HasColumnType("int");
 
                     b.Property<bool>("EstDisponible")
                         .HasColumnType("bit");
@@ -285,11 +326,9 @@ namespace PFA.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("NumeroImmatriculation")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NumeroServiceClient")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("Prix")
@@ -300,12 +339,9 @@ namespace PFA.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int>("UtilisateurId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("UtilisateurId");
+                    b.HasIndex("DestinationId");
 
                     b.ToTable("Transports");
                 });
@@ -394,6 +430,8 @@ namespace PFA.Migrations
 
                     b.HasIndex("TransportId");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("Paniers");
                 });
 
@@ -474,15 +512,26 @@ namespace PFA.Migrations
                         .HasForeignKey("UserId");
                 });
 
-            modelBuilder.Entity("PFA.Models.Transport", b =>
+            modelBuilder.Entity("PFA.Models.Hebergement", b =>
                 {
-                    b.HasOne("PFA.Models.User", "Utilisateur")
+                    b.HasOne("PFA.Models.Destination", "Destination")
                         .WithMany()
-                        .HasForeignKey("UtilisateurId")
+                        .HasForeignKey("DestinationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Utilisateur");
+                    b.Navigation("Destination");
+                });
+
+            modelBuilder.Entity("PFA.Models.Transport", b =>
+                {
+                    b.HasOne("PFA.Models.Destination", "Destination")
+                        .WithMany()
+                        .HasForeignKey("DestinationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Destination");
                 });
 
             modelBuilder.Entity("Panier", b =>
@@ -495,7 +544,7 @@ namespace PFA.Migrations
                         .WithMany()
                         .HasForeignKey("DestinationId");
 
-                    b.HasOne("Hebergement", "Hebergement")
+                    b.HasOne("PFA.Models.Hebergement", "Hebergement")
                         .WithMany()
                         .HasForeignKey("HebergementId");
 
@@ -507,6 +556,12 @@ namespace PFA.Migrations
                         .WithMany()
                         .HasForeignKey("TransportId");
 
+                    b.HasOne("PFA.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Activite");
 
                     b.Navigation("Destination");
@@ -516,6 +571,8 @@ namespace PFA.Migrations
                     b.Navigation("Restaurant");
 
                     b.Navigation("Transport");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Restaurant", b =>

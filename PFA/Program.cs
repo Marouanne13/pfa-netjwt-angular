@@ -8,6 +8,9 @@ using PFA.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<MessageService>();
+
+builder.Services.AddScoped<TransportService>();
+
 // 📌 Configuration de la base de données SQL Server
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

@@ -2,101 +2,91 @@
 using Microsoft.EntityFrameworkCore;
 using PFA.Data;
 using PFA.Models;
-using PFA.Services;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace PFA.Controllers
+[Route("api/hebergements")]
+[ApiController]
+public class HebergementController : ControllerBase
 {
-    [Route("api/hebergements")]
-    [ApiController]
-    public class HebergementController : ControllerBase
+    private readonly AppDbContext _context;
+    private readonly HebergementService _hebergementService;
+
+    public HebergementController(AppDbContext context)
     {
-        private readonly HebergementService _hebergementService;
-        private readonly AppDbContext _context;
+        _context = context;
+        _hebergementService = new HebergementService(_context); // 🔥 Initialisation directe ici
+    }
 
-        public HebergementController(HebergementService hebergementService, AppDbContext context)
+    // Récupérer tous les hébergements
+    [HttpGet("all")]
+    public async Task<ActionResult<IEnumerable<Hebergement>>> GetAllHebergements()
+    {
+        var hebergements = await _hebergementService.GetAllHebergements();
+        return Ok(hebergements);
+    }
+
+    // Récupérer par destination
+    [HttpGet("destination/{id}")]
+    public async Task<ActionResult<IEnumerable<Hebergement>>> GetHebergementsByDestination(int id)
+    {
+        var hebergements = await _context.Hebergements
+            .Where(h => h.DestinationId == id)
+            .ToListAsync();
+
+        if (hebergements == null || hebergements.Count == 0)
         {
-            _hebergementService = hebergementService;
-            _context = context;
+            return NotFound($"Aucun hébergement trouvé pour la destination {id}.");
         }
 
-        // ✅ 📌 Récupérer tous les hébergements
-        [HttpGet("all")]
-        public async Task<ActionResult<IEnumerable<Hebergement>>> GetAllHebergements()
-        {
-            var hebergements = await _context.Hebergements.ToListAsync();
-            return Ok(hebergements);
-        }
-
-        // ✅ 📌 Récupérer les hébergements d'une destination spécifique
-        [HttpGet("destination/{nom}")]
-        public async Task<ActionResult<IEnumerable<Hebergement>>> GetHebergementsParDestination(string nom)
-        {
-            var hebergements = await _context.Hebergements
-                .Include(h => h.Destination) // 🔥 Assure d'inclure la relation Destination
-                .Where(h => h.Destination.Nom == nom)
-                .ToListAsync();
-
-            if (hebergements == null || !hebergements.Any())
-                return NotFound($"Aucun hébergement trouvé pour la destination : {nom}");
-
-            return Ok(hebergements);
-        }
-
-        // ✅ 📌 Ajouter un hébergement
-        [HttpPost("ajouter")]
-        public async Task<ActionResult<Hebergement>> AjouterHebergement([FromBody] Hebergement hebergement)
-        {
-            if (hebergement == null)
-                return BadRequest("Les données de l'hébergement sont invalides.");
-
-            // ✅ Vérifier si la destination existe avant d'ajouter l'hébergement
-            var destinationExiste = await _context.Destinations.FindAsync(hebergement.DestinationId);
-            if (destinationExiste == null)
-                return BadRequest($"La destination avec ID {hebergement.DestinationId} n'existe pas.");
-
-            // ✅ Forcer Destination à NULL pour éviter la validation forcée
-            hebergement.Destination = null;
-
-            _context.Hebergements.Add(hebergement);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetAllHebergements), new { id = hebergement.Id }, hebergement);
-        }
+        return Ok(hebergements);
+    }
 
 
+    // Ajouter un hébergement
+    [HttpPost("ajouter")]
+    public async Task<ActionResult<Hebergement>> AjouterHebergement([FromBody] Hebergement hebergement)
+    {
+        if (hebergement == null)
+            return BadRequest("Les données de l'hébergement sont invalides.");
 
-        // ✅ 📌 Modifier un hébergement
-        [HttpPut("modifier/{id}")]
-        public async Task<IActionResult> ModifierHebergement(int id, [FromBody] Hebergement hebergement)
-        {
-            if (id != hebergement.Id)
-                return BadRequest("L'ID de l'hébergement ne correspond pas.");
+        var destinationExiste = await _context.Destinations.FindAsync(hebergement.DestinationId);
+        if (destinationExiste == null)
+            return BadRequest($"La destination avec ID {hebergement.DestinationId} n'existe pas.");
 
-            var hebergementExiste = await _context.Hebergements.FindAsync(id);
-            if (hebergementExiste == null)
-                return NotFound("Hébergement non trouvé.");
+        hebergement.Destination = null;
+        _context.Hebergements.Add(hebergement);
+        await _context.SaveChangesAsync();
 
-            _context.Entry(hebergementExiste).CurrentValues.SetValues(hebergement);
-            await _context.SaveChangesAsync();
+        return CreatedAtAction(nameof(GetAllHebergements), new { id = hebergement.Id }, hebergement);
+    }
 
-            return NoContent();
-        }
+    // Modifier un hébergement
+    [HttpPut("modifier/{id}")]
+    public async Task<IActionResult> ModifierHebergement(int id, [FromBody] Hebergement hebergement)
+    {
+        if (id != hebergement.Id)
+            return BadRequest("L'ID de l'hébergement ne correspond pas.");
 
-        // ✅ 📌 Supprimer un hébergement
-        [HttpDelete("supprimer/{id}")]
-        public async Task<IActionResult> SupprimerHebergement(int id)
-        {
-            var hebergement = await _context.Hebergements.FindAsync(id);
-            if (hebergement == null)
-                return NotFound("Hébergement non trouvé.");
+        var hebergementExiste = await _context.Hebergements.FindAsync(id);
+        if (hebergementExiste == null)
+            return NotFound("Hébergement non trouvé.");
 
-            _context.Hebergements.Remove(hebergement);
-            await _context.SaveChangesAsync();
+        _context.Entry(hebergementExiste).CurrentValues.SetValues(hebergement);
+        await _context.SaveChangesAsync();
 
-            return NoContent();
-        }
+        return NoContent();
+    }
+
+    // Supprimer un hébergement
+    [HttpDelete("supprimer/{id}")]
+    public async Task<IActionResult> SupprimerHebergement(int id)
+    {
+        var hebergement = await _context.Hebergements.FindAsync(id);
+        if (hebergement == null)
+            return NotFound("Hébergement non trouvé.");
+
+        _context.Hebergements.Remove(hebergement);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
     }
 }

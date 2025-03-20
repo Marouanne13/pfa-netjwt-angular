@@ -6,11 +6,11 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class DestinationService {
-  private apiUrl = 'http://localhost:5278/api/destinations'; // Remplace avec ton backend
+  private apiUrl = 'http://localhost:5278/api/destinations';
 
   constructor(private http: HttpClient) {}
 
   getDestinations(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl);
+    return this.http.get<any[]>(`${this.apiUrl}`);
   }
 }

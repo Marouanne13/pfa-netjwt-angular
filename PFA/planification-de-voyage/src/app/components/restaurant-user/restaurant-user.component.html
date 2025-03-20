@@ -1,0 +1,13 @@
+<h2>🍽️ Restaurants disponibles</h2>
+
+<div *ngFor="let restaurant of restaurants" class="restaurant-card">
+  <h3>{{ restaurant.nom }}</h3>
+  <p>Type de cuisine : {{ restaurant.typeCuisine }}</p>
+  <p>Adresse : {{ restaurant.adresse }}</p>
+  <p>Évaluation : ⭐ {{ restaurant.nombreEtoiles }}</p>
+
+  <button (click)="choisirTransport()" class="btn">
+    Choisir un transport
+  </button>
+  
+</div>

@@ -2,5 +2,5 @@
 <div *ngFor="let destination of destinations">
   <h2>{{ destination.nom }}</h2>
   <p>{{ destination.description }}</p>
-  <button (click)="goToHebergements(destination.nom)">Voir les hébergements</button>
+  <button (click)="goToHebergements(destination.id)">Voir les hébergements</button>
 </div>

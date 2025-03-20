@@ -1,1 +1,113 @@
-<p>transports works!</p>
+<div class="container">
+    <h2>Gestion des Transports</h2>
+
+    <!-- ✅ Formulaire pour ajouter ou modifier un transport -->
+    <form (ngSubmit)="addOrUpdateTransport()">
+        <div>
+            <label>Nom Compagnie :</label>
+            <input type="text" [(ngModel)]="formTransport.nomCompagnie" name="nomCompagnie" required>
+        </div>
+
+        <div>
+            <label>Type de Transport :</label>
+            <input type="text" [(ngModel)]="formTransport.typeTransport" name="typeTransport" required>
+        </div>
+
+        <div>
+            <label>Mode de Transport :</label>
+            <input type="text" [(ngModel)]="formTransport.modeDeTransport" name="modeDeTransport" required>
+        </div>
+
+        <div>
+            <label>Capacité :</label>
+            <input type="number" [(ngModel)]="formTransport.capacite" name="capacite" required min="1">
+        </div>
+
+        <div>
+            <label>Prix (MAD) :</label>
+            <input type="number" [(ngModel)]="formTransport.prix" name="prix" required min="0">
+        </div>
+
+        <div>
+            <label>Heure de départ :</label>
+            <input type="time" [(ngModel)]="formTransport.heureDepart" name="heureDepart" required>
+        </div>
+
+        <div>
+            <label>Heure d'arrivée :</label>
+            <input type="time" [(ngModel)]="formTransport.heureArrivee" name="heureArrivee" required>
+        </div>
+
+        <div>
+            <label>Numéro d'immatriculation :</label>
+            <input type="text" [(ngModel)]="formTransport.numeroImmatriculation" name="numeroImmatriculation">
+        </div>
+
+        <div>
+            <label>Numéro du service client :</label>
+            <input type="text" [(ngModel)]="formTransport.numeroServiceClient" name="numeroServiceClient">
+        </div>
+
+        <div>
+            <label>Date de création :</label>
+            <input type="datetime-local" [(ngModel)]="formTransport.dateCreation" name="dateCreation" disabled>
+        </div>
+
+        <div>
+            <label>Destination :</label>
+            <select [(ngModel)]="formTransport.destinationId" name="destinationId" required>
+                <option *ngFor="let dest of destinations" [value]="dest.id">{{ dest.nom }}</option>
+            </select>
+        </div>
+
+        <div>
+            <label>Disponible :</label>
+            <input type="checkbox" [(ngModel)]="formTransport.estDisponible" name="estDisponible">
+        </div>
+
+        <button type="submit">{{ editingTransport ? 'Modifier' : 'Ajouter' }}</button>
+        <button type="button" (click)="resetForm()">Annuler</button>
+    </form>
+
+    <hr>
+
+    <!-- ✅ Liste des transports -->
+    <table>
+        <thead>
+            <tr>
+                <th>Nom Compagnie</th>
+                <th>Type</th>
+                <th>Capacité</th>
+                <th>Mode</th>
+                <th>Prix</th>
+                <th>Départ</th>
+                <th>Arrivée</th>
+                <th>Immatriculation</th>
+                <th>Service Client</th>
+                <th>Destination</th>
+                <th>Disponible</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let transport of transports">
+                <td>{{ transport.nomCompagnie }}</td>
+                <td>{{ transport.typeTransport }}</td>
+                <td>{{ transport.capacite }}</td>
+                <td>{{ transport.modeDeTransport }}</td>
+                <td>{{ transport.prix }} MAD</td>
+                <td>{{ transport.heureDepart }}</td>
+                <td>{{ transport.heureArrivee }}</td>
+                <td>{{ transport.numeroImmatriculation || '-' }}</td>
+                <td>{{ transport.numeroServiceClient || '-' }}</td>
+                <td>{{ transport.destinationId }}</td>
+                <td>{{ transport.estDisponible ? 'Oui' : 'Non' }}</td>
+                <td>
+                    <button (click)="startEdit(transport)">✏️ Modifier</button>
+                    <button (click)="transport.id !== undefined ? deleteTransport(transport.id) : null">🗑 Supprimer</button>
+
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
