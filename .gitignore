@@ -361,3 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/PFA/planification-de-voyage/src/app/app.routes.ts
+/.gitignore
+/.gitignore
+/PFA/planification-de-voyage/src/app/app.routes.ts

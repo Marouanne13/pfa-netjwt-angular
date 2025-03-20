@@ -21,6 +21,7 @@ import { UserMessageComponent } from './components/user-message/user-message.com
 import { AdminMessagesComponent } from './components/admin-messages/admin-messages.component';
 
 
+
 export const routes: Routes = [
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
   { path: 'register', component: RegisterComponent },
@@ -41,5 +42,6 @@ export const routes: Routes = [
   { path: 'activites/:nom', component: ActivitesUserComponent },
   { path: 'user-messages', component: UserMessageComponent },
   { path: 'admin-messages', component: AdminMessagesComponent },
+
   { path: '**', redirectTo: '/home' }
 ];
