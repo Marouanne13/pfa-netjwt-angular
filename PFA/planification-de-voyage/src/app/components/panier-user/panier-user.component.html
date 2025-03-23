@@ -1,0 +1,18 @@
+<h2>🛒 Votre Panier</h2>
+
+<div *ngIf="panier.length === 0">
+  <p>Votre panier est vide.</p>
+</div>
+
+<div *ngFor="let item of panier">
+  <p>
+    <strong>Destination :</strong> {{ item.destination?.nom || 'Non choisi' }} <br>
+    <strong>Hébergement :</strong> {{ item.hebergement?.nom || 'Non choisi' }} <br>
+    <strong>Activité :</strong> {{ item.activite?.nom || 'Non choisi' }} <br>
+    <strong>Transport :</strong> {{ item.transport?.nomCompagnie || 'Non choisi' }} <br>
+    <strong>Restaurant :</strong> {{ item.restaurant?.nom || 'Non choisi' }}
+  </p>
+  <button (click)="supprimerElement(item.id)">❌ Supprimer</button>
+</div>
+
+<button (click)="viderPanier()" *ngIf="panier.length > 0">🗑️ Vider le panier</button>

@@ -20,15 +20,16 @@ import { HebergementsComponent } from './components/hebergements/hebergements.co
 import { UserMessageComponent } from './components/user-message/user-message.component';
 import { AdminMessagesComponent } from './components/admin-messages/admin-messages.component';
 import { RestaurantUserComponent } from './components/restaurant-user/restaurant-user.component';
-//import { PanierUserComponent } from './components/panier.user/panier.user.component';
+import { PanierUserComponent } from './components/panier.user/panier-user.component';
+
 import { TransportListComponent } from './components/transport-list/transport-list.component';
 import { TransportsComponent } from './components/transports/transports.component';
 import { TransportUserComponent } from './components/transport-user/transport-user.component';
-import { UserProfileComponent } from './components/user-profile/user-profile.component';
+
+
 
 export const routes: Routes = [
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
-  { path: 'transport-user', component: TransportUserComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
   { path: 'loginUser', component: LoginUserComponent },
@@ -38,7 +39,7 @@ export const routes: Routes = [
   { path: 'restaurant-form/:id', component: RestaurantFormComponent, canActivate: [AuthGuard] },
   { path: 'restaurant-list', component: RestaurantListComponent, canActivate: [AuthGuard] }, // ✅ Nouvelle route pour liste des restaurants
   { path: 'clients', component: ClientsComponent, canActivate: [AuthGuard] },
-  
+
   { path: 'gestion-voyages', component: GestionVoyagesComponent, canActivate: [AuthGuard] }, // ✅ Gestion des voyages
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: 'about', component: AboutComponent , canActivate: [AuthGuard]},
@@ -46,11 +47,12 @@ export const routes: Routes = [
   { path: 'hebergements', component: HebergementsComponent },
   { path: 'activitesUser/:destinationId', component: ActivitesUserComponent },
   { path: 'restaurant-user', component: RestaurantUserComponent },
- 
- // { path: 'panier-user', component: PanierUserComponent },
-  
+  { path: 'transport-user', component: TransportUserComponent },
+  { path: 'panier-user', component: PanierUserComponent },
+
   { path: 'user-messages', component: UserMessageComponent },
   { path: 'admin-messages', component: AdminMessagesComponent },
-  { path: 'profil', component: UserProfileComponent },
+
+
   { path: '**', redirectTo: '/home' }
 ];

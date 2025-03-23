@@ -10,6 +10,7 @@ export class UserService {
   private apiUrl = 'http://localhost:5278/api/user'; // base URL
   private profileUrl = `${this.apiUrl}/profile`;     // pour /profile/{id}
 
+
   constructor(private http: HttpClient, private router: Router) {}
 
   // 🔹 Récupérer le profil complet depuis l’API
@@ -21,6 +22,8 @@ export class UserService {
   register(userData: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, userData);
   }
+
+
 
   // ✅ Connexion (avec stockage du token + redirection)
   login(credentials: any): Observable<any> {
@@ -39,11 +42,14 @@ export class UserService {
   saveToken(token: string, userId: number): void {
     localStorage.setItem('token', token);
     localStorage.setItem('userId', userId.toString()); // 🔥 Stocker l'ID utilisateur
+ console.log("Token utilisé :", token);
+
   }
 
   // ✅ Récupérer le Token JWT
   getToken(): string | null {
     return localStorage.getItem('token');
+
   }
 
   // ✅ Récupérer l'ID utilisateur
