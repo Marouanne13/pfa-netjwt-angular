@@ -1,0 +1,37 @@
+<div class="profile-container">
+    <!-- Bouton pour afficher les données -->
+    <button (click)="afficherProfil()" class="btn-show">Afficher mon profil</button>
+  
+    <!-- Affichage des infos du profil -->
+    <div *ngIf="userData && !editMode" class="profile-card">
+      <h2>Profil de l'utilisateur</h2>
+      <p><strong>📛 Nom :</strong> {{ userData.nom }}</p>
+      <p><strong>📧 Email :</strong> {{ userData.email }}</p>
+      <p><strong>📞 Téléphone :</strong> {{ userData.telephone }}</p>
+      <p><strong>🏠 Adresse :</strong> {{ userData.adresse }}</p>
+      <p><strong>🎂 Date de naissance :</strong> {{ userData.dateDeNaissance | date }}</p>
+      <p><strong>⚧ Genre :</strong> {{ userData.genre }}</p>
+      <p><strong>🗓️ Date de création :</strong> {{ userData.dateDeCreation | date:'short' }}</p>
+  
+      <button class="btn-edit" (click)="toggleEdit()">Modifier mon profil ✏️</button>
+    </div>
+  
+    <!-- Formulaire d'édition -->
+    <form *ngIf="editMode" (ngSubmit)="modifierProfil()" class="profile-form">
+      <input type="text" [(ngModel)]="userData.nom" name="nom" placeholder="Nom complet" required />
+      <input type="email" [(ngModel)]="userData.email" name="email" placeholder="Email" required />
+      <input type="text" [(ngModel)]="userData.telephone" name="telephone" placeholder="Téléphone" required />
+      <input type="text" [(ngModel)]="userData.adresse" name="adresse" placeholder="Adresse" required />
+      <input type="date" [(ngModel)]="userData.dateDeNaissance" name="dateDeNaissance" required />
+      
+      <select [(ngModel)]="userData.genre" name="genre" required>
+        <option value="Homme">Homme</option>
+        <option value="Femme">Femme</option>
+        <option value="Autre">Autre</option>
+      </select>
+  
+      <button type="submit" class="btn-save">Enregistrer ✅</button>
+      <button type="button" class="btn-cancel" (click)="toggleEdit()">Annuler ❌</button>
+    </form>
+  </div>
+  

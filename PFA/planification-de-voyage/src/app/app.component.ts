@@ -17,5 +17,8 @@ import { AboutComponent } from "./components/about/about.component";
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'Mon Application Angular';
+  isLoggedIn(): boolean {
+    // logique d'authentification
+    return !!localStorage.getItem('token'); // ou selon ton système d'authentification
+  }
 }

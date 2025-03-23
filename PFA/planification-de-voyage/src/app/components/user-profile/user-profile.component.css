@@ -1,0 +1,84 @@
+/* Conteneur principal */
+.profile-container {
+    max-width: 600px;
+    margin: 40px auto;
+    text-align: center;
+  }
+  
+  /* Bouton principal */
+  .btn-show, .btn-edit, .btn-save, .btn-cancel {
+    background-color: #1976d2;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+    margin: 10px 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .btn-edit {
+    background-color: #ffa000;
+  }
+  
+  .btn-save {
+    background-color: #4caf50;
+  }
+  
+  .btn-cancel {
+    background-color: #e53935;
+  }
+  
+  .btn-show:hover,
+  .btn-edit:hover,
+  .btn-save:hover,
+  .btn-cancel:hover {
+    filter: brightness(90%);
+  }
+  
+  /* Carte profil */
+  .profile-card {
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 20px;
+    text-align: left;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .profile-card h2 {
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .profile-card p {
+    font-size: 16px;
+    margin: 10px 0;
+  }
+  
+  .profile-card strong {
+    color: #444;
+  }
+  
+  /* Formulaire */
+  .profile-form {
+    background-color: #fafafa;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: left;
+  }
+  
+  .profile-form input,
+  .profile-form select {
+    display: block;
+    width: 100%;
+    padding: 10px 12px;
+    margin: 12px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 15px;
+  }
+  

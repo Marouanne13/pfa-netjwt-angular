@@ -7,9 +7,15 @@ using PFA.Data;
 using PFA.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
 builder.Services.AddScoped<MessageService>();
 
 builder.Services.AddScoped<TransportService>();
+
+builder.Services.AddScoped<UserProfileService>();
+
+
 
 // 📌 Configuration de la base de données SQL Server
 builder.Services.AddDbContext<AppDbContext>(options =>

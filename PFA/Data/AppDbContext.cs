@@ -14,11 +14,13 @@ namespace PFA.Data
  
         public DbSet<Restaurant> Restaurant { get; set; }
 
-
+       
 
         public DbSet<Hebergement> Hebergements { get; set; }
 
         public DbSet<Message> Messages { get; set; }
+       
+
         public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)
         {

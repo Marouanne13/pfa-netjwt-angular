@@ -7,9 +7,15 @@ import { Observable, tap } from 'rxjs';
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = 'http://localhost:5278/api/user';
+  private apiUrl = 'http://localhost:5278/api/user'; // base URL
+  private profileUrl = `${this.apiUrl}/profile`;     // pour /profile/{id}
 
   constructor(private http: HttpClient, private router: Router) {}
+
+  // 🔹 Récupérer le profil complet depuis l’API
+  getUserProfile(id: number): Observable<any> {
+    return this.http.get<any>(`${this.profileUrl}/${id}`);
+  }
 
   // ✅ Inscription d'un nouvel utilisateur
   register(userData: any): Observable<any> {
@@ -57,4 +63,8 @@ export class UserService {
     localStorage.removeItem('userId');
     this.router.navigate(['/login']);
   }
+  updateUserProfile(id: number, updatedData: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/profile/${id}`, updatedData);
+  }
+  
 }

@@ -3,7 +3,11 @@
 <nav>
   <a href="/user-messages">Utilisateur</a>
   <a href="/admin-messages">Admin</a>
+
+
+
 </nav>
+<a *ngIf="isLoggedIn()" [routerLink]="['/profil']">👤 Mon Profil</a>
 
 
 

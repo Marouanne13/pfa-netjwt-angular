@@ -97,14 +97,15 @@ namespace PFA.Controllers
         // ✅ GÉNÉRATION DU TOKEN JWT
         private string GenerateJwtToken(User user)
         {
-            var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? "SuperSecretKey123456");
+            var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? "CeciEstUneSuperCleSecreteJWT123456789");
             var issuer = _configuration["Jwt:Issuer"] ?? "https://localhost:5278";
             var audience = _configuration["Jwt:Audience"] ?? "https://localhost:5278";
 
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Email, user.Email)
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, "User")
             };
 
             var token = new JwtSecurityToken(
