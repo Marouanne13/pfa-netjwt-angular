@@ -20,13 +20,20 @@ import { HebergementsComponent } from './components/hebergements/hebergements.co
 import { UserMessageComponent } from './components/user-message/user-message.component';
 import { AdminMessagesComponent } from './components/admin-messages/admin-messages.component';
 import { RestaurantUserComponent } from './components/restaurant-user/restaurant-user.component';
+<<<<<<< HEAD
 import { PanierUserComponent } from './components/panier-user/panier-user.component';
+=======
+>>>>>>> 18cebbc13788d9efcf08d241495472bc953de8ec
 
 import { TransportListComponent } from './components/transport-list/transport-list.component';
 import { TransportsComponent } from './components/transports/transports.component';
 import { TransportUserComponent } from './components/transport-user/transport-user.component';
+import { PaiementComponent } from './components/paiement/paiement.component'; // assure-toi du bon chemin
 
 
+import { SuccessComponent } from './components/success/success.component'; // assure-toi du bon chemin
+import { CancelComponent } from './components/cancel/cancel.component'; // assure-toi du bon chemin
+import { DestinationAdminComponent } from './components/destination-admin/destination-admin.component';
 
 export const routes: Routes = [
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
@@ -48,10 +55,16 @@ export const routes: Routes = [
   { path: 'activitesUser/:destinationId', component: ActivitesUserComponent },
   { path: 'restaurant-user', component: RestaurantUserComponent },
   { path: 'transport-user', component: TransportUserComponent },
-  { path: 'panier-user', component: PanierUserComponent },
+
 
   { path: 'user-messages', component: UserMessageComponent },
   { path: 'admin-messages', component: AdminMessagesComponent },
+  { path: 'paiement', component: PaiementComponent },
+
+    { path: 'success', component: SuccessComponent },
+    { path: 'cancel', component: CancelComponent },
+
+    { path: 'destination-admin', component: DestinationAdminComponent },
 
 
   { path: '**', redirectTo: '/home' }

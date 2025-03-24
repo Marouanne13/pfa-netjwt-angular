@@ -9,6 +9,7 @@ import { UserService } from '../../services/user.service';
   standalone: true,
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css'],
+ 
   imports: [CommonModule, FormsModule]
 })
 export class RegisterComponent {
@@ -31,8 +32,8 @@ export class RegisterComponent {
       return;
     }
 
-  
- 
+
+
 
     const userData = {
       nom: this.nom,
