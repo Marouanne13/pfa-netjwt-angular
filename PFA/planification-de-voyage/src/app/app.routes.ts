@@ -20,7 +20,7 @@ import { HebergementsComponent } from './components/hebergements/hebergements.co
 import { UserMessageComponent } from './components/user-message/user-message.component';
 import { AdminMessagesComponent } from './components/admin-messages/admin-messages.component';
 import { RestaurantUserComponent } from './components/restaurant-user/restaurant-user.component';
-import { PanierUserComponent } from './components/panier.user/panier-user.component';
+import { PanierUserComponent } from './components/panier-user/panier-user.component';
 
 import { TransportListComponent } from './components/transport-list/transport-list.component';
 import { TransportsComponent } from './components/transports/transports.component';
