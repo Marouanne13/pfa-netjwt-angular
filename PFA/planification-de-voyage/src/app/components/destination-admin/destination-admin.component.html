@@ -1,0 +1,94 @@
+<div class="container mt-4">
+  <h2 class="text-center mb-4">🌍 Gestion des Destinations</h2>
+
+  <form (ngSubmit)="save()" class="row g-3">
+    <div class="col-md-6">
+      <label>Nom</label>
+      <input type="text" [(ngModel)]="form.nom" name="nom" class="form-control" required>
+    </div>
+
+    <div class="col-md-6">
+      <label>Description</label>
+      <input type="text" [(ngModel)]="form.description" name="description" class="form-control" required>
+    </div>
+
+    <div class="col-md-6">
+      <label>Région</label>
+      <input type="text" [(ngModel)]="form.region" name="region" class="form-control" required>
+    </div>
+
+    <div class="col-md-3">
+      <label>Latitude</label>
+      <input type="number" [(ngModel)]="form.latitude" name="latitude" class="form-control" required>
+    </div>
+
+    <div class="col-md-3">
+      <label>Longitude</label>
+      <input type="number" [(ngModel)]="form.longitude" name="longitude" class="form-control" required>
+    </div>
+
+    <div class="col-md-6">
+      <label>Image URL</label>
+      <input type="text" [(ngModel)]="form.imageUrl" name="imageUrl" class="form-control" required>
+    </div>
+
+    <div class="col-md-6">
+      <label>Ville</label>
+      <input type="text" [(ngModel)]="form.ville" name="ville" class="form-control" required>
+    </div>
+
+    <div class="col-md-6">
+      <label>Est Populaire</label>
+      <select [(ngModel)]="form.estPopulaire" name="estPopulaire" class="form-select" required>
+        <option [value]="true">Oui</option>
+        <option [value]="false">Non</option>
+      </select>
+    </div>
+
+    <div class="col-md-6">
+      <label>Nombre de Visites</label>
+      <input type="number" [(ngModel)]="form.nombreVisites" name="nombreVisites" class="form-control" required>
+    </div>
+
+    <div class="col-12 text-center">
+      <button type="submit" class="btn btn-success me-2">
+        {{ editing ? 'Mettre à jour' : 'Ajouter' }}
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="reset()">Annuler</button>
+    </div>
+  </form>
+
+  <hr class="my-4">
+
+  <table class="table table-striped table-bordered text-center">
+    <thead class="table-dark">
+      <tr>
+        <th>Nom</th>
+        <th>Description</th>
+        <th>Région</th>
+        <th>Latitude</th>
+        <th>Longitude</th>
+        <th>Ville</th>
+        <th>Visites</th>
+        <th>Populaire</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let dest of destinations">
+        <td>{{ dest.nom }}</td>
+        <td>{{ dest.description }}</td>
+        <td>{{ dest.region }}</td>
+        <td>{{ dest.latitude }}</td>
+        <td>{{ dest.longitude }}</td>
+        <td>{{ dest.ville }}</td>
+        <td>{{ dest.nombreVisites }}</td>
+        <td>{{ dest.estPopulaire ? '✅' : '❌' }}</td>
+        <td>
+          <button class="btn btn-warning btn-sm me-2" (click)="edit(dest)">Modifier</button>
+          <button class="btn btn-danger btn-sm" (click)="delete(dest.id!)">Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,55 @@
+/* Conteneur principal */
+.register-body {
+  background: url('../body.jpg') no-repeat center center fixed;
+  background-size: cover;
+  min-height: 100vh; /* Assurez-vous que le fond couvre toute la hauteur */
+  display: flex; /* Flexbox pour centrer le contenu */
+  justify-content: center; /* Centrer horizontalement */
+  align-items: center; /* Centrer verticalement */
+  padding: 0 20px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Conteneur du formulaire */
+.register-body .container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 1000px; /* Limite la largeur du formulaire */
+  padding: 20px;
+  margin-top: 20%;
+
+}
+
+/* Formulaire */
+.card {
+  background: rgba(255, 255, 255, 0.2); /* Transparence ajustée */
+  backdrop-filter: blur(15px); /* Augmenter le flou */
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+
+/* Amélioration du style des inputs */
+.form-control, .form-select {
+  background-color: rgba(255, 255, 255, 0.6);
+  border: none;
+  color: #000;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.card h2,
+.card label,
+.card p {
+  color: #fff;
+}
+/* Empêcher le débordement horizontal */
+body, html {
+  overflow-x: hidden;
+}
+* {
+  box-sizing: border-box; /* Inclure les marges et bordures dans la largeur de l'élément */
+}

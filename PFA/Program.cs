@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using PFA.Data;
 using PFA.Services;
+using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,8 @@ builder.Services.AddScoped<TransportService>();
 
 builder.Services.AddScoped<UserProfileService>();
 
+builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
 
 // 📌 Configuration de la base de données SQL Server

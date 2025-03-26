@@ -1,18 +1,108 @@
+/* ✅ Fond d'écran */
+body {
+  background: url('../body.jpg') no-repeat center center fixed;
+  background-size: cover;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+  overflow-x: hidden;
+}
+
+/* ✅ Conteneur principal avec effet verre (glassmorphism) */
 .container {
-    max-width: 900px;
-    margin: auto;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  margin-top: 60px;
+}
+
+/* ✅ Titres */
+h2 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #000;
+  margin-bottom: 30px;
+}
+
+/* ✅ Tableau */
+.table {
+  margin-top: 20px;
+}
+.table-striped tbody tr:nth-child(odd) {
+  background-color: rgba(255, 255, 255, 0.4);
+}
+.table-hover tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.6);
+}
+th, td {
+  padding: 12px;
+  vertical-align: middle;
+  text-align: center;
+}
+
+/* ✅ Boutons d'action */
+.action-buttons button {
+  margin-right: 5px;
+}
+.btn-sm {
+  padding: 5px 10px;
+  font-size: 14px;
+}
+
+/* ✅ Formulaire */
+.form-activite .form-control,
+.form-activite .form-select {
+  margin-bottom: 15px;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border: none;
+  color: #000;
+}
+
+button.btn-primary,
+button.btn-secondary {
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 8px;
+}
+
+/* ✅ Responsive */
+@media (max-width: 768px) {
+  .form-activite .col-md-6 {
+    margin-bottom: 20px;
   }
-  
-  .table {
-    margin-top: 20px;
+
+  .container {
+    padding: 20px;
   }
-  
-  .card {
-    background: #f8f9fa;
-    border-radius: 8px;
-  }
-  
-  button {
-    width: 100%;
-  }
-  
+}
+
+
+.form-label {
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.form-activite .form-control,
+.form-activite .form-select {
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+
+.form-activite .btn {
+  min-width: 130px;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 8px;
+}
+
+.row.g-3 > div {
+  margin-bottom: 15px;
+}
