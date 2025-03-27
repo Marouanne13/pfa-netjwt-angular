@@ -4,6 +4,7 @@ import { SessionService } from '../../services/session.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { routes } from '../../app.routes';
+import { PanierUserService } from '../../services/panier-user.service'; 
 
 @Component({
   selector: 'app-hebergements',
@@ -19,7 +20,8 @@ export class HebergementsComponent implements OnInit {
   constructor(
     private hebergementService: HebergementService, // ✅ Injection du service des hébergements
     private sessionService: SessionService, // ✅ Service session
-    private router: Router // ✅ Pour la navigation après choix de l'hébergement
+    private router: Router ,
+    private panierService: PanierUserService// ✅ Pour la navigation après choix de l'hébergement
   ) {}
 
   ngOnInit() {
@@ -50,11 +52,8 @@ export class HebergementsComponent implements OnInit {
     this.sessionService.setLocalStorage('hebergementId', hebergementId.toString());
     console.log("🏨 Hébergement enregistré en session (ID) :", hebergementId);
   
-    // Redirection vers les activités après le choix de l'hébergement
+    // Redirection vers les activités sans encore stocker dans le panier
     this.router.navigate(['/activitesUser', hebergementId]);
   }
-  
-  
+
 }
-
-

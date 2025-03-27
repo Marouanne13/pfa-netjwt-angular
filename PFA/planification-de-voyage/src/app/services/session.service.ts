@@ -31,15 +31,13 @@ export class SessionService {
   }
 
   // ✅ Alternative : Utiliser `localStorage` pour la session locale
-  setLocalStorage(key: string, value: any) {
-    localStorage.setItem(key, JSON.stringify(value));
+  setLocalStorage(key: string, value: string) {
+    localStorage.setItem(key, value);
   }
-
-  getLocalStorage(key: string) {
-    const data = localStorage.getItem(key);
-    return data ? JSON.parse(data) : null;
+  
+  getLocalStorage(key: string): string | null {
+    return localStorage.getItem(key);
   }
-
   removeLocalStorage(key: string) {
     localStorage.removeItem(key);
   }

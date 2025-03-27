@@ -41,29 +41,16 @@ namespace PFA.Controllers
 
         // ✅ 📌 Ajouter un élément au panier
         [HttpPost("ajouter")]
-        public async Task<IActionResult> AjouterAuPanier([FromBody] Panier panier)
+        public IActionResult AjouterPanier([FromBody] Panier panier)
         {
-            if (panier == null)
-            {
-                return BadRequest("❌ Les données du panier sont nulles.");
-            }
+            // Vérification simple
+            if (panier.UserId == 0 || panier.DestinationId == 0)
+                return BadRequest("UserId ou DestinationId manquant");
 
-            try
-            {
-                _context.Panier.Add(panier);
-                await _context.SaveChangesAsync();
-                return Ok(new { message = "✅ Panier ajouté avec succès" });
-            }
-            catch (DbUpdateException dbEx)
-            {
-                return StatusCode(500, $"Erreur SQL: {dbEx.InnerException?.Message}");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Erreur serveur: {ex.Message}");
-            }
+            _context.Panier.Add(panier);
+            _context.SaveChanges();
+            return Ok(new { message = "Panier ajouté avec succès !" });
         }
-
 
 
         // ✅ 📌 Supprimer un élément du panier
@@ -91,5 +78,6 @@ namespace PFA.Controllers
             await _context.SaveChangesAsync();
             return Ok(new { message = "Panier vidé avec succès !" });
         }
+
     }
 }
