@@ -3,45 +3,56 @@ import { PanierUserService } from '../../services/panier-user.service';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { TransportService } from '../../services/transport.service'; // Import du service
+import { TransportService } from '../../services/transport.service';
 
 @Component({
   selector: 'app-transport-user',
+  standalone: true,
   imports: [CommonModule],
   templateUrl: './transport-user.component.html',
   styleUrls: ['./transport-user.component.css'],
 })
 export class TransportUserComponent implements OnInit {
-  userId: number = 1; // ID de l'utilisateur connecté (à récupérer dynamiquement)
+  userId: number = 0;
   transportId: number | null = null;
   destinationId: number | null = null;
   hebergementId: number | null = null;
   activiteId: number | null = null;
   restaurantId: number | null = null;
 
-  transports: any[] = []; // ✅ Ajout de la liste des transports
+  transports: any[] = [];
 
   constructor(
     private panierUserService: PanierUserService,
-    private transportService: TransportService, // Service pour récupérer les transports
+    private transportService: TransportService,
     private router: Router
   ) {}
 
   ngOnInit() {
-    this.recupererChoix();
-    this.chargerTransports(); // ✅ Charger les transports disponibles
+    this.recupererChoix();       // 🔁 Récupération des données utilisateur
+    this.chargerTransports();    // 🚍 Chargement des transports
   }
 
-  // ✅ Récupérer tous les choix de l'utilisateur stockés en session
+  // 🔁 Récupération des valeurs en session/localStorage
   recupererChoix() {
+    this.userId = Number(localStorage.getItem('userId')) || 0;
     this.destinationId = Number(localStorage.getItem('destinationId')) || null;
     this.hebergementId = Number(localStorage.getItem('hebergementId')) || null;
     this.activiteId = Number(localStorage.getItem('activiteId')) || null;
-    this.restaurantId = Number(localStorage.getItem('restaurantId')) || null;
-    this.transportId = Number(localStorage.getItem('transportId')) || null;
+    this.restaurantId = null; // Tu as skippé cette étape
+    this.transportId = null; // On attend le choix de l’utilisateur
+
+    console.log("📦 Données récupérées depuis le localStorage :", {
+      userId: this.userId,
+      destinationId: this.destinationId,
+      hebergementId: this.hebergementId,
+      activiteId: this.activiteId,
+      restaurantId: this.restaurantId,
+      transportId: this.transportId
+    });
   }
 
-  // ✅ Charger les transports depuis l'API
+  // 🚍 Chargement des transports disponibles
   chargerTransports() {
     this.transportService.getTransports().subscribe({
       next: (data) => {
@@ -54,25 +65,35 @@ export class TransportUserComponent implements OnInit {
     });
   }
 
-  // ✅ Ajouter tout dans le panier
+  // 🚌 Enregistrer le transport sélectionné
+  choisirTransport(id: number) {
+    this.transportId = id;
+    localStorage.setItem('transportId', id.toString());
+    console.log("🚌 Transport sélectionné :", id);
+  }
+
+  // 📤 Envoi final au backend avec tous les choix
   ajouterToutAuPanier() {
+    // Assurer que les données sont bien récupérées
     const panierData = {
       userId: this.userId,
       destinationId: this.destinationId,
       hebergementId: this.hebergementId,
       activiteId: this.activiteId,
       restaurantId: this.restaurantId,
-      transportId: this.transportId,
+      transportId: this.transportId
     };
 
+    console.log("📤 Données envoyées au backend :", panierData);
+
     this.panierUserService.ajouterToutAuPanier(panierData).subscribe({
-      next: (response: any) => {
-        console.log("✅ Panier enregistré avec succès :", response);
-        alert("Panier enregistré avec succès !");
+      next: (res) => {
+        console.log("✅ Panier stocké avec succès :", res);
+        alert("Panier enregistré avec tous les choix !");
         this.router.navigate(['/confirmation']);
       },
-      error: (error: HttpErrorResponse) => {
-        console.error("❌ Erreur lors de l'enregistrement du panier", error.message);
+      error: (err: HttpErrorResponse) => {
+        console.error("❌ Erreur lors de l'enregistrement du panier :", err.message);
       }
     });
   }

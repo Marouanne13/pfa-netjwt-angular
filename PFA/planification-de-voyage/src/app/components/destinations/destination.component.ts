@@ -37,7 +37,8 @@ export class DestinationComponent implements OnInit {
 
   choisirDestination(destinationId: number) {
     // ✅ Enregistrer l'ID dans la session
-    this.sessionService.setLocalStorage('destinationId', destinationId);
+    this.sessionService.setLocalStorage('destinationId', destinationId.toString());
+
     console.log("📌 Destination enregistrée en session (ID) :", this.sessionService.getLocalStorage('destinationId'));
   
     // 🔥 Rediriger vers la page des hébergements
@@ -45,7 +46,8 @@ export class DestinationComponent implements OnInit {
   }
   
   goToHebergements(destinationId: number) {
-    this.sessionService.setLocalStorage('destinationId', destinationId);
+    this.sessionService.setLocalStorage('destinationId', destinationId.toString());
+
     console.log("📌 Redirection vers hébergements pour destination ID :", destinationId);
     this.router.navigate(['/hebergements']);
   }

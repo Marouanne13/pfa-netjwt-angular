@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router'; // Importer ActivatedRoute
+import { Router } from '@angular/router';
 import { SessionService } from '../../services/session.service';
 import { CommonModule } from '@angular/common';
-import { ActiviteUserService } from '../../services/activite-user.service';  // Vérifie l'import
+import { ActiviteUserService } from '../../services/activite-user.service';
 
 @Component({
   selector: 'app-activites-user',
@@ -12,50 +12,47 @@ import { ActiviteUserService } from '../../services/activite-user.service';  // 
   styleUrls: ['./activitesUser.component.css']
 })
 export class ActivitesUserComponent implements OnInit {
-
   activites: any[] = [];
-  destinationId: string | null = null;
+  destinationId: number | null = null;
 
   constructor(
     private router: Router,
     private sessionService: SessionService,
-    private activiteUserService: ActiviteUserService, // Injection du service
-    private activatedRoute: ActivatedRoute // Injection d'ActivatedRoute
+    private activiteUserService: ActiviteUserService
   ) {}
 
   ngOnInit() {
-    this.destinationId = this.sessionService.getLocalStorage('destinationId');
-  
-    if (!this.destinationId) {
-      console.error("❌ Aucun ID de destination trouvé !");
+    this.destinationId = Number(this.sessionService.getLocalStorage('destinationId'));
+
+    if (!this.destinationId || isNaN(this.destinationId)) {
+      console.error("❌ Aucun ID de destination valide trouvé !");
       return;
     }
-  
+
     console.log("📍 Destination ID récupéré :", this.destinationId);
     this.loadActivites();
   }
-  
+
   loadActivites() {
-    if (!this.destinationId) return;
-    this.activiteUserService.getActivitesParDestination(this.destinationId).subscribe({
+    this.activiteUserService.getActivitesParDestination(this.destinationId!.toString()).subscribe({
       next: (data: any[]) => {
         this.activites = data;
         console.log("✅ Activités chargées :", this.activites);
       },
-      error: (err: any) => {
+      error: (err) => {
         console.error("❌ Erreur chargement activités", err);
       }
     });
   }
   
-  choisirActivite(id: number) {
-    this.sessionService.setLocalStorage('activiteId', id.toString());
-    console.log("🎭 Activité enregistrée en session (ID) :", id);
 
-    // Redirection vers les restaurants
-    this.router.navigate(['/restaurants']);
-}
-voirRestaurants() {
-  this.router.navigate(['/restaurant-user']); // 🔥 Redirige vers la page des restaurants
-}
+  choisirActivite(activiteId: number) {
+    this.sessionService.setLocalStorage('activiteId', activiteId.toString());
+    console.log("🎯 Activité enregistrée dans localStorage :", activiteId);
+
+    this.router.navigate(['/transport-user']);
+  }
+  choisirTransport() {
+    this.router.navigate(['/transport-user']);
+  }
 }
