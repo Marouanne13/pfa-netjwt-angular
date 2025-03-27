@@ -13,12 +13,17 @@ import { FormsModule } from '@angular/forms';
 export class UserMessageComponent implements OnInit {
   messages: Message[] = [];
   newMessage: string = '';
-  userId: number = 1; // ✅ Remplace par l'ID réel de l'utilisateur (via JWT)
+  userId: number = 1; // À remplacer par l’ID réel de l’utilisateur (JWT)
+  showChat: boolean = false;
 
   constructor(private messageService: MessageService) {}
 
   ngOnInit(): void {
     this.loadMessages();
+  }
+
+  toggleChat(): void {
+    this.showChat = !this.showChat;
   }
 
   loadMessages(): void {
@@ -35,14 +40,14 @@ export class UserMessageComponent implements OnInit {
 
     const message: Message = {
       expediteurId: this.userId,
-      destinataireId: 2, // ✅ Supposons que l'admin a l'ID 2
+      destinataireId: 2, // ID de l’admin
       expediteurType: 'User',
       contenu: this.newMessage
     };
 
     this.messageService.sendMessage(message).subscribe(() => {
       this.loadMessages();
-      this.newMessage = ''; // ✅ Vider le champ après envoi
+      this.newMessage = '';
     });
   }
 }

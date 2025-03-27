@@ -1,96 +1,112 @@
-/* Style général de la barre de chat */
+/* Bouton flottant pour ouvrir/fermer le chat */
+.toggle-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 1001;
+}
+
+/* Boîte de chat en bas de la page */
 .chat-bar {
-    width: 50%;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    background-color: #f9f9f9;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Titre */
-  h3 {
-    text-align: center;
-    color: #2c3e50;
-    font-size: 24px;
-    margin-bottom: 10px;
-  }
-  
-  /* Liste des messages */
-  .messages {
-    max-height: 300px;
-    overflow-y: auto;
-    padding: 10px;
-    border: 1px solid #ccc;
-    background: #fff;
-    border-radius: 5px;
-    margin-bottom: 10px;
-  }
-  
-  /* Message commun */
-  .message {
-    padding: 8px 12px;
-    border-radius: 10px;
-    margin: 5px 0;
-    max-width: 80%;
-    word-wrap: break-word;
-    font-size: 16px;
-  }
-  
-  /* Messages de l'utilisateur */
-  .message.user {
-    background-color: #3498db;
-    color: white;
-    text-align: right;
-    align-self: flex-end;
-    margin-left: auto;
-  }
-  
-  /* Messages de l'admin */
-  .message.admin {
-    background-color: #ecf0f1;
-    color: #2c3e50;
-    text-align: left;
-    align-self: flex-start;
-    margin-right: auto;
-  }
-  
-  /* Style des dates */
-  small {
-    display: block;
-    font-size: 12px;
-    color: #7f8c8d;
-    margin-top: 5px;
-  }
-  
-  /* Champ d'entrée */
-  .input-container {
-    display: flex;
-    margin-top: 10px;
-  }
-  
-  .input-container input {
-    flex: 1;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-  }
-  
-  /* Bouton envoyer */
-  .input-container button {
-    background-color: #2ecc71;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    margin-left: 5px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-  
-  .input-container button:hover {
-    background-color: #27ae60;
-  }
-  
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 300px;
+  max-height: 400px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+}
+
+/* Titre */
+h3 {
+  text-align: center;
+  color: #2c3e50;
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+/* Liste des messages */
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  background: #fff;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+}
+
+/* Message général */
+.message {
+  padding: 8px 12px;
+  border-radius: 10px;
+  margin: 5px 0;
+  max-width: 80%;
+  word-wrap: break-word;
+  font-size: 15px;
+}
+
+/* Message utilisateur */
+.message.user {
+  background-color: #3498db;
+  color: white;
+  text-align: right;
+  margin-left: auto;
+}
+
+/* Message admin */
+.message.admin {
+  background-color: #ecf0f1;
+  color: #2c3e50;
+  text-align: left;
+  margin-right: auto;
+}
+
+/* Date */
+small {
+  display: block;
+  font-size: 12px;
+  color: #7f8c8d;
+  margin-top: 5px;
+}
+
+/* Zone d'envoi */
+.input-container {
+  display: flex;
+}
+
+.input-container input {
+  flex: 1;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.input-container button {
+  background-color: #2ecc71;
+  color: white;
+  border: none;
+  margin-left: 5px;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.input-container button:hover {
+  background-color: #27ae60;
+}
