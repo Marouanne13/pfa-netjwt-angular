@@ -29,20 +29,19 @@ export class TransportUserComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.recupererChoix();       // 🔁 Récupération des données utilisateur
-    this.chargerTransports();    // 🚍 Chargement des transports
+    this.recupererChoix();
+    this.chargerTransports();
   }
 
-  // 🔁 Récupération des valeurs en session/localStorage
   recupererChoix() {
     this.userId = Number(localStorage.getItem('userId')) || 0;
     this.destinationId = Number(localStorage.getItem('destinationId')) || null;
     this.hebergementId = Number(localStorage.getItem('hebergementId')) || null;
     this.activiteId = Number(localStorage.getItem('activiteId')) || null;
-    this.restaurantId = null; // Tu as skippé cette étape
-    this.transportId = null; // On attend le choix de l’utilisateur
+    this.restaurantId = null; // Skipped volontairement
+    this.transportId = null;
 
-    console.log("📦 Données récupérées depuis le localStorage :", {
+    console.log("📦 Données récupérées :", {
       userId: this.userId,
       destinationId: this.destinationId,
       hebergementId: this.hebergementId,
@@ -52,7 +51,6 @@ export class TransportUserComponent implements OnInit {
     });
   }
 
-  // 🚍 Chargement des transports disponibles
   chargerTransports() {
     this.transportService.getTransports().subscribe({
       next: (data) => {
@@ -65,16 +63,13 @@ export class TransportUserComponent implements OnInit {
     });
   }
 
-  // 🚌 Enregistrer le transport sélectionné
   choisirTransport(id: number) {
     this.transportId = id;
     localStorage.setItem('transportId', id.toString());
     console.log("🚌 Transport sélectionné :", id);
   }
 
-  // 📤 Envoi final au backend avec tous les choix
   ajouterToutAuPanier() {
-    // Assurer que les données sont bien récupérées
     const panierData = {
       userId: this.userId,
       destinationId: this.destinationId,
@@ -86,14 +81,15 @@ export class TransportUserComponent implements OnInit {
 
     console.log("📤 Données envoyées au backend :", panierData);
 
-    this.panierUserService.ajouterToutAuPanier(panierData).subscribe({
-      next: (res) => {
-        console.log("✅ Panier stocké avec succès :", res);
-        alert("Panier enregistré avec tous les choix !");
-        this.router.navigate(['/confirmation']);
+    this.panierUserService.ajouterAuPanier(panierData).subscribe({
+      next: (res: any) => {
+        console.log("✅ Panier enregistré :", res);
+
+        // ✅ Redirection vers page de paiement après ajout au panier
+        this.router.navigate(['/paiement']);
       },
       error: (err: HttpErrorResponse) => {
-        console.error("❌ Erreur lors de l'enregistrement du panier :", err.message);
+        console.error("❌ Erreur lors de l'ajout au panier :", err);
       }
     });
   }

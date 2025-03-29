@@ -6,7 +6,7 @@ import { ActivitesComponent } from './components/activites/activites.component';
 
 import { ClientsComponent } from './components/clients/clients.component';
 
-import { GestionVoyagesComponent } from './components/gestion-voyages/gestion-voyages.component'; // ✅ Gestion des voyages
+
 import { AuthGuard } from './guards/auth.guard';
 import { RegisterComponent } from './components/register/register.component';
 import { HomeComponent } from './components/home/home.component';
@@ -45,7 +45,7 @@ export const routes: Routes = [
   { path: 'restaurant-list', component: RestaurantListComponent, canActivate: [AuthGuard] }, // ✅ Nouvelle route pour liste des restaurants
   { path: 'clients', component: ClientsComponent, canActivate: [AuthGuard] },
 
-  { path: 'gestion-voyages', component: GestionVoyagesComponent, canActivate: [AuthGuard] }, // ✅ Gestion des voyages
+
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: 'about', component: AboutComponent , canActivate: [AuthGuard]},
   { path: 'destinations', component: DestinationComponent },

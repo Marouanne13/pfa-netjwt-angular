@@ -1,56 +1,82 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Stripe;
 using Stripe.Checkout;
+using PFA.Data;
 
-[Route("api/[controller]")]
-[ApiController]
-public class PaiementController : ControllerBase
+namespace PFA.Controllers
 {
-    private readonly IConfiguration _configuration;
-
-    public PaiementController(IConfiguration configuration)
+    [Route("api/paiement")] // 👉 ce qui donne : /api/paiement/create-checkout-session/{userId}
+    [ApiController]
+    public class PaiementController : ControllerBase
     {
-        _configuration = configuration;
-        StripeConfiguration.ApiKey = _configuration["Stripe:SecretKey"];
-    }
+        private readonly IConfiguration _configuration;
+        private readonly AppDbContext _context;
 
-    [HttpPost("create-checkout-session")]
-    public IActionResult CreateCheckoutSession([FromBody] PaiementRequest request)
-    {
-        var options = new SessionCreateOptions
+        public PaiementController(IConfiguration configuration, AppDbContext context)
         {
-            PaymentMethodTypes = new List<string> { "card" },
-            LineItems = new List<SessionLineItemOptions>
+            _configuration = configuration;
+            _context = context;
+
+            // ✅ Récupère la clé Stripe depuis appsettings.json
+            StripeConfiguration.ApiKey = _configuration["Stripe:SecretKey"];
+        }
+
+        [HttpPost("create-checkout-session/{userId}")]
+        public async Task<IActionResult> CreateCheckoutSession(int userId)
+        {
+            // 🔍 Récupère le dernier panier de l’utilisateur
+            var panier = await _context.Panier
+                .Include(p => p.Hebergement)
+                .Include(p => p.Activite)
+                .Include(p => p.Transport)
+                .Where(p => p.UserId == userId)
+                .OrderByDescending(p => p.Id) // 🔁 prend le plus récent si plusieurs
+                .FirstOrDefaultAsync();
+
+            if (panier == null)
+                return BadRequest("Aucun panier trouvé pour cet utilisateur.");
+
+            double total = 0;
+
+            if (panier.Hebergement != null)
+                total += panier.Hebergement.PrixParNuit;
+
+            if (panier.Activite != null)
+                total += panier.Activite.Prix;
+
+            if (panier.Transport != null)
+                total += panier.Transport.Prix;
+
+            // ✅ Configuration de la session Stripe Checkout
+            var options = new SessionCreateOptions
             {
-                new SessionLineItemOptions
+                PaymentMethodTypes = new List<string> { "card" },
+                LineItems = new List<SessionLineItemOptions>
                 {
-                    PriceData = new SessionLineItemPriceDataOptions
+                    new SessionLineItemOptions
                     {
-                        UnitAmount = (long)(request.Amount * 100), // 💵 convertit en centimes
-                        Currency = "usd",
-                        ProductData = new SessionLineItemPriceDataProductDataOptions
+                        PriceData = new SessionLineItemPriceDataOptions
                         {
-                            Name = request.ProductName,
+                            UnitAmount = (long)(total * 100), // 💲 en centimes
+                            Currency = "usd",
+                            ProductData = new SessionLineItemPriceDataProductDataOptions
+                            {
+                                Name = "Paiement de votre panier",
+                            },
                         },
-                    },
-                    Quantity = 1,
+                        Quantity = 1,
+                    }
                 },
-            },
-            Mode = "payment",
-            SuccessUrl = "http://localhost:4200/success",
-            CancelUrl = "http://localhost:4200/cancel",
-        };
+                Mode = "payment",
+                SuccessUrl = "http://localhost:4200/success",
+                CancelUrl = "http://localhost:4200/cancel",
+            };
 
-        var service = new SessionService();
-        Session session = service.Create(options);
+            var service = new SessionService();
+            Session session = service.Create(options);
 
-        return Ok(new { sessionId = session.Id }); // ✅ le frontend a besoin de "sessionId"
+            return Ok(new { sessionId = session.Id });
+        }
     }
-}
-
-// ✅ Classe en dehors du contrôleur
-public class PaiementRequest
-{
-    public string ProductName { get; set; }
-    public double Amount { get; set; }
 }

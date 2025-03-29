@@ -1,1 +1,34 @@
-<button (click)="payer()">Payer</button>
+<h2 class="text-center mb-4">👜 Récapitulatif du Panier</h2>
+
+<table class="table text-center">
+  <thead class="table-dark">
+    <tr>
+      <th>Hébergement</th>
+      <th>Activité</th>
+      <th>Transport</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of panierFiltre">
+      <td>
+        {{ item.hebergement?.nom || '-' }} - {{ item.hebergement?.prixParNuit || 0 }} DH
+      </td>
+      <td>
+        {{ item.activite?.nom || '-' }} - {{ item.activite?.prix || 0 }} DH
+      </td>
+      <td>
+        {{ item.transport?.typeTransport || '-' }} - {{ item.transport?.prix || 0 }} DH
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 class="mt-4 text-end pe-4">
+  💰 <strong>Total : {{ total }} DH</strong>
+</h3>
+
+<div class="text-center mt-3">
+  <button class="btn btn-primary" (click)="payer()">
+    💳 Payer maintenant
+  </button>
+</div>

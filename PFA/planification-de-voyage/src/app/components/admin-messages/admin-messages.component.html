@@ -1,16 +1,29 @@
-<div class="admin-panel">
-    <h2>Messages des Utilisateurs</h2>
-
+<div class="chat-container">
+  <div class="sidebar">
+    <h3>Utilisateurs</h3>
     <ul>
-        <li *ngFor="let msg of messages" (click)="selectUser(msg.expediteurId)">
-            <strong>{{ msg.expediteurType }} (ID: {{ msg.expediteurId }}) :</strong> {{ msg.contenu }}
-        </li>
+      <li *ngFor="let userId of getUsers()" (click)="selectUser(userId)" [class.active]="userId === selectedUserId">
+        👤 Utilisateur {{ userId }}
+      </li>
     </ul>
+  </div>
 
-    <!-- Interface de réponse -->
-    <div *ngIf="selectedUserId">
-        <h3>Répondre à l'utilisateur {{ selectedUserId }}</h3>
-        <input [(ngModel)]="responseMessage" placeholder="Écrire une réponse...">
-        <button (click)="sendResponse()">Envoyer</button>
+  <div class="chat-box" *ngIf="selectedUserId">
+    <div class="chat-header">
+      💬 Discussion avec l'utilisateur {{ selectedUserId }}
     </div>
+
+    <div class="chat-body">
+      <div *ngFor="let msg of getMessagesForSelectedUser()"
+           [ngClass]="msg.expediteurType === 'Admin' ? 'message admin' : 'message user'">
+        <span class="sender">{{ msg.expediteurType }}</span>
+        <p>{{ msg.contenu }}</p>
+      </div>
+    </div>
+
+    <div class="chat-footer">
+      <input type="text" [(ngModel)]="responseMessage" placeholder="Écrire une réponse..." />
+      <button (click)="sendResponse()">Envoyer</button>
+    </div>
+  </div>
 </div>

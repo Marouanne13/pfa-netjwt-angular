@@ -2,8 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using PFA.Data;
 using PFA.Models;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,7 +18,7 @@ namespace PFA.Controllers
             _context = context;
         }
 
-        // ✅ 📌 Récupérer le panier d'un utilisateur par UserId
+        // ✅ Récupérer le panier complet d’un utilisateur avec les données liées
         [HttpGet("{userId}")]
         public async Task<IActionResult> GetPanier(int userId)
         {
@@ -39,21 +37,20 @@ namespace PFA.Controllers
             return Ok(panier);
         }
 
-        // ✅ 📌 Ajouter un élément au panier
+        // ✅ Ajouter une ligne au panier
         [HttpPost("ajouter")]
         public IActionResult AjouterPanier([FromBody] Panier panier)
         {
-            // Vérification simple
             if (panier.UserId == 0 || panier.DestinationId == 0)
                 return BadRequest("UserId ou DestinationId manquant");
 
             _context.Panier.Add(panier);
             _context.SaveChanges();
+
             return Ok(new { message = "Panier ajouté avec succès !" });
         }
 
-
-        // ✅ 📌 Supprimer un élément du panier
+        // ✅ Supprimer une ligne de panier
         [HttpDelete("supprimer/{id}")]
         public async Task<IActionResult> SupprimerDuPanier(int id)
         {
@@ -63,21 +60,51 @@ namespace PFA.Controllers
 
             _context.Panier.Remove(panier);
             await _context.SaveChangesAsync();
+
             return Ok(new { message = "Élément supprimé du panier !" });
         }
 
-        // ✅ 📌 Vider complètement le panier
+        // ✅ Vider tout le panier d’un utilisateur
         [HttpDelete("vider/{userId}")]
         public async Task<IActionResult> ViderPanier(int userId)
         {
-            var panier = _context.Panier.Where(p => p.UserId == userId);
-            if (!panier.Any())
+            var paniers = _context.Panier.Where(p => p.UserId == userId);
+            if (!paniers.Any())
                 return NotFound("Aucun élément à supprimer.");
 
-            _context.Panier.RemoveRange(panier);
+            _context.Panier.RemoveRange(paniers);
             await _context.SaveChangesAsync();
+
             return Ok(new { message = "Panier vidé avec succès !" });
         }
 
+        // ✅ Calculer le total du dernier panier valide uniquement
+        [HttpGet("total/{userId}")]
+        public async Task<IActionResult> CalculerTotalPanier(int userId)
+        {
+            var dernierPanier = await _context.Panier
+                .Where(p => p.UserId == userId)
+                .OrderByDescending(p => p.Id)
+                .Include(p => p.Hebergement)
+                .Include(p => p.Activite)
+                .Include(p => p.Transport)
+                .FirstOrDefaultAsync();
+
+            if (dernierPanier == null)
+                return Ok(0);
+
+            double total = 0;
+
+            if (dernierPanier.Hebergement != null)
+                total += dernierPanier.Hebergement.PrixParNuit;
+
+            if (dernierPanier.Activite != null)
+                total += dernierPanier.Activite.Prix;
+
+            if (dernierPanier.Transport != null)
+                total += dernierPanier.Transport.Prix;
+
+            return Ok(total);
+        }
     }
 }
