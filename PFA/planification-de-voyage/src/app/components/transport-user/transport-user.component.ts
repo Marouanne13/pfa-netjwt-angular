@@ -4,11 +4,13 @@ import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { TransportService } from '../../services/transport.service';
+import { FooterComponent } from "../../footer/footer.component";
+import { UserMessageComponent } from "../user-message/user-message.component";
 
 @Component({
   selector: 'app-transport-user',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FooterComponent, UserMessageComponent],
   templateUrl: './transport-user.component.html',
   styleUrls: ['./transport-user.component.css'],
 })
@@ -32,6 +34,20 @@ export class TransportUserComponent implements OnInit {
     this.recupererChoix();
     this.chargerTransports();
   }
+  getImageUrl(nom: string): string {
+    const key = nom.toLowerCase();
+  
+    if (key.includes('ctm')) return 'assets/image/CTM.jpg';
+    if (key.includes('train')) return 'assets/image/oncf.jpg';
+    if (key.includes('vito')) return 'assets/image/mercede.jpg';
+    if (key.includes('taxi')) return 'assets/image/Taxi1.jpg';
+    if (key.includes('royal air')) return 'assets/image/air.jpg';
+    if (key.includes('royal air') || key.includes('air') || key.includes('avion')) return 'assets/image/air.jpg';
+  
+    return 'assets/images/default-transport.jpg';
+  }
+  
+  
 
   recupererChoix() {
     this.userId = Number(localStorage.getItem('userId')) || 0;

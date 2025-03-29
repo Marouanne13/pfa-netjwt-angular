@@ -1,14 +1,93 @@
+
+<header class="th-header header-layout1">
+ 
+  <!-- Main Menu Area -->
+  <div class="menu-area">
+      <div class="container th-container">
+          <div class="row align-items-center justify-content-between">
+              <div class="col-auto">
+                  <div class="header-logo">
+                      <a href="home-travel.html"><img src="assets/img/logo.svg" alt="Tourm"></a>
+                  </div>
+              </div>
+              <div class="col-auto me-xl-auto">
+                  <nav class="main-menu d-none d-xl-inline-block">
+                      <ul>
+                          <li class="menu-item-has-children">
+                              <a class="active" href="home-travel.html">Home</a>
+
+                          </li>
+                          <li><a href="about">About</a></li>
+                          <li class="menu-item-has-children">
+                              <a href="#">Destination</a>
+                              <ul class="sub-menu">
+                                  <li><a href="destinations">Destination</a></li>
+
+                              </ul>
+                          </li>
+                          <li class="menu-item-has-children">
+                              <a href="#">Service</a>
+
+                          </li>
+                          <li class="menu-item-has-children">
+                              <a href="#">Activities</a>
+
+                          </li>
+                          <li class="menu-item-has-children">
+                              <a href="#">Pages</a>
+                              <ul class="sub-menu">
+                                  <li class="menu-item-has-children">
+                                      <a href="#">Shop</a>
+
+                                  </li>
+
+                              </ul>
+
+                          </li>
+                          <li class="menu-item-has-children">
+                              <a href="#">Blog</a>
+                       
+                          </li>
+                          <li>
+                              <a href="contact.html">Contact us</a>
+                          </li>
+                      </ul>
+                  </nav>
+                  <button type="button" class="th-menu-toggle d-block d-xl-none"><i class="far fa-bars"></i></button>
+              </div>
+              <div class="col-auto d-none d-xl-block">
+                  <div class="header-button">
+                      <a href="contact.html" class="th-btn style3 th-icon">Book Now</a>
+
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div class="logo-bg" data-mask-src="assets/img/logo_bg_mask.png"></div>
+  </div>
+
+</header>
+
+
 <h2 class="title">Choisissez votre hébergement</h2>
 
 <div class="hebergement-container">
   <div *ngFor="let hebergement of hebergements" class="hebergement-card">
-    <h3>{{ hebergement.nom }}</h3>
-    <p>{{ hebergement.description }}</p>
-    <p><strong>Prix :</strong> {{ hebergement.prixParNuit }} MAD/nuit</p>
-    <p><strong>Adresse :</strong> {{ hebergement.adresse }}</p>
+    <img class="hebergement-image" [src]="getImageUrl(hebergement)" alt="{{ hebergement.nom }}">
 
-    <button (click)="choisirHebergement(hebergement.id)" class="btn-choisir">
-      Choisir
-    </button>
+    <div class="hebergement-body">
+      <h3>{{ hebergement.nom }}</h3>
+      <p><strong>Prix :</strong> {{ hebergement.prixParNuit }} MAD/nuit</p>
+      <p><strong>Adresse :</strong> {{ hebergement.adresse }}</p>
+      <p><strong>NumeroTelephone:</strong> {{ hebergement.NumeroTelephone }}</p>
+
+      <button (click)="choisirHebergement(hebergement.id)" class="btn-choisir">
+        Choisir
+      </button>
+    </div>
   </div>
+  <app-user-message></app-user-message>
 </div>
+
+<app-footer></app-footer>
+

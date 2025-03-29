@@ -4,12 +4,14 @@ import { SessionService } from '../../services/session.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { routes } from '../../app.routes';
-import { PanierUserService } from '../../services/panier-user.service'; 
+import { PanierUserService } from '../../services/panier-user.service';
+import { FooterComponent } from "../../footer/footer.component";
+import { UserMessageComponent } from "../user-message/user-message.component"; 
 
 @Component({
   selector: 'app-hebergements',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FooterComponent, UserMessageComponent],
   templateUrl: './hebergements.component.html',
   styleUrls: ['./hebergements.component.css']
 })
@@ -36,6 +38,23 @@ export class HebergementsComponent implements OnInit {
     console.log("📌 Destination ID récupéré :", this.destinationId);
   
     this.loadHebergements();
+  }
+  getImageUrl(hebergement: any): string {
+    if (!hebergement || !hebergement.nom) return 'assets/image/default.jpg';
+  
+    const nom = hebergement.nom.toLowerCase();
+  
+    if (nom.includes('city center')) {
+      return 'assets/image/casa.jpg';
+    } else if (nom.includes('palmiers')) {
+      return '/assets/image/palmier.jpg';
+    } else if (nom.includes('villa zen')) {
+      return '/assets/image/villa.jpg';
+    } else if (nom.includes('prestige')) {
+      return '/assets/image/prestige.jpg'; // dernier recours pour Casablanca
+    }
+  
+    return 'assets/image/default.jpg';
   }
   
   loadHebergements() {
