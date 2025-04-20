@@ -32,13 +32,7 @@ pipeline {
       }
     }
 
-    stage('NPM & Angular') {
-      steps {
-        sh 'npm install'
-        // –verbose/–progress pour un peu de log à chaque étape
-        sh 'ng build --configuration production --verbose --progress'
-      }
-    }
+  
 
     stage('Test') {
       steps {
