@@ -101,11 +101,18 @@ namespace PFA.Controllers
             var issuer = _configuration["Jwt:Issuer"] ?? "https://localhost:5278";
             var audience = _configuration["Jwt:Audience"] ?? "https://localhost:5278";
 
+            //var claims = new List<Claim>
+            //{
+            //    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            //    new Claim(ClaimTypes.Email, user.Email),
+            //    new Claim(ClaimTypes.Role, "User")
+            //};
+
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, "User")
+                new Claim("sub", user.Id.ToString()),
+                new Claim("email", user.Email),
+                new Claim("role", "User")
             };
 
             var token = new JwtSecurityToken(

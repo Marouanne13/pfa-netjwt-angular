@@ -1,6 +1,6 @@
 namespace PFA.Tests
 {
-    public class UnitTest1
+    public class fullname1
     {
         [Fact]
         public void Test1()

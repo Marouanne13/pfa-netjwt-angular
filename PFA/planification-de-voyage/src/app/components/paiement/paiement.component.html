@@ -1,34 +1,35 @@
-<h2 class="text-center mb-4">👜 Récapitulatif du Panier</h2>
+<header style="background-color: #1C8554;" class="text-white py-3 shadow-sm">
+  <div class="container d-flex justify-content-between align-items-center">
+    <h1 class="h4 mb-0">🌍 TravelPlanner</h1>
+    <nav>
+      <a href="#" class="text-white me-3 text-decoration-none">Accueil</a>
+      <a href="#" class="text-white me-3 text-decoration-none">Destinations</a>
+      <a href="#" class="text-white text-decoration-none">Mon Compte</a>
+    </nav>
+  </div>
+</header>
 
-<table class="table text-center">
-  <thead class="table-dark">
-    <tr>
-      <th>Hébergement</th>
-      <th>Activité</th>
-      <th>Transport</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let item of panierFiltre">
-      <td>
-        {{ item.hebergement?.nom || '-' }} - {{ item.hebergement?.prixParNuit || 0 }} DH
-      </td>
-      <td>
-        {{ item.activite?.nom || '-' }} - {{ item.activite?.prix || 0 }} DH
-      </td>
-      <td>
-        {{ item.transport?.typeTransport || '-' }} - {{ item.transport?.prix || 0 }} DH
-      </td>
-    </tr>
-  </tbody>
-</table>
 
-<h3 class="mt-4 text-end pe-4">
-  💰 <strong>Total : {{ total }} DH</strong>
-</h3>
+<!-- 🔻 CONTENU PANIER -->
+<div class="container mt-5 d-flex justify-content-center">
+  <div class="card shadow p-4" style="max-width: 500px; width: 100%;">
+    <h2 class="text-center mb-4">
+      👜 <span class="fw-bold">Récapitulatif du Panier</span>
+    </h2>
 
-<div class="text-center mt-3">
-  <button class="btn btn-primary" (click)="payer()">
-    💳 Payer maintenant
-  </button>
+    <div class="d-flex justify-content-between align-items-center border-top pt-3">
+      <span class="fs-5 fw-semibold">💰 Total :</span>
+      <span class="fs-4 fw-bold text-success">{{ total }} DH</span>
+    </div>
+
+    <div class="text-center mt-4">
+      <button class="btn btn-lg btn-success w-100" (click)="payer()">
+        💳 Payer maintenant
+      </button>
+    </div>
+  </div>
+
+  <app-user-message></app-user-message>
 </div>
+
+<app-footer></app-footer>

@@ -1,22 +1,7 @@
-.destination-card {
-  position: relative;
-  height: 320px;
-  min-width: 300px;
-  border-radius: 16px;
-  background-size: cover;
-  background-position: center;
-  overflow: hidden;
-  cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-  display: flex;
-  align-items: flex-end;
-}
 
-.destination-card:hover {
-  transform: scale(1.02);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-}
+
+
+
 
 /* 👉 Images spécifiques par ville */
 .casablanca {
@@ -33,27 +18,277 @@
   background-image: url('/assets/image/Rabat1.jpg');
 }
 
-
-
-/* ✅ Texte sur l’image */
-.destination-info {
-  width: 100%;
-  padding: 12px 16px;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: white;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
+/* Modern CSS Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+background-color:  #cef3f7;
+  color: #000000;
+  line-height: 1.6;
+}
+
+/* Container */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+}
+
+/* Title with enhanced animations */
+.title {
+  font-size: 3.5rem;
+  text-align: center;
+  margin-bottom: 4rem;
+  color: #060404;
+  font-weight: 300;
+  letter-spacing: 2px;
+  position: relative;
+  opacity: 0;
+  animation: titleReveal 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  text-shadow: 0 0 30px rgb(25, 0, 255);
+}
+
+.title::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, #1500ff, transparent);
+  transform: translateY(-50%) scaleX(0);
+  opacity: 0.1;
+  animation: titleGlow 2s ease-in-out infinite;
+}
+
+.title::after {
+  content: '';
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  width: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #1900ff, #ff6b6b);
+  transform: translateX(-50%);
+  animation: titleUnderline 1s cubic-bezier(0.4, 0, 0.2, 1) 0.5s forwards;
+}
+
+@keyframes titleReveal {
+  0% {
+    opacity: 0;
+    transform: perspective(500px) rotateX(30deg) translateY(-50px);
+    letter-spacing: 15px;
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(500px) rotateX(0) translateY(0);
+    letter-spacing: 2px;
+  }
+}
+
+@keyframes titleGlow {
+  0%, 100% {
+    transform: translateY(-50%) scaleX(0.5);
+    opacity: 0.1;
+  }
+  50% {
+    transform: translateY(-50%) scaleX(1);
+    opacity: 0.2;
+  }
+}
+
+@keyframes titleUnderline {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 60px;
+  }
+}
+
+/* Destinations Grid */
 .destinations-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 20px;
-  padding: 20px 40px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2.5rem;
+  margin-bottom: 4rem;
+  opacity: 0;
+  animation: fadeIn 1s ease 0.3s forwards;
 }
 
 .destination-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  height: 400px;
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.destination-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 20px 45px rgba(0,0,0,0.4);
+}
+
+.destination-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,0.2),
+    rgba(0,0,0,0.8)
+  );
+  opacity: 0.7;
+  transition: opacity 0.5s ease;
+}
+
+.destination-card:hover::before {
+  opacity: 0.9;
 }
 
 
+.destination-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 2rem;
+  color: white;
+  transform: translateY(30px);
+  opacity: 0;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.destination-card:hover .destination-info {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.destination-info::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(90deg, #ffd700, #ff6b6b);
+  transition: width 0.5s ease;
+}
+
+.destination-card:hover .destination-info::before {
+  width: 100px;
+}
+
+.user-message {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 3rem;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: fadeInUp 0.8s ease forwards;
+}
+
+.user-message p {
+  font-size: 1.2rem;
+  color: #fff;
+  letter-spacing: 1px;
+}
+
+.footer {
+  text-align: center;
+  padding: 3rem;
+  color: rgba(255, 255, 255, 0.7);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 4rem;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+}
+
+@keyframes fadeInUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.destination-info {
+  font-size: 1.5rem;
+  font-weight: 300;
+  letter-spacing: 1px;
+}
+
+@media (max-width: 1024px) {
+  .container {
+    padding: 2rem;
+  }
+
+  .title {
+    font-size: 2.8rem;
+  }
+
+  .destination-card {
+    height: 350px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1.5rem;
+  }
+
+  .title {
+    font-size: 2.2rem;
+    margin-bottom: 3rem;
+  }
+
+  .destinations-grid {
+    gap: 1.5rem;
+  }
+
+  .destination-card {
+    height: 300px;
+  }
+
+  .destination-info {
+    font-size: 1.2rem;
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.8rem;
+  }
+
+  .destination-card {
+    height: 250px;
+  }
+
+  .user-message {
+    padding: 2rem;
+  }
+}

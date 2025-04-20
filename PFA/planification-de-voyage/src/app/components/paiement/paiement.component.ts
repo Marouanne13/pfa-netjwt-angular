@@ -4,11 +4,13 @@ import { loadStripe } from '@stripe/stripe-js';
 import Swal from 'sweetalert2';
 import { NgIf, NgFor } from '@angular/common';
 import { PanierUserService } from '../../services/panier-user.service';
+import { FooterComponent } from "../../footer/footer.component";
+import { UserMessageComponent } from "../user-message/user-message.component";
 
 @Component({
   selector: 'app-paiement',
   standalone: true,
-  imports: [NgIf, NgFor],
+  imports: [NgIf, NgFor, FooterComponent, UserMessageComponent],
   templateUrl: './paiement.component.html',
   styleUrls: ['./paiement.component.css']
 })

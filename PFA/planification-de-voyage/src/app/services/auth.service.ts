@@ -89,11 +89,11 @@ export class AuthService {
     }
 
     let targetRoute = '/login'; // 🔹 Par défaut, retour à login
-    if (role === 'Gérer les voyages') targetRoute = '/gestion-voyages';
+    if (role === 'Gérer les voyages') targetRoute = '/destination-admin';
     else if (role === 'Gérer les activités') targetRoute = '/activites';
     else if (role === 'Gérer les restaurants') targetRoute = '/restaurant-list'; // 🔹 Changement ici
     else if (role === 'Gérer les clients') targetRoute = '/clients';
-    else if (role === 'Gérer les transports') targetRoute = '/transports'; // 🔹 Nouveau rôle ajouté
+    else if (role === 'Gérer les transports') targetRoute = '/admin-messages'; // 🔹 Nouveau rôle ajouté
 
     console.log('🚀 Redirection vers:', targetRoute);
     this.router.navigate([targetRoute]).then(success => {

@@ -2,6 +2,8 @@
 using PFA.Models;
 using PFA.Services;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace PFA.Controllers
@@ -76,10 +78,12 @@ namespace PFA.Controllers
         [HttpGet("user/{userId}")]
         public async Task<IActionResult> GetMessagesForUser(int userId)
         {
-            if (userId <= 0)
-                return BadRequest("ID utilisateur invalide.");
+            var userIdFromToken = User.FindFirst("sub")?.Value;
 
-            var messages = await _messageService.GetMessagesForUser(userId);
+            //if (userId <= 0)
+            //    return BadRequest("ID utilisateur invalide.");
+            Console.WriteLine("id from token: " +  userIdFromToken);
+            var messages = await _messageService.GetMessagesForUser(int.Parse(userIdFromToken));
             if (messages == null || messages.Count == 0)
                 return NotFound("Aucun message trouvé pour cet utilisateur.");
 

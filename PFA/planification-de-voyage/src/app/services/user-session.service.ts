@@ -15,9 +15,9 @@ export class UserSessionService {
     try {
       const payload = this.decodeToken(token);
       return {
-        email: payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"],
-        userId: +payload["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"],
-        role: payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]
+        email: payload["email"],
+        userId: +payload["sub"],
+        role: payload["role"]
       };
     } catch (error) {
       console.error("❌ Erreur lors de l'extraction des infos du token", error);
