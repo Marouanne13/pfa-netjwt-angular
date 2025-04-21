@@ -6,24 +6,31 @@ pipeline {
   }
 
   environment {
-    SONARQUBE_URL = 'http://localhost:9010'
+    SONARQUBE_NAME = 'sonarqube'
+    SONARQUBE_PORT = '9000'
+    SONARQUBE_URL = "http://${SONARQUBE_NAME}:${SONARQUBE_PORT}"
   }
 
   stages {
+    stage('Préparer réseau Docker') {
+      steps {
+        sh 'docker network create sonarnet || true'
+      }
+    }
 
     stage('Lancer SonarQube (Docker)') {
       steps {
-        echo '🚀 Lancement de SonarQube en local sur le port 9010...'
+        echo '🚀 Lancement de SonarQube dans sonarnet...'
         sh '''
           docker rm -f sonarqube || true
-          docker run -d --name sonarqube -p 9010:9000 sonarqube:lts
-          echo "⏳ Attente de SonarQube (max 90s)..."
+          docker run -d --name sonarqube --network sonarnet -p 9000:9000 sonarqube:lts
+          echo "⏳ Attente de SonarQube côté hôte (localhost)..."
           for i in {1..30}; do
-            if curl -s http://localhost:9010/api/system/health | grep -q '"status":"GREEN"'; then
-              echo "✅ SonarQube est prêt !"
+            if curl -s http://localhost:9000/api/system/health | grep -q '"status":"GREEN"'; then
+              echo "✅ SonarQube prêt côté hôte !"
               break
             fi
-            echo "⏳ SonarQube pas prêt... Retry $i"
+            echo "⏳ SonarQube pas prêt (hôte)... [$i]"
             sleep 3
           done
         '''
@@ -45,18 +52,18 @@ pipeline {
         script {
           withCredentials([string(credentialsId: 'sonarcloud-token', variable: 'SONAR_TOKEN')]) {
             sh """
-              docker run --rm --network host \
+              docker run --rm --network sonarnet \
                 -v \$(pwd):/app \
                 -w /app \
                 -e SONAR_TOKEN=\$SONAR_TOKEN \
                 mcr.microsoft.com/dotnet/sdk:8.0 sh -c '
-                  echo "⌛ Attente que SonarQube soit prêt (sur localhost:9010)..."
-                  for i in \$(seq 1 90); do
-                    if curl -s http://localhost:9010/api/system/health | grep -q "GREEN"; then
-                      echo "✅ SonarQube est prêt (GREEN)"
+                  echo "⌛ Attente de SonarQube dans le réseau Docker (sonarqube:9000)..."
+                  for i in \$(seq 1 60); do
+                    if curl -s http://sonarqube:9000/api/system/health | grep -q "GREEN"; then
+                      echo "✅ SonarQube est prêt (dans réseau Docker)"
                       break
                     fi
-                    echo "⏳ Retry \$i... toujours en attente"
+                    echo "⏳ Retry \$i... toujours en attente dans le conteneur"
                     sleep 2
                   done
 
@@ -80,14 +87,14 @@ pipeline {
 
   post {
     always {
-      echo '🧹 Nettoyage SonarQube...'
+      echo '🧹 Nettoyage conteneur SonarQube...'
       sh 'docker stop sonarqube || true'
     }
     success {
-      echo '✅ Pipeline réussie avec SonarQube local sur port 9010 !'
+      echo '✅ Pipeline SonarQube réussie avec réseau Docker !'
     }
     failure {
-      echo '❌ Pipeline échouée – vérifiez les étapes.'
+      echo '❌ Pipeline échouée – SonarQube ou .NET SDK inaccessible.'
     }
   }
 }
