@@ -6,15 +6,14 @@ pipeline {
     durabilityHint('PERFORMANCE_OPTIMIZED')
   }
 
-  stages {
-    stage('Checkout') {
-      steps {
-        // Remplacez par l'ID exact de votre credential SSH
-        git url:        'git@github.com:Marouanne13/pfa-netjwt-angular.git',
-            credentialsId: 'jenkins_rsa',
-            branch:        'main'
-      }
-    }
+stage('Checkout') {
+  steps {
+    git url: 'git@github.com:Marouanne13/pfa-netjwt-angular.git',
+        credentialsId: 'github-deploy-key',
+        branch: 'main'
+  }
+}
+
 
     stage('Restore') {
       steps {
