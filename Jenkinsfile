@@ -33,7 +33,7 @@ pipeline {
             # Démarrage de l’analyse SonarCloud
             dotnet sonarscanner begin \
               /k:"Marouanne13_pfa-netjwt-angular" \
-              /o:"Marouanne13" \
+              /o:"marouanne13" \
               /d:sonar.login=$SONAR_TOKEN
           '''
         }
