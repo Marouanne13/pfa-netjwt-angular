@@ -1,8 +1,12 @@
 pipeline {
   agent any
 
+  options {
+    durabilityHint('MAX_SURVIVABILITY')
+  }
+
   environment {
-    SONAR_TOKEN = 'admin' // Par défaut pour local SonarQube (ou ton token)
+    SONAR_TOKEN = 'admin' // identifiant par défaut si tu n’as pas défini d'utilisateur admin/token spécifique
     SONAR_HOST_URL = 'http://localhost:9000'
   }
 
@@ -14,8 +18,15 @@ pipeline {
         sh '''
           docker rm -f sonarqube || true
           docker run -d --name sonarqube -p 9000:9000 sonarqube:lts
-          echo "⏳ Attente que SonarQube soit prêt..."
-          sleep 30
+          echo "⏳ Attente de SonarQube (max 90s)..."
+          for i in {1..30}; do
+            if curl -s http://localhost:9000/api/system/health | grep -q '"status":"GREEN"'; then
+              echo "✅ SonarQube est prêt !"
+              break
+            fi
+            echo "⏳ SonarQube pas prêt, retry... [$i]"
+            sleep 3
+          done
         '''
       }
     }
@@ -44,13 +55,13 @@ pipeline {
     stage('SonarQube: Begin Analysis') {
       steps {
         withEnv(["PATH+DOTNET=${HOME}/.dotnet/tools"]) {
-          sh """
+          sh '''
             dotnet sonarscanner begin \
               /k:"pfa-netjwt-angular" \
               /d:sonar.login=$SONAR_TOKEN \
               /d:sonar.host.url=$SONAR_HOST_URL \
               /d:sonar.verbose=true
-          """
+          '''
         }
       }
     }
@@ -95,10 +106,10 @@ pipeline {
       sh 'docker stop sonarqube || true'
     }
     success {
-      echo '✅ Build et analyse SonarQube locales réussies !'
+      echo '✅ Pipeline complète réussie avec analyse SonarQube locale !'
     }
     failure {
-      echo '❌ Pipeline échouée – vérifiez les étapes ou les logs SonarQube.'
+      echo '❌ Pipeline échouée – vérifiez les logs de SonarQube ou dotnet.'
     }
   }
 }
