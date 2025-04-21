@@ -1,12 +1,12 @@
 pipeline {
   agent any
 
-  options {
-    durabilityHint('MAX_SURVIVABILITY')
+  environment {
+    SONARQUBE = 'http://sonarqube:9000'
   }
 
-  environment {
-    SONARQUBE_URL = 'http://sonarqube:9000'
+  options {
+    durabilityHint('MAX_SURVIVABILITY')
   }
 
   stages {
@@ -24,13 +24,13 @@ pipeline {
           docker rm -f sonarqube || true
           docker run -d --name sonarqube --network sonarnet -p 9000:9000 sonarqube:lts
 
-          echo "⏳ Attente que SonarQube soit prêt..."
+          echo "⏳ Attente de SonarQube côté hôte..."
           for i in {1..30}; do
             if curl -s http://localhost:9000/api/system/health | grep -q '"status":"GREEN"'; then
-              echo "✅ SonarQube est prêt !"
+              echo "✅ SonarQube est prêt côté hôte !"
               break
             fi
-            echo "⏳ Tentative $i : SonarQube pas prêt..."
+            echo "⏳ Attente côté hôte... [$i]"
             sleep 3
           done
         '''
@@ -59,21 +59,20 @@ pipeline {
                 -e SONAR_TOKEN=\$SONAR_TOKEN \
                 mcr.microsoft.com/dotnet/sdk:8.0 \
                 sh -c '
+                  echo "⌛ Attente de SonarQube dans le réseau Docker..."
+                  for i in \$(seq 1 60); do
+                    if curl -s http://sonarqube:9000/api/system/health | grep -q "GREEN"; then
+                      echo "✅ SonarQube est prêt dans le conteneur SDK !"
+                      break
+                    fi
+                    echo "⏳ Retry \$i... toujours en attente dans le conteneur"
+                    sleep 2
+                  done
+
                   dotnet tool install --global dotnet-sonarscanner &&
                   export PATH="\$PATH:/root/.dotnet/tools" &&
 
-                  # 💡 Attente active que SonarQube soit prêt AVANT de lancer l’analyse
-                  echo "⏳ Attente que SonarQube soit prêt (dans le conteneur SDK)..."
-                  for i in \$(seq 1 30); do
-                    if wget -q --spider ${SONARQUBE_URL}/api/system/health; then
-                      echo "✅ SonarQube OK (SDK)"
-                      break
-                    fi
-                    echo "⏳ Retry \$i... toujours en attente"
-                    sleep 3
-                  done
-
-                  dotnet-sonarscanner begin /k:"pfa-netjwt-angular" /d:sonar.login=\$SONAR_TOKEN /d:sonar.host.url="${SONARQUBE_URL}" &&
+                  dotnet-sonarscanner begin /k:"pfa-netjwt-angular" /d:sonar.login=\$SONAR_TOKEN /d:sonar.host.url="$SONARQUBE" &&
 
                   dotnet restore /app/PFA/PFA.sln &&
                   dotnet build /app/PFA/PFA.sln &&
@@ -90,14 +89,14 @@ pipeline {
 
   post {
     always {
-      echo '🧹 Nettoyage du conteneur SonarQube...'
+      echo '🧹 Nettoyage...'
       sh 'docker stop sonarqube || true'
     }
     success {
-      echo '✅ Pipeline complète réussie avec analyse SonarQube locale !'
+      echo '✅ Pipeline complète réussie avec analyse SonarQube dans conteneur !'
     }
     failure {
-      echo '❌ Pipeline échouée – SonarQube a peut-être démarré trop lentement. Vérifie les logs.'
+      echo '❌ Échec de la pipeline – vérifiez les logs (connexion, réseau, etc.).'
     }
   }
 }
