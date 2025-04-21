@@ -27,10 +27,10 @@ pipeline {
           echo "⏳ Attente que SonarQube soit prêt..."
           for i in {1..30}; do
             if curl -s http://localhost:9000/api/system/health | grep -q '"status":"GREEN"'; then
-              echo "✅ SonarQube prêt !"
+              echo "✅ SonarQube est prêt !"
               break
             fi
-            echo "⏳ Attente... [$i]"
+            echo "⏳ Tentative $i : SonarQube pas prêt..."
             sleep 3
           done
         '''
@@ -62,6 +62,17 @@ pipeline {
                   dotnet tool install --global dotnet-sonarscanner &&
                   export PATH="\$PATH:/root/.dotnet/tools" &&
 
+                  # 💡 Attente active que SonarQube soit prêt AVANT de lancer l’analyse
+                  echo "⏳ Attente que SonarQube soit prêt (dans le conteneur SDK)..."
+                  for i in \$(seq 1 30); do
+                    if wget -q --spider ${SONARQUBE_URL}/api/system/health; then
+                      echo "✅ SonarQube OK (SDK)"
+                      break
+                    fi
+                    echo "⏳ Retry \$i... toujours en attente"
+                    sleep 3
+                  done
+
                   dotnet-sonarscanner begin /k:"pfa-netjwt-angular" /d:sonar.login=\$SONAR_TOKEN /d:sonar.host.url="${SONARQUBE_URL}" &&
 
                   dotnet restore /app/PFA/PFA.sln &&
@@ -79,14 +90,14 @@ pipeline {
 
   post {
     always {
-      echo '🧹 Nettoyage...'
+      echo '🧹 Nettoyage du conteneur SonarQube...'
       sh 'docker stop sonarqube || true'
     }
     success {
-      echo '✅ Pipeline SonarQube complétée avec succès !'
+      echo '✅ Pipeline complète réussie avec analyse SonarQube locale !'
     }
     failure {
-      echo '❌ Échec de la pipeline – vérifiez les logs (connexion, réseau, etc.).'
+      echo '❌ Pipeline échouée – SonarQube a peut-être démarré trop lentement. Vérifie les logs.'
     }
   }
 }
