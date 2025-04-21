@@ -6,8 +6,8 @@ pipeline {
   }
 
   environment {
-    // Liaison du token "JenkinsCI" via l'ID "sonarcloud-token"
-    SONAR_TOKEN = credentials('sonarcloud-token')
+    // Tokens SonarCloud
+    SONAR_TOKEN = credentials('sonarcloud-token') // token brut (format texte)
   }
 
   stages {
@@ -87,7 +87,8 @@ pipeline {
           echo "🔍 Vérification du Quality Gate via l’API SonarCloud..."
 
           def projectKey = "Marouanne13_pfa-netjwt-angular"
-          def encodedToken = SONAR_TOKEN.bytes.encodeBase64().toString()
+          def encodedToken = "${SONAR_TOKEN}:".bytes.encodeBase64().toString()
+
           def response = httpRequest(
             url: "https://sonarcloud.io/api/qualitygates/project_status?projectKey=${projectKey}",
             customHeaders: [[name: 'Authorization', value: "Basic ${encodedToken}"]],
