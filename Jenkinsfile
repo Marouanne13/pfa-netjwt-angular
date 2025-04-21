@@ -6,36 +6,11 @@ pipeline {
   }
 
   environment {
-    SONARQUBE_NAME = 'sonarqube'
-    SONARQUBE_PORT = '9000'
-    SONARQUBE_URL = "http://${SONARQUBE_NAME}:${SONARQUBE_PORT}"
+    // Liaison du token "JenkinsCI" via l'ID "sonarcloud-token"
+    SONAR_TOKEN = credentials('sonarcloud-token')
   }
 
   stages {
-    stage('Préparer réseau Docker') {
-      steps {
-        sh 'docker network create sonarnet || true'
-      }
-    }
-
-    stage('Lancer SonarQube (Docker)') {
-      steps {
-        echo '🚀 Lancement de SonarQube dans sonarnet...'
-        sh '''
-          docker rm -f sonarqube || true
-          docker run -d --name sonarqube --network sonarnet -p 9000:9000 sonarqube:lts
-          echo "⏳ Attente de SonarQube côté hôte (localhost)..."
-          for i in {1..30}; do
-            if curl -s http://localhost:9000/api/system/health | grep -q '"status":"GREEN"'; then
-              echo "✅ SonarQube prêt côté hôte !"
-              break
-            fi
-            echo "⏳ SonarQube pas prêt (hôte)... [$i]"
-            sleep 3
-          done
-        '''
-      }
-    }
 
     stage('Checkout') {
       steps {
@@ -47,54 +22,66 @@ pipeline {
       }
     }
 
-    stage('Analyse SonarQube (via SDK .NET)') {
+    stage('Install SonarScanner') {
       steps {
-        script {
-          withCredentials([string(credentialsId: 'sonarcloud-token', variable: 'SONAR_TOKEN')]) {
-            sh """
-              docker run --rm --network sonarnet \
-                -v \$(pwd):/app \
-                -w /app \
-                -e SONAR_TOKEN=\$SONAR_TOKEN \
-                mcr.microsoft.com/dotnet/sdk:8.0 sh -c '
-                  echo "⌛ Attente de SonarQube dans le réseau Docker (sonarqube:9000)..."
-                  for i in \$(seq 1 60); do
-                    if curl -s http://sonarqube:9000/api/system/health | grep -q "GREEN"; then
-                      echo "✅ SonarQube est prêt (dans réseau Docker)"
-                      break
-                    fi
-                    echo "⏳ Retry \$i... toujours en attente dans le conteneur"
-                    sleep 2
-                  done
+        // Installation du scanner s'il n'est pas déjà installé
+        withEnv(["PATH+DOTNET=${HOME}/.dotnet/tools"]) {
+          sh '''
+            export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
+            dotnet tool install --global dotnet-sonarscanner --version 10.1.2 --verbosity quiet || true
+          '''
+        }
+      }
+    }
 
-                  dotnet tool install --global dotnet-sonarscanner
-                  export PATH="\$PATH:/root/.dotnet/tools"
+    stage('SonarCloud: Begin Analysis') {
+      steps {
+        withEnv(["PATH+DOTNET=${HOME}/.dotnet/tools"]) {
+          sh '''
+            dotnet sonarscanner begin \
+              /k:"Marouanne13_pfa-netjwt-angular" \
+              /o:"marouanne13" \
+              /d:sonar.host.url=https://sonarcloud.io \
+              /d:sonar.login=$SONAR_TOKEN \
+              /d:sonar.verbose=true
+          '''
+        }
+      }
+    }
 
-                  dotnet-sonarscanner begin /k:"pfa-netjwt-angular" /d:sonar.login=\$SONAR_TOKEN /d:sonar.host.url="${SONARQUBE_URL}"
+    stage('Restore') {
+      steps {
+        sh 'dotnet restore PFA.sln --verbosity minimal'
+      }
+    }
 
-                  dotnet restore /app/PFA/PFA.sln
-                  dotnet build /app/PFA/PFA.sln
-                  dotnet test /app/PFA/PFA.sln --no-build
+    stage('Build') {
+      steps {
+        sh 'dotnet build PFA.sln --no-restore --verbosity minimal'
+      }
+    }
 
-                  dotnet-sonarscanner end /d:sonar.login=\$SONAR_TOKEN
-                '
-            """
-          }
+    stage('Test') {
+      steps {
+        sh 'dotnet test PFA.sln --no-build --verbosity minimal'
+      }
+    }
+
+    stage('SonarCloud: End Analysis') {
+      steps {
+        withEnv(["PATH+DOTNET=${HOME}/.dotnet/tools"]) {
+          sh 'dotnet sonarscanner end /d:sonar.login=$SONAR_TOKEN'
         }
       }
     }
   }
 
   post {
-    always {
-      echo '🧹 Nettoyage conteneur SonarQube...'
-      sh 'docker stop sonarqube || true'
-    }
     success {
-      echo '✅ Pipeline SonarQube réussie avec réseau Docker !'
+      echo '🎉 Build, tests et analyse SonarCloud réussis !'
     }
     failure {
-      echo '❌ Pipeline échouée – SonarQube ou .NET SDK inaccessible.'
+      echo '❌ Échec de la pipeline – vérifiez les logs Jenkins et le Quality Gate SonarCloud.'
     }
   }
 }
