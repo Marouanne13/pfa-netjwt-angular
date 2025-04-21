@@ -71,13 +71,38 @@ pipeline {
         script {
           try {
             withEnv(["PATH+DOTNET=${HOME}/.dotnet/tools"]) {
-              // ❌ Ne PAS mettre sonar.verbose ici
               sh 'dotnet sonarscanner end /d:sonar.login=$SONAR_TOKEN'
             }
           } catch (err) {
             echo "❌ Erreur pendant l'étape 'SonarCloud: End Analysis'"
             echo "💥 Détail de l'erreur : ${err}"
             error("SonarScanner end failed.")
+          }
+        }
+      }
+    }
+
+    stage('Vérification Quality Gate') {
+      steps {
+        script {
+          echo "🔍 Vérification du Quality Gate via l’API SonarCloud..."
+
+          def projectKey = "Marouanne13_pfa-netjwt-angular"
+          def encodedToken = SONAR_TOKEN.bytes.encodeBase64().toString()
+          def response = httpRequest(
+            url: "https://sonarcloud.io/api/qualitygates/project_status?projectKey=${projectKey}",
+            customHeaders: [[name: 'Authorization', value: "Basic ${encodedToken}"]],
+            validResponseCodes: '200'
+          )
+
+          def json = readJSON text: response.content
+          def status = json.projectStatus.status
+          echo "📊 Quality Gate Status: ${status}"
+
+          if (status != 'OK') {
+            error("❌ Quality Gate échoué : ${status}")
+          } else {
+            echo "✅ Quality Gate validé !"
           }
         }
       }
