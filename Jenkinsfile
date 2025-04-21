@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   environment {
-    SONAR_TOKEN = 'admin' // Or the token you've configured in local SonarQube (default user is 'admin' if not changed)
+    SONAR_TOKEN = 'squ_1ff12c102b3b9c50acdd91aa28d76ba11515b23c' // Or the token you've configured in local SonarQube (default user is 'admin' if not changed)
     SONAR_HOST_URL = 'http://localhost:9000'
   }
 
