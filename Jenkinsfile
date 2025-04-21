@@ -6,7 +6,7 @@ pipeline {
   }
 
   environment {
-    // injecte votre token SonarCloud
+    // Liaison du token "JenkinsCI" via l'ID "sonarcloud-token"
     SONAR_TOKEN = credentials('sonarcloud-token')
   }
 
@@ -15,27 +15,35 @@ pipeline {
     stage('Checkout') {
       steps {
         git(
-          url:           'git@github.com:Marouanne13/pfa-netjwt-angular.git',
+          url: 'git@github.com:Marouanne13/pfa-netjwt-angular.git',
           credentialsId: 'jenkins-ssh-deploy',
-          branch:        'main'
+          branch: 'main'
         )
       }
     }
 
-    stage('SonarCloud: begin analysis') {
+    stage('Install SonarScanner') {
       steps {
-        // On ajoute ~/.dotnet/tools au PATH pour que 'dotnet tool' soit visible
+        // Installation du scanner s'il n'est pas déjà installé
         withEnv(["PATH+DOTNET=${HOME}/.dotnet/tools"]) {
           sh '''
-            # Installe le scanner (ou le met à jour) si besoin
-export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
-           dotnet tool install --global dotnet-sonarscanner --version 10.1.2 --verbosity quiet || true
+            export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
+            dotnet tool install --global dotnet-sonarscanner --version 10.1.2 --verbosity quiet || true
+          '''
+        }
+      }
+    }
 
-  dotnet sonarscanner begin \
-    /k:"Marouanne13_pfa-netjwt-angular" \
-    /o:"marouanne13" \
-    /d:sonar.login=$SONAR_TOKEN \
-    /d:sonar.verbose=true
+    stage('SonarCloud: Begin Analysis') {
+      steps {
+        withEnv(["PATH+DOTNET=${HOME}/.dotnet/tools"]) {
+          sh '''
+            dotnet sonarscanner begin \
+              /k:"Marouanne13_pfa-netjwt-angular" \
+              /o:"marouanne13" \
+              /d:sonar.host.url=https://sonarcloud.io \
+              /d:sonar.login=$SONAR_TOKEN \
+              /d:sonar.verbose=true
           '''
         }
       }
@@ -59,9 +67,8 @@ export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
       }
     }
 
-    stage('SonarCloud: end analysis') {
+    stage('SonarCloud: End Analysis') {
       steps {
-        // Même PATH pour que dotnet-sonarscanner reste accessible
         withEnv(["PATH+DOTNET=${HOME}/.dotnet/tools"]) {
           sh 'dotnet sonarscanner end /d:sonar.login=$SONAR_TOKEN'
         }
