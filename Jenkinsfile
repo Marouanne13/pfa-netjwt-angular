@@ -24,7 +24,6 @@ pipeline {
 
     stage('Install SonarScanner') {
       steps {
-        // Installation du scanner s'il n'est pas déjà installé
         withEnv(["PATH+DOTNET=${HOME}/.dotnet/tools"]) {
           sh '''
             export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
@@ -69,8 +68,16 @@ pipeline {
 
     stage('SonarCloud: End Analysis') {
       steps {
-        withEnv(["PATH+DOTNET=${HOME}/.dotnet/tools"]) {
-          sh 'dotnet sonarscanner end /d:sonar.login=$SONAR_TOKEN'
+        script {
+          try {
+            withEnv(["PATH+DOTNET=${HOME}/.dotnet/tools"]) {
+              sh 'dotnet sonarscanner end /d:sonar.login=$SONAR_TOKEN /d:sonar.verbose=true'
+            }
+          } catch (err) {
+            echo "❌ Erreur pendant l'étape 'SonarCloud: End Analysis'"
+            echo "💥 Détail de l'erreur : ${err}"
+            error("SonarScanner end failed.")
+          }
         }
       }
     }
