@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   options {
-    durabilityHint('PERFORMANCE_OPTIMIZED')
+    durabilityHint('MAX_SURVIVABILITY')
   }
 
   environment {
