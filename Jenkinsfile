@@ -50,14 +50,24 @@ pipeline {
                 -w /app \
                 -e SONAR_TOKEN=\$SONAR_TOKEN \
                 mcr.microsoft.com/dotnet/sdk:8.0 sh -c '
-                  dotnet tool install --global dotnet-sonarscanner &&
-                  export PATH="\$PATH:/root/.dotnet/tools" &&
+                  echo "⌛ Attente que SonarQube soit prêt (sur localhost:9010)..."
+                  for i in \$(seq 1 90); do
+                    if curl -s http://localhost:9010/api/system/health | grep -q "GREEN"; then
+                      echo "✅ SonarQube est prêt (GREEN)"
+                      break
+                    fi
+                    echo "⏳ Retry \$i... toujours en attente"
+                    sleep 2
+                  done
 
-                  dotnet-sonarscanner begin /k:"pfa-netjwt-angular" /d:sonar.login=\$SONAR_TOKEN /d:sonar.host.url="${SONARQUBE_URL}" &&
+                  dotnet tool install --global dotnet-sonarscanner
+                  export PATH="\$PATH:/root/.dotnet/tools"
 
-                  dotnet restore /app/PFA/PFA.sln &&
-                  dotnet build /app/PFA/PFA.sln &&
-                  dotnet test /app/PFA/PFA.sln --no-build &&
+                  dotnet-sonarscanner begin /k:"pfa-netjwt-angular" /d:sonar.login=\$SONAR_TOKEN /d:sonar.host.url="${SONARQUBE_URL}"
+
+                  dotnet restore /app/PFA/PFA.sln
+                  dotnet build /app/PFA/PFA.sln
+                  dotnet test /app/PFA/PFA.sln --no-build
 
                   dotnet-sonarscanner end /d:sonar.login=\$SONAR_TOKEN
                 '
