@@ -71,7 +71,8 @@ pipeline {
         script {
           try {
             withEnv(["PATH+DOTNET=${HOME}/.dotnet/tools"]) {
-              sh 'dotnet sonarscanner end /d:sonar.login=$SONAR_TOKEN /d:sonar.verbose=true'
+              // ❌ Ne PAS mettre sonar.verbose ici
+              sh 'dotnet sonarscanner end /d:sonar.login=$SONAR_TOKEN'
             }
           } catch (err) {
             echo "❌ Erreur pendant l'étape 'SonarCloud: End Analysis'"
