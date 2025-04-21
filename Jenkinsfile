@@ -43,7 +43,7 @@ pipeline {
     stage('Analyse SonarQube (via container SDK)') {
       steps {
         script {
-          withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN')]) {
+          withCredentials([string(credentialsId: 'sonarcloud-token', variable: 'SONAR_TOKEN')]) {
             sh """
               docker run --rm \
                 -v \$(pwd):/app \
