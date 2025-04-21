@@ -1,13 +1,12 @@
 pipeline {
   agent any
 
-  // limite la verbosité du wrapper pour éviter les timeouts
   options {
     durabilityHint('PERFORMANCE_OPTIMIZED')
   }
 
-  // injecte votre token SonarCloud depuis les Credentials Jenkins
   environment {
+    // injecte votre token SonarCloud
     SONAR_TOKEN = credentials('sonarcloud-token')
   }
 
@@ -15,22 +14,23 @@ pipeline {
 
     stage('Checkout') {
       steps {
-        // clone via SSH avec la Deploy Key enregistrée sous l'ID 'jenkins-ssh-deploy'
-        git url:           'git@github.com:Marouanne13/pfa-netjwt-angular.git',
-            credentialsId: 'jenkins-ssh-deploy',
-            branch:        'main'
+        git(
+          url:           'git@github.com:Marouanne13/pfa-netjwt-angular.git',
+          credentialsId: 'jenkins-ssh-deploy',
+          branch:        'main'
+        )
       }
     }
 
     stage('SonarCloud: begin analysis') {
       steps {
-        withSonarQubeEnv('sonarcloud') {
-          // 1) S’assurer que le dossier des .NET global tools est dans le PATH
-          sh 'export PATH="$HOME/.dotnet/tools:$PATH"'
-          // 2) Installer (silencieusement) le scanner si besoin
-          sh 'dotnet tool install --global dotnet-sonarscanner --version 5.12.0 --verbosity quiet || true'
-          // 3) Lancer l’analyse SonarCloud
+        // On ajoute ~/.dotnet/tools au PATH pour que 'dotnet tool' soit visible
+        withEnv(["PATH+DOTNET=${HOME}/.dotnet/tools"]) {
           sh '''
+            # Installe le scanner (ou le met à jour) si besoin
+            dotnet tool install --global dotnet-sonarscanner --version 10.1.2 --verbosity quiet || true
+
+            # Démarrage de l’analyse SonarCloud
             dotnet sonarscanner begin \
               /k:"Marouanne13_pfa-netjwt-angular" \
               /o:"Marouanne13" \
@@ -60,20 +60,20 @@ pipeline {
 
     stage('SonarCloud: end analysis') {
       steps {
-        // on remet le PATH pour être sûrs
-        sh 'export PATH="$HOME/.dotnet/tools:$PATH"'
-        // on clôt l’analyse et on pousse les résultats vers SonarCloud
-        sh 'dotnet sonarscanner end /d:sonar.login=$SONAR_TOKEN'
+        // Même PATH pour que dotnet-sonarscanner reste accessible
+        withEnv(["PATH+DOTNET=${HOME}/.dotnet/tools"]) {
+          sh 'dotnet sonarscanner end /d:sonar.login=$SONAR_TOKEN'
+        }
       }
     }
   }
 
   post {
     success {
-      echo '🎉 Build, tests et analyse SonarCloud réussis !'
+      echo '🎉 Build, tests et analyse SonarCloud réussis !'
     }
     failure {
-      echo '❌ Échec de la pipeline, vérifiez les logs Jenkins et le Quality Gate SonarCloud.'
+      echo '❌ Échec de la pipeline – vérifiez les logs Jenkins et le Quality Gate SonarCloud.'
     }
   }
 }
