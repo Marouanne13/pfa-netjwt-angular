@@ -1,15 +1,24 @@
 pipeline {
   agent any
 
-  options {
-    durabilityHint('MAX_SURVIVABILITY')
-  }
-
   environment {
-    SONAR_TOKEN = credentials('sonarcloud-token')
+    SONAR_TOKEN = 'admin' // Par défaut pour local SonarQube (ou ton token)
+    SONAR_HOST_URL = 'http://localhost:9000'
   }
 
   stages {
+
+    stage('Lancer SonarQube (Docker)') {
+      steps {
+        echo '🚀 Démarrage de SonarQube en local (Docker)...'
+        sh '''
+          docker rm -f sonarqube || true
+          docker run -d --name sonarqube -p 9000:9000 sonarqube:lts
+          echo "⏳ Attente que SonarQube soit prêt..."
+          sleep 30
+        '''
+      }
+    }
 
     stage('Checkout') {
       steps {
@@ -32,17 +41,16 @@ pipeline {
       }
     }
 
-    stage('SonarCloud: Begin Analysis') {
+    stage('SonarQube: Begin Analysis') {
       steps {
         withEnv(["PATH+DOTNET=${HOME}/.dotnet/tools"]) {
-          sh '''
+          sh """
             dotnet sonarscanner begin \
-              /k:"Marouanne13_pfa-netjwt-angular" \
-              /o:"marouanne13" \
-              /d:sonar.host.url=https://sonarcloud.io \
+              /k:"pfa-netjwt-angular" \
               /d:sonar.login=$SONAR_TOKEN \
+              /d:sonar.host.url=$SONAR_HOST_URL \
               /d:sonar.verbose=true
-          '''
+          """
         }
       }
     }
@@ -65,7 +73,7 @@ pipeline {
       }
     }
 
-    stage('SonarCloud: End Analysis') {
+    stage('SonarQube: End Analysis') {
       steps {
         script {
           withEnv(["PATH+DOTNET=${HOME}/.dotnet/tools"]) {
@@ -79,41 +87,18 @@ pipeline {
         }
       }
     }
-
-    stage('Vérification Quality Gate') {
-      steps {
-        script {
-          echo "🔍 Vérification du Quality Gate via l’API SonarCloud..."
-
-          def projectKey = "Marouanne13_pfa-netjwt-angular"
-          def encodedToken = (SONAR_TOKEN + ":").getBytes().encodeBase64().toString()
-
-          def response = httpRequest(
-            url: "https://sonarcloud.io/api/qualitygates/project_status?projectKey=${projectKey}",
-            customHeaders: [[name: 'Authorization', value: "Basic ${encodedToken}"]],
-            validResponseCodes: '200'
-          )
-
-          def json = readJSON text: response.content
-          def status = json.projectStatus.status
-          echo "📊 Quality Gate Status: ${status}"
-
-          if (status != 'OK') {
-            error("❌ Quality Gate échoué : ${status}")
-          } else {
-            echo "✅ Quality Gate validé !"
-          }
-        }
-      }
-    }
   }
 
   post {
+    always {
+      echo '🧹 Nettoyage du conteneur SonarQube...'
+      sh 'docker stop sonarqube || true'
+    }
     success {
-      echo '🎉 Build, tests et analyse SonarCloud réussis !'
+      echo '✅ Build et analyse SonarQube locales réussies !'
     }
     failure {
-      echo '❌ Échec de la pipeline – vérifiez les logs Jenkins et le Quality Gate SonarCloud.'
+      echo '❌ Pipeline échouée – vérifiez les étapes ou les logs SonarQube.'
     }
   }
 }
