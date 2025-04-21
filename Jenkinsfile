@@ -87,7 +87,8 @@ pipeline {
           echo "🔍 Vérification du Quality Gate via l’API SonarCloud..."
 
           def projectKey = "Marouanne13_pfa-netjwt-angular"
-          def encodedToken = "${SONAR_TOKEN}:".bytes.encodeBase64().toString()
+          def encodedToken = (SONAR_TOKEN + ":").getBytes().encodeBase64().toString()
+
 
           def response = httpRequest(
             url: "https://sonarcloud.io/api/qualitygates/project_status?projectKey=${projectKey}",
