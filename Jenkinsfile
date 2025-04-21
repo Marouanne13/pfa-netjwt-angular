@@ -1,13 +1,9 @@
 pipeline {
   agent any
 
-  options {
-    durabilityHint('MAX_SURVIVABILITY')
-  }
-
   environment {
-    // Liaison du token "JenkinsCI" via l'ID "sonarcloud-token"
-    SONAR_TOKEN = credentials('sonarcloud-token')
+    SONAR_TOKEN = 'admin' // Or the token you've configured in local SonarQube (default user is 'admin' if not changed)
+    SONAR_HOST_URL = 'http://localhost:9000'
   }
 
   stages {
@@ -24,25 +20,23 @@ pipeline {
 
     stage('Install SonarScanner') {
       steps {
-        // Installation du scanner s'il n'est pas déjà installé
         withEnv(["PATH+DOTNET=${HOME}/.dotnet/tools"]) {
           sh '''
             export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
-            dotnet tool install --global dotnet-sonarscanner --version 10.1.2 --verbosity quiet || true
+            dotnet tool install --global dotnet-sonarscanner --version 10.1.2 || true
           '''
         }
       }
     }
 
-    stage('SonarCloud: Begin Analysis') {
+    stage('SonarQube: Begin Analysis') {
       steps {
         withEnv(["PATH+DOTNET=${HOME}/.dotnet/tools"]) {
           sh '''
             dotnet sonarscanner begin \
-              /k:"Marouanne13_pfa-netjwt-angular" \
-              /o:"marouanne13" \
-              /d:sonar.host.url=https://sonarcloud.io \
+              /k:"pfa-netjwt-angular" \
               /d:sonar.login=$SONAR_TOKEN \
+              /d:sonar.host.url=$SONAR_HOST_URL \
               /d:sonar.verbose=true
           '''
         }
@@ -67,7 +61,7 @@ pipeline {
       }
     }
 
-    stage('SonarCloud: End Analysis') {
+    stage('SonarQube: End Analysis') {
       steps {
         withEnv(["PATH+DOTNET=${HOME}/.dotnet/tools"]) {
           sh 'dotnet sonarscanner end /d:sonar.login=$SONAR_TOKEN'
@@ -77,11 +71,14 @@ pipeline {
   }
 
   post {
+    always {
+      echo '📋 Fin de pipeline (succès ou échec).'
+    }
     success {
-      echo '🎉 Build, tests et analyse SonarCloud réussis !'
+      echo '✅ Build et analyse SonarQube réussis.'
     }
     failure {
-      echo '❌ Échec de la pipeline – vérifiez les logs Jenkins et le Quality Gate SonarCloud.'
+      echo '❌ La pipeline a échoué. Vérifiez les logs.'
     }
   }
 }
