@@ -28,6 +28,7 @@ pipeline {
         withEnv(["PATH+DOTNET=${HOME}/.dotnet/tools"]) {
           sh '''
             # Installe le scanner (ou le met à jour) si besoin
+export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
             dotnet tool install --global dotnet-sonarscanner --version 10.1.2 --verbosity quiet || true
 
             # Démarrage de l’analyse SonarCloud
