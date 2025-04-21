@@ -17,7 +17,7 @@ pipeline {
       steps {
         // clone via SSH avec la Deploy Key enregistrée sous l'ID github-deploy-key
         git url:      'git@github.com:Marouanne13/pfa-netjwt-angular.git',
-            credentialsId: 'github-deploy-key',
+            credentialsId: 'jenkins-ssh-deploy',
             branch:       'main'
       }
     }
