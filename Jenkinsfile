@@ -1,36 +1,29 @@
 pipeline {
   agent any
 
-  environment {
-    SONARQUBE = 'http://sonarqube:9000'
-  }
-
   options {
     durabilityHint('MAX_SURVIVABILITY')
   }
 
-  stages {
+  environment {
+    SONARQUBE_URL = 'http://localhost:9010'
+  }
 
-    stage('Préparer le réseau Docker') {
-      steps {
-        sh 'docker network create sonarnet || true'
-      }
-    }
+  stages {
 
     stage('Lancer SonarQube (Docker)') {
       steps {
-        echo '🚀 Démarrage de SonarQube dans le réseau Docker personnalisé...'
+        echo '🚀 Lancement de SonarQube en local sur le port 9010...'
         sh '''
           docker rm -f sonarqube || true
-          docker run -d --name sonarqube --network sonarnet -p 9000:9000 sonarqube:lts
-
-          echo "⏳ Attente de SonarQube côté hôte..."
+          docker run -d --name sonarqube -p 9010:9000 sonarqube:lts
+          echo "⏳ Attente de SonarQube (max 90s)..."
           for i in {1..30}; do
-            if curl -s http://localhost:9000/api/system/health | grep -q '"status":"GREEN"'; then
-              echo "✅ SonarQube est prêt côté hôte !"
+            if curl -s http://localhost:9010/api/system/health | grep -q '"status":"GREEN"'; then
+              echo "✅ SonarQube est prêt !"
               break
             fi
-            echo "⏳ Attente côté hôte... [$i]"
+            echo "⏳ SonarQube pas prêt... Retry $i"
             sleep 3
           done
         '''
@@ -52,27 +45,15 @@ pipeline {
         script {
           withCredentials([string(credentialsId: 'sonarcloud-token', variable: 'SONAR_TOKEN')]) {
             sh """
-              docker run --rm \
-                --network sonarnet \
+              docker run --rm --network host \
                 -v \$(pwd):/app \
                 -w /app \
                 -e SONAR_TOKEN=\$SONAR_TOKEN \
-                mcr.microsoft.com/dotnet/sdk:8.0 \
-                sh -c '
-                  echo "⌛ Attente de SonarQube dans le réseau Docker..."
-                  for i in \$(seq 1 60); do
-                    if curl -s http://sonarqube:9000/api/system/health | grep -q "GREEN"; then
-                      echo "✅ SonarQube est prêt dans le conteneur SDK !"
-                      break
-                    fi
-                    echo "⏳ Retry \$i... toujours en attente dans le conteneur"
-                    sleep 2
-                  done
-
+                mcr.microsoft.com/dotnet/sdk:8.0 sh -c '
                   dotnet tool install --global dotnet-sonarscanner &&
                   export PATH="\$PATH:/root/.dotnet/tools" &&
 
-                  dotnet-sonarscanner begin /k:"pfa-netjwt-angular" /d:sonar.login=\$SONAR_TOKEN /d:sonar.host.url="$SONARQUBE" &&
+                  dotnet-sonarscanner begin /k:"pfa-netjwt-angular" /d:sonar.login=\$SONAR_TOKEN /d:sonar.host.url="${SONARQUBE_URL}" &&
 
                   dotnet restore /app/PFA/PFA.sln &&
                   dotnet build /app/PFA/PFA.sln &&
@@ -89,14 +70,14 @@ pipeline {
 
   post {
     always {
-      echo '🧹 Nettoyage...'
+      echo '🧹 Nettoyage SonarQube...'
       sh 'docker stop sonarqube || true'
     }
     success {
-      echo '✅ Pipeline complète réussie avec analyse SonarQube dans conteneur !'
+      echo '✅ Pipeline réussie avec SonarQube local sur port 9010 !'
     }
     failure {
-      echo '❌ Échec de la pipeline – vérifiez les logs (connexion, réseau, etc.).'
+      echo '❌ Pipeline échouée – vérifiez les étapes.'
     }
   }
 }
