@@ -6,24 +6,31 @@ pipeline {
   }
 
   environment {
-    SONARQUBE = 'http://172.17.0.1:9000'
+    SONARQUBE_URL = 'http://sonarqube:9000'
   }
 
   stages {
 
+    stage('Préparer le réseau Docker') {
+      steps {
+        sh 'docker network create sonarnet || true'
+      }
+    }
+
     stage('Lancer SonarQube (Docker)') {
       steps {
-        echo '🚀 Démarrage de SonarQube en local (Docker)...'
+        echo '🚀 Démarrage de SonarQube dans le réseau Docker personnalisé...'
         sh '''
           docker rm -f sonarqube || true
-          docker run -d --name sonarqube -p 9000:9000 sonarqube:lts
-          echo "⏳ Attente de SonarQube (max 90s)..."
+          docker run -d --name sonarqube --network sonarnet -p 9000:9000 sonarqube:lts
+
+          echo "⏳ Attente que SonarQube soit prêt..."
           for i in {1..30}; do
             if curl -s http://localhost:9000/api/system/health | grep -q '"status":"GREEN"'; then
-              echo "✅ SonarQube est prêt !"
+              echo "✅ SonarQube prêt !"
               break
             fi
-            echo "⏳ SonarQube pas prêt, retry... [$i]"
+            echo "⏳ Attente... [$i]"
             sleep 3
           done
         '''
@@ -40,12 +47,13 @@ pipeline {
       }
     }
 
-    stage('Analyse SonarQube (via container SDK)') {
+    stage('Analyse SonarQube (via SDK .NET)') {
       steps {
         script {
           withCredentials([string(credentialsId: 'sonarcloud-token', variable: 'SONAR_TOKEN')]) {
             sh """
               docker run --rm \
+                --network sonarnet \
                 -v \$(pwd):/app \
                 -w /app \
                 -e SONAR_TOKEN=\$SONAR_TOKEN \
@@ -54,7 +62,7 @@ pipeline {
                   dotnet tool install --global dotnet-sonarscanner &&
                   export PATH="\$PATH:/root/.dotnet/tools" &&
 
-                  dotnet-sonarscanner begin /k:"pfa-netjwt-angular" /d:sonar.login=\$SONAR_TOKEN /d:sonar.host.url="${SONARQUBE}" &&
+                  dotnet-sonarscanner begin /k:"pfa-netjwt-angular" /d:sonar.login=\$SONAR_TOKEN /d:sonar.host.url="${SONARQUBE_URL}" &&
 
                   dotnet restore /app/PFA/PFA.sln &&
                   dotnet build /app/PFA/PFA.sln &&
@@ -71,14 +79,14 @@ pipeline {
 
   post {
     always {
-      echo '🧹 Nettoyage du conteneur SonarQube...'
+      echo '🧹 Nettoyage...'
       sh 'docker stop sonarqube || true'
     }
     success {
-      echo '✅ Pipeline complète réussie avec analyse SonarQube !'
+      echo '✅ Pipeline SonarQube complétée avec succès !'
     }
     failure {
-      echo '❌ Pipeline échouée – vérifiez les logs du conteneur dotnet ou SonarQube.'
+      echo '❌ Échec de la pipeline – vérifiez les logs (connexion, réseau, etc.).'
     }
   }
 }
