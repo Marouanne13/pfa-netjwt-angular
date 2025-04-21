@@ -15,20 +15,21 @@ pipeline {
 
     stage('Checkout') {
       steps {
-        // clone via SSH avec la Deploy Key enregistrée sous l'ID github-deploy-key
-        git url:      'git@github.com:Marouanne13/pfa-netjwt-angular.git',
+        // clone via SSH avec la Deploy Key enregistrée sous l'ID 'jenkins-ssh-deploy'
+        git url:           'git@github.com:Marouanne13/pfa-netjwt-angular.git',
             credentialsId: 'jenkins-ssh-deploy',
-            branch:       'main'
+            branch:        'main'
       }
     }
 
     stage('SonarCloud: begin analysis') {
       steps {
-        // withSonarQubeEnv('sonarcloud') doit correspondre à l'instance SonarQube nommée "sonarcloud"
         withSonarQubeEnv('sonarcloud') {
-          // installe le scanner si besoin (quiet)
+          // 1) S’assurer que le dossier des .NET global tools est dans le PATH
+          sh 'export PATH="$HOME/.dotnet/tools:$PATH"'
+          // 2) Installer (silencieusement) le scanner si besoin
           sh 'dotnet tool install --global dotnet-sonarscanner --version 5.12.0 --verbosity quiet || true'
-          // démarre l’analyse
+          // 3) Lancer l’analyse SonarCloud
           sh '''
             dotnet sonarscanner begin \
               /k:"Marouanne13_pfa-netjwt-angular" \
@@ -59,7 +60,9 @@ pipeline {
 
     stage('SonarCloud: end analysis') {
       steps {
-        // clôt l’analyse et envoie les résultats à SonarCloud
+        // on remet le PATH pour être sûrs
+        sh 'export PATH="$HOME/.dotnet/tools:$PATH"'
+        // on clôt l’analyse et on pousse les résultats vers SonarCloud
         sh 'dotnet sonarscanner end /d:sonar.login=$SONAR_TOKEN'
       }
     }
