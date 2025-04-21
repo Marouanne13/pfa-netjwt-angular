@@ -6,8 +6,7 @@ pipeline {
   }
 
   environment {
-    SONAR_TOKEN = 'admin' // identifiant par défaut si tu n’as pas défini d'utilisateur admin/token spécifique
-    SONAR_HOST_URL = 'http://localhost:9000'
+    SONARQUBE = 'http://172.17.0.1:9000'
   }
 
   stages {
@@ -41,59 +40,29 @@ pipeline {
       }
     }
 
-    stage('Install SonarScanner') {
-      steps {
-        withEnv(["PATH+DOTNET=${HOME}/.dotnet/tools"]) {
-          sh '''
-            export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
-            dotnet tool install --global dotnet-sonarscanner --version 10.1.2 --verbosity quiet || true
-          '''
-        }
-      }
-    }
-
-    stage('SonarQube: Begin Analysis') {
-      steps {
-        withEnv(["PATH+DOTNET=${HOME}/.dotnet/tools"]) {
-          sh '''
-            dotnet sonarscanner begin \
-              /k:"pfa-netjwt-angular" \
-              /d:sonar.login=$SONAR_TOKEN \
-              /d:sonar.host.url=$SONAR_HOST_URL \
-              /d:sonar.verbose=true
-          '''
-        }
-      }
-    }
-
-    stage('Restore') {
-      steps {
-        sh 'dotnet restore PFA.sln --verbosity minimal'
-      }
-    }
-
-    stage('Build') {
-      steps {
-        sh 'dotnet build PFA.sln --no-restore --verbosity minimal'
-      }
-    }
-
-    stage('Test') {
-      steps {
-        sh 'dotnet test PFA.sln --no-build --verbosity minimal'
-      }
-    }
-
-    stage('SonarQube: End Analysis') {
+    stage('Analyse SonarQube (via container SDK)') {
       steps {
         script {
-          withEnv(["PATH+DOTNET=${HOME}/.dotnet/tools"]) {
-            def result = sh(script: 'dotnet sonarscanner end /d:sonar.login=$SONAR_TOKEN', returnStatus: true)
-            if (result != 0) {
-              echo "⚠️ SonarScanner end a retourné ${result}, mais on continue la pipeline."
-            } else {
-              echo "✅ SonarScanner end terminé avec succès."
-            }
+          withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN')]) {
+            sh """
+              docker run --rm \
+                -v \$(pwd):/app \
+                -w /app \
+                -e SONAR_TOKEN=\$SONAR_TOKEN \
+                mcr.microsoft.com/dotnet/sdk:8.0 \
+                sh -c '
+                  dotnet tool install --global dotnet-sonarscanner &&
+                  export PATH="\$PATH:/root/.dotnet/tools" &&
+
+                  dotnet-sonarscanner begin /k:"pfa-netjwt-angular" /d:sonar.login=\$SONAR_TOKEN /d:sonar.host.url="${SONARQUBE}" &&
+
+                  dotnet restore /app/PFA/PFA.sln &&
+                  dotnet build /app/PFA/PFA.sln &&
+                  dotnet test /app/PFA/PFA.sln --no-build &&
+
+                  dotnet-sonarscanner end /d:sonar.login=\$SONAR_TOKEN
+                '
+            """
           }
         }
       }
@@ -106,10 +75,10 @@ pipeline {
       sh 'docker stop sonarqube || true'
     }
     success {
-      echo '✅ Pipeline complète réussie avec analyse SonarQube locale !'
+      echo '✅ Pipeline complète réussie avec analyse SonarQube !'
     }
     failure {
-      echo '❌ Pipeline échouée – vérifiez les logs de SonarQube ou dotnet.'
+      echo '❌ Pipeline échouée – vérifiez les logs du conteneur dotnet ou SonarQube.'
     }
   }
 }
