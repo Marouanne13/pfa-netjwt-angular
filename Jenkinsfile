@@ -6,8 +6,7 @@ pipeline {
   }
 
   environment {
-    // Tokens SonarCloud
-    SONAR_TOKEN = credentials('sonarcloud-token') // token brut (format texte)
+    SONAR_TOKEN = credentials('sonarcloud-token')
   }
 
   stages {
@@ -88,7 +87,6 @@ pipeline {
 
           def projectKey = "Marouanne13_pfa-netjwt-angular"
           def encodedToken = (SONAR_TOKEN + ":").getBytes().encodeBase64().toString()
-
 
           def response = httpRequest(
             url: "https://sonarcloud.io/api/qualitygates/project_status?projectKey=${projectKey}",
