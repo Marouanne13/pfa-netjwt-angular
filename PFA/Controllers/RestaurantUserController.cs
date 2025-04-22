@@ -1,46 +1,39 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using System.Linq;
 using PFA.Data;
 using PFA.Models;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace PFA.Controllers
+[Route("api/[controller]")]
+[ApiController]
+// ❌ Retirer l'attribut [Authorize] pour permettre l'accès sans authentification
+public class RestaurantsUserController : ControllerBase
 {
-    [Route("api/restaurantsUser")]
-    [ApiController]
-    public class RestaurantUserController : ControllerBase
+    private readonly AppDbContext _context;
+
+    public RestaurantsUserController(AppDbContext context)
     {
-        private readonly AppDbContext _context;
+        _context = context;
+    }
 
-        public RestaurantUserController(AppDbContext context)
-        {
-            _context = context;
-        }
+    // GET: api/restaurantsUser
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<Restaurant>>> GetRestaurants()
+    {
+        var restaurants = await _context.Restaurant.ToListAsync();
+        return Ok(restaurants);
+    }
 
-        // ✅ 📌 Récupérer les restaurants en fonction de la session de l'utilisateur
-        [HttpGet("par-destination")]
-        public async Task<IActionResult> GetRestaurantsParDestination()
-        {
-            // Récupérer l'ID de la destination depuis la session (simulation d'une vraie session)
-            int? destinationId = 1; // ⚠️ Remplace par la vraie récupération de session
-
-            if (destinationId == null)
-            {
-                return BadRequest("Aucune destination trouvée en session.");
-            }
-
-            var restaurants = await _context.Restaurant
-                .Where(r => r.Adresse.Contains("Casablanca")) // Filtrage basé sur Casablanca
-                .ToListAsync();
-
-            if (!restaurants.Any())
-            {
-                return NotFound($"Aucun restaurant trouvé pour la destination ID {destinationId}");
-            }
-
-            return Ok(restaurants);
-        }
+    // Optionnel : recherche simple
+    [HttpGet("search")]
+    public async Task<ActionResult<IEnumerable<Restaurant>>> SearchRestaurants([FromQuery] string query)
+    {
+        var results = await _context.Restaurant
+            .Where(r => r.Nom.Contains(query) || r.Adresse.Contains(query))
+            .ToListAsync();
+        return Ok(results);
     }
 }

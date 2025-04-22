@@ -2,13 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { loadStripe } from '@stripe/stripe-js';
 import Swal from 'sweetalert2';
-import { NgIf, NgFor } from '@angular/common';
+import { NgIf, NgFor, CommonModule } from '@angular/common';
 import { PanierUserService } from '../../services/panier-user.service';
 
 @Component({
   selector: 'app-paiement',
   standalone: true,
-  imports: [NgIf, NgFor],
+  imports: [CommonModule],
   templateUrl: './paiement.component.html',
   styleUrls: ['./paiement.component.css']
 })

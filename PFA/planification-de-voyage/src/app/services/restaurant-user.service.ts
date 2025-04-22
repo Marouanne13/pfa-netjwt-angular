@@ -6,12 +6,15 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class RestaurantUserService {
-  private apiUrl = 'http://localhost:5278/api/restaurantsUser'; // Remplace par l'URL réelle
+  private apiUrl = 'http://localhost:5278/api/Restaurant';
 
   constructor(private http: HttpClient) {}
 
-  // 🔥 Récupérer les restaurants basés sur la destination en session
   getRestaurants(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/par-destination`);
+    return this.http.get<any[]>(this.apiUrl); // Pas besoin de headers
+  }
+
+  searchRestaurants(query: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/search?query=${query}`);
   }
 }

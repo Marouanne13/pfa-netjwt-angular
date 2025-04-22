@@ -22,31 +22,6 @@ namespace PFA.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Favori", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ItemId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Favoris");
-                });
-
             modelBuilder.Entity("PFA.Models.Activite", b =>
                 {
                     b.Property<int>("Id")
@@ -514,17 +489,6 @@ namespace PFA.Migrations
                     b.HasIndex("UtilisateurId");
 
                     b.ToTable("Restaurant");
-                });
-
-            modelBuilder.Entity("Favori", b =>
-                {
-                    b.HasOne("PFA.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("PFA.Models.Activite", b =>
