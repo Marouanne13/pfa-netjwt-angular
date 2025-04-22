@@ -54,6 +54,18 @@ pipeline {
         sh 'dotnet build PFA.sln --no-restore --verbosity minimal'
       }
     }
+stage('Verify Build Artifact') {
+  steps {
+    script {
+      def dllExists = fileExists 'PFA/bin/Debug/net8.0/PFA.dll'
+      if (!dllExists) {
+        error("❌ Le fichier PFA.dll n'a pas été généré. Échec de la compilation.")
+      } else {
+        echo '✅ Fichier PFA.dll trouvé. Compilation réussie.'
+      }
+    }
+  }
+}
 
     stage('Test') {
       steps {
