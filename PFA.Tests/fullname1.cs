@@ -1,7 +1,9 @@
-namespace PFA.Tests
+
 using Xunit;
 
-{
+namespace PFA.Tests;
+
+
     public class fullname1
     {
         [Fact]
@@ -10,4 +12,3 @@ using Xunit;
 
         }
     }
-}
