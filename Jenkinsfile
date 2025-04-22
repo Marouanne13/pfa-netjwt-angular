@@ -91,7 +91,7 @@ stage('Verify Build Artifact') {
     stage('Build Backend Docker Image') {
       steps {
         dir('PFA') {  // Répertoire pour le backend .NET
-          sh 'docker build -t dotnet-backend:latest .'
+          sh 'docker build -f Dockerfile.backend -t dotnet-backend:latest .'
         }
       }
     }
