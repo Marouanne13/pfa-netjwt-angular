@@ -15,6 +15,8 @@ pipeline {
           credentialsId: 'jenkins-ssh-deploy',
           branch: 'main'
         )
+   sh 'pwd'  // Afficher le répertoire après le checkout
+    sh 'ls -la' 
       }
     }
 
