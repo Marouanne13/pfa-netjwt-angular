@@ -80,6 +80,30 @@ stage('Verify Build Artifact') {
         }
       }
     }
+ stage('Build Front Docker Image') {
+      steps {
+        dir('pfa-netjwt-angular') {  // Assurez-vous que vous êtes dans le bon répertoire pour Angular
+          sh 'docker build -t angular-frontend:latest .'
+        }
+      }
+    }
+
+    stage('Build Backend Docker Image') {
+      steps {
+        dir('PFA') {  // Répertoire pour le backend .NET
+          sh 'docker build -t dotnet-backend:latest .'
+        }
+      }
+    }
+
+    stage('Build and Run with Docker Compose') { 
+      steps {
+        script {
+          // Assurez-vous que Docker Compose est installé sur le serveur Jenkins
+          sh 'docker-compose up --build -d'
+        }
+      }
+    }
   }
 
   post {
