@@ -83,7 +83,7 @@ stage('Verify Build Artifact') {
  stage('Build Front Docker Image') {
       steps {
         dir('pfa-netjwt-angular') {  // Assurez-vous que vous êtes dans le bon répertoire pour Angular
-          sh 'docker build -t angular-frontend:latest .'
+          sh 'docker build -f Dockerfile.frontend -t angular-frontend:latest .'
         }
       }
     }
