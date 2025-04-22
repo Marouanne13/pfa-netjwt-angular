@@ -85,10 +85,12 @@
         <div class="image-container position-relative">
           <img
             [src]="resto.imageUrl || 'https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=800&q=80'"
+            
             class="card-img-top rounded-top"
             alt="Image du restaurant"
             style="height: 200px; object-fit: cover;"
           />
+          
         </div>
         <div class="card-body">
           <h5 class="card-title text-primary fw-bold">{{ resto.nom }}</h5>
@@ -102,10 +104,20 @@
             <strong>⭐</strong> {{ resto.nombreEtoiles }} étoiles
           </p>
         </div>
+        
+        <button (click)="ajouterAuPlanning(resto)">Ajouter au planning</button>
+        <button (click)="voirPlanning()">Voir mon planning</button>
+        <button (click)="viderPlanning()" class="btn btn-danger">Vider le planning</button>
+
+
       </div>
     </div>
   </div>
+  <div class="retour-home-container">
+    <button class="btn-retour" (click)="retourAccueil()">🏠 Retour à l'accueil</button>
+  </div>
   
+
 </div>
 
 <app-footer></app-footer>

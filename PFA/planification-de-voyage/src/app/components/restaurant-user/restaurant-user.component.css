@@ -1,13 +1,61 @@
-.search-input {
-  border-radius: 30px;
+/* Appliquer la même couleur de fond que la page destination */
+:host {
+  display: block;
+  background-color: #d7f8fc;
+  min-height: 100vh;
+  padding-top: 20px;
+}
+
+/* Adapter les cartes au fond clair */
+.ticket-card {
+  background: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease;
+}
+
+.ticket-card:hover {
+  transform: translateY(-3px);
+  border-color: #007bff;
+}
+
+body {
+  background-color: #d7f8fc;
+}
+
+.btn-success {
+  border-radius: 20px;
+  font-weight: bold;
+  padding: 10px 25px;
+  box-shadow: 0 2px 10px rgba(0, 128, 0, 0.1);
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-success:hover {
+  transform: scale(1.05);
+  background-color: #28a745;
+}
+.retour-home-container {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.btn-retour {
+  background-color: #e0f7ff;
+  border: 2px solid #00bcd4;
+  color: #007b8a;
   padding: 10px 20px;
   font-size: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  border: 1px solid #ddd;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
-.card-title {
-  font-weight: 600;
-}
-.card-body p {
-  font-size: 14px;
+
+.btn-retour:hover {
+  background-color: #00bcd4;
+  color: white;
 }

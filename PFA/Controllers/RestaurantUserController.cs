@@ -1,39 +1,67 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using System.Linq;
 using PFA.Data;
 using PFA.Models;
+using System.Text.Json;
 
-[Route("api/[controller]")]
-[ApiController]
-// ❌ Retirer l'attribut [Authorize] pour permettre l'accès sans authentification
-public class RestaurantsUserController : ControllerBase
+namespace PFA.Controllers
 {
-    private readonly AppDbContext _context;
-
-    public RestaurantsUserController(AppDbContext context)
+    [Route("api/[controller]")]
+    [ApiController]
+    public class RestaurantsUserController : ControllerBase
     {
-        _context = context;
-    }
+        private readonly AppDbContext _context;
 
-    // GET: api/restaurantsUser
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<Restaurant>>> GetRestaurants()
-    {
-        var restaurants = await _context.Restaurant.ToListAsync();
-        return Ok(restaurants);
-    }
+        public RestaurantsUserController(AppDbContext context)
+        {
+            _context = context;
+        }
 
-    // Optionnel : recherche simple
-    [HttpGet("search")]
-    public async Task<ActionResult<IEnumerable<Restaurant>>> SearchRestaurants([FromQuery] string query)
-    {
-        var results = await _context.Restaurant
-            .Where(r => r.Nom.Contains(query) || r.Adresse.Contains(query))
-            .ToListAsync();
-        return Ok(results);
+        // ✅ GET tous les restaurants
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Restaurant>>> GetRestaurants()
+        {
+            var restaurants = await _context.Restaurant.ToListAsync();
+            return Ok(restaurants);
+        }
+
+        // ✅ GET recherche
+        [HttpGet("search")]
+        public async Task<ActionResult<IEnumerable<Restaurant>>> SearchRestaurants([FromQuery] string query)
+        {
+            var results = await _context.Restaurant
+                .Where(r => r.Nom.Contains(query) || r.Adresse.Contains(query))
+                .ToListAsync();
+
+            return Ok(results);
+        }
+
+        // ✅ POST pour stocker un restaurant temporairement en session
+        [HttpPost("session")]
+        public IActionResult StockerRestaurantEnSession([FromBody] Restaurant resto)
+        {
+            var json = HttpContext.Session.GetString("restaurants_temp");
+            var restaurants = string.IsNullOrEmpty(json)
+                ? new List<Restaurant>()
+                : JsonSerializer.Deserialize<List<Restaurant>>(json);
+
+            restaurants.Add(resto);
+            HttpContext.Session.SetString("restaurants_temp", JsonSerializer.Serialize(restaurants));
+            return Ok(new { message = "Ajouté à la session." });
+        }
+
+
+        // ✅ GET pour récupérer la session
+        [HttpGet("session")]
+        public IActionResult GetRestaurantsEnSession()
+        {
+            var json = HttpContext.Session.GetString("restaurants_temp");
+
+            if (string.IsNullOrEmpty(json))
+                return Ok(new List<Restaurant>());
+
+            var restaurants = JsonSerializer.Deserialize<List<Restaurant>>(json);
+            return Ok(restaurants);
+        }
     }
 }
