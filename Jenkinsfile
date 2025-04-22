@@ -82,20 +82,22 @@ stage('Verify Build Artifact') {
     }
 stage('Build Front Docker Image') {
   steps {
-    dir('pfa-netjwt-angular/PFA/planification-de-voyage') {  // Assurez-vous que vous êtes dans le bon répertoire pour Angular
-sh 'ls -la'
-      sh 'docker build -f Dockerfile.frontend -t angular-frontend:latest .'
-    }
+   dir('pfa-netjwt-angular/PFA/planification-de-voyage') {  // Assurez-vous que vous êtes dans le bon répertoire pour Angular
+  sh 'ls -la'
+  sh 'docker build -f Dockerfile.frontend -t angular-frontend:latest .'
+}
+
   }
 }
 
 
     stage('Build Backend Docker Image') {
       steps {
-        dir('pfa-netjwt-angular/PFA') {  // Répertoire pour le backend .NET
-sh 'ls -la'
-          sh 'docker build -f Dockerfile.backend -t dotnet-backend:latest .'
-        }
+       dir('pfa-netjwt-angular/PFA') {  // Répertoire pour le backend .NET
+  sh 'ls -la'
+  sh 'docker build -f Dockerfile.backend -t dotnet-backend:latest .'
+}
+
       }
     }
 
