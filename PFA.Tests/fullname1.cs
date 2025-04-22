@@ -1,4 +1,6 @@
 namespace PFA.Tests
+using Xunit;
+
 {
     public class fullname1
     {
