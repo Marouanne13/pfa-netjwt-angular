@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend  # Le Dockerfile pour Angular
+    ports:
+      - "80:80"  # Expose le port 80 pour l'accès au frontend via le navigateur
+    depends_on:
+      - backend  # Assure que le backend est démarré avant le frontend
+    networks:
+      - mynetwork
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend  # Le Dockerfile pour .NET API
+    ports:
+      - "5278:5278"  # Expose le port 5278 pour l'API backend
+    networks:
+      - mynetwork
+    environment:
+      ASPNETCORE_URLS: "http://+:5278"  # Définir l'URL de l'API
+
+networks:
+  mynetwork:
+    driver: bridge
