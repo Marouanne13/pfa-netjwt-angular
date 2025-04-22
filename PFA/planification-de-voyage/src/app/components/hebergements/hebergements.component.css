@@ -1,63 +1,298 @@
-/* 🔹 Container des cartes */
+/* Modern CSS Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background-color:  #cef3f7;
+  color: #1a365d;
+  line-height: 1.6;
+}
+
+/* Container */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+}
+
+/* Title Styles */
+.title {
+  font-size: 2.8rem;
+  text-align: center;
+  margin-bottom: 4rem;
+  color: #2c5282;
+  font-weight: 600;
+  letter-spacing: 2px;
+  position: relative;
+  opacity: 0;
+  animation: titleReveal 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.title::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, #4299e1, transparent);
+  transform: translateY(-50%) scaleX(0);
+  opacity: 0.1;
+  animation: titleGlow 2s ease-in-out infinite;
+}
+
+.title::after {
+  content: '';
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  width: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #4299e1, #2b6cb0);
+  transform: translateX(-50%);
+  animation: titleUnderline 1s cubic-bezier(0.4, 0, 0.2, 1) 0.5s forwards;
+}
+
+/* Hébergement Container */
 .hebergement-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
-  gap: 25px;
-  padding: 20px 40px;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2.5rem;
+  padding: 2rem 0;
+  opacity: 0;
+  animation: fadeIn 1s ease 0.3s forwards;
 }
 
-/* 🔹 Carte hébergement */
+/* Hébergement Card */
 .hebergement-card {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: #ffffff;
+  border-radius: 20px;
   overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 10px 30px rgba(44, 82, 130, 0.1);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  border: 1px solid rgba(66, 153, 225, 0.1);
+  opacity: 0;
+  transform: translateY(30px);
+  animation: cardReveal 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
-/* 🔹 Image */
+.hebergement-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(44, 82, 130, 0.15);
+}
+
 .hebergement-image {
   width: 100%;
-  height: 220px;
+  height: 250px;
   object-fit: cover;
-  display: block;
+  transition: transform 0.5s ease;
 }
 
-/* 🔹 Contenu */
+.hebergement-card:hover .hebergement-image {
+  transform: scale(1.05);
+}
+
 .hebergement-body {
-  padding: 15px;
-  text-align: left;
+  padding: 2rem;
+  position: relative;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(240, 244, 248, 0.5) 100%);
 }
 
 .hebergement-body h3 {
-  margin: 0 0 10px;
-  font-size: 1.1rem;
-  color: #2c3e50;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #2c5282;
+  font-weight: 600;
 }
 
 .hebergement-body p {
-  margin: 4px 0;
-  color: #444;
-  font-size: 0.95rem;
+  margin: 0.8rem 0;
+  color: #4a5568;
+  font-size: 1rem;
 }
 
 .hebergement-body strong {
-  color: #222;
+  color: #2b6cb0;
+  font-weight: 600;
 }
 
-/* 🔹 Bouton */
 .btn-choisir {
-  margin-top: 10px;
-  background-color: #3498db;
-  color: white;
-  padding: 8px 16px;
+  margin-top: 1.5rem;
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, #4299e1, #2b6cb0);
   border: none;
-  border-radius: 6px;
-  font-size: 14px;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-choisir::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: 0.5s;
+}
+
+.btn-choisir:hover::before {
+  left: 100%;
 }
 
 .btn-choisir:hover {
-  background-color: #2980b9;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(66, 153, 225, 0.3);
+}
+
+/* Animations */
+@keyframes titleReveal {
+  0% {
+    opacity: 0;
+    transform: perspective(500px) rotateX(30deg) translateY(-50px);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(500px) rotateX(0) translateY(0);
+  }
+}
+
+@keyframes titleGlow {
+  0%, 100% {
+    transform: translateY(-50%) scaleX(0.5);
+    opacity: 0.1;
+  }
+  50% {
+    transform: translateY(-50%) scaleX(1);
+    opacity: 0.2;
+  }
+}
+
+@keyframes titleUnderline {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100px;
+  }
+}
+
+@keyframes cardReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* User Message */
+.user-message {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 3rem;
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid rgba(66, 153, 225, 0.1);
+  box-shadow: 0 10px 30px rgba(44, 82, 130, 0.1);
+  animation: fadeInUp 0.8s ease forwards;
+  margin-top: 2rem;
+}
+
+.user-message p {
+  font-size: 1.2rem;
+  color: #2c5282;
+  letter-spacing: 1px;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 3rem;
+  color: #4a5568;
+  border-top: 1px solid rgba(66, 153, 225, 0.1);
+  margin-top: 4rem;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .hebergement-container {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+
+  .title {
+    font-size: 2.4rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1.5rem;
+  }
+
+  .title {
+    font-size: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .hebergement-card {
+    margin-bottom: 2rem;
+  }
+
+  .hebergement-image {
+    height: 200px;
+  }
+
+  .hebergement-body {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.8rem;
+  }
+
+  .hebergement-container {
+    grid-template-columns: 1fr;
+  }
+
+  .hebergement-body h3 {
+    font-size: 1.3rem;
+  }
+
+  .btn-choisir {
+    font-size: 1rem;
+    padding: 0.8rem;
+  }
 }

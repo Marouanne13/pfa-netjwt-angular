@@ -1,75 +1,280 @@
+/* Modern CSS Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+
+  background-color:  #cef3f7;
+  color: #1a365d;
+  line-height: 1.6;
+}
+
+/* Container */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+}
+
+/* Title Styles */
+.title {
+  font-size: 2.8rem;
+  text-align: center;
+  margin-bottom: 4rem;
+  color: #2b6cb0;
+  font-weight: 600;
+  position: relative;
+  opacity: 0;
+  transform: translateY(-20px);
+  animation: titleAppear 1s ease forwards;
+}
+
+.title::after {
+  content: '';
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  width: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #4299e1, #2b6cb0);
+  transform: translateX(-50%);
+  animation: lineExpand 1.2s ease-out forwards 0.5s;
+}
+
+/* Activities Container */
 .activites-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 25px;
-  padding: 0 40px;
+  gap: 30px;
+  padding: 20px;
+  opacity: 0;
+  animation: fadeIn 1s ease forwards 0.3s;
 }
 
+/* Activity Card */
 .activite-card {
-  border-radius: 12px;
+  background: #ffffff;
+  border-radius: 15px;
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  background: #fff;
-  transition: transform 0.3s ease;
-  display: flex;
-  flex-direction: column;
+  box-shadow: 0 10px 20px rgba(44, 82, 130, 0.1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+  transform: translateY(30px);
+  animation: cardAppear 0.6s ease forwards;
+  border: 1px solid rgba(66, 153, 225, 0.1);
 }
 
 .activite-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-10px);
+  box-shadow: 0 20px 30px rgba(44, 82, 130, 0.15);
 }
 
-/* Image */
 .activite-img {
   width: 100%;
-  height: 180px;
+  height: 220px;
   object-fit: cover;
-  display: block;
+  transition: transform 0.6s ease;
 }
 
-/* Contenu */
+.activite-card:hover .activite-img {
+  transform: scale(1.05);
+}
+
 .activite-body {
-  padding: 20px;
+  padding: 25px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
 }
 
 .activite-body h3 {
-  margin-top: 0;
-  font-size: 20px;
-  color: #2c3e50;
+  color: #2b6cb0;
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  font-weight: 600;
 }
 
 .activite-body p {
-  margin: 6px 0;
-  color: #333;
+  color: #4a5568;
+  margin: 12px 0;
+  line-height: 1.6;
 }
 
 .activite-body strong {
-  color: #444;
+  color: #2c5282;
+  font-weight: 600;
 }
 
-/* Boutons */
-.btn-choisir,
-.btn-secondaire {
-  margin-top: 10px;
-  padding: 10px 16px;
-  border-radius: 6px;
-  font-size: 15px;
-  border: none;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
+/* Buttons */
 .btn-choisir {
-  background-color: #e67e22;
+  width: 100%;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #4299e1, #2b6cb0);
   color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-choisir::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: 0.5s;
+}
+
+.btn-choisir:hover::before {
+  left: 100%;
 }
 
 .btn-choisir:hover {
-  background-color: #d35400;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(66, 153, 225, 0.3);
 }
 
 .btn-secondaire {
-  background-color: transparent;
-  color: #2c3e50;
-  text-decoration: underline;
+  width: 100%;
+  padding: 10px 20px;
+  background: transparent;
+  color: #2b6cb0;
+  border: 2px solid #4299e1;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+.btn-secondaire:hover {
+  background: rgba(66, 153, 225, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Animations */
+@keyframes titleAppear {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes lineExpand {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100px;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes cardAppear {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* User Message */
+.user-message {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 30px;
+  background: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 10px 20px rgba(44, 82, 130, 0.1);
+  border: 1px solid rgba(66, 153, 225, 0.1);
+  margin-top: 30px;
+}
+
+.user-message p {
+  color: #2b6cb0;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 30px;
+  color: #4a5568;
+  border-top: 1px solid rgba(66, 153, 225, 0.1);
+  margin-top: 50px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .title {
+    font-size: 2.2rem;
+    margin-bottom: 3rem;
+  }
+
+  .activites-container {
+    gap: 20px;
+    padding: 10px;
+  }
+
+  .activite-card {
+    margin-bottom: 20px;
+  }
+
+  .activite-img {
+    height: 180px;
+  }
+
+  .activite-body {
+    padding: 20px;
+  }
+
+  .activite-body h3 {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 1.5rem;
+  }
+
+  .title {
+    font-size: 1.8rem;
+  }
+
+  .activite-body {
+    padding: 15px;
+  }
+
+  .btn-choisir,
+  .btn-secondaire {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+  }
 }

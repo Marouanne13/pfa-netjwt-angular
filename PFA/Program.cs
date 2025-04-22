@@ -6,6 +6,7 @@ using System.Text;
 using PFA.Data;
 using PFA.Services;
 using Stripe;
+using System.IdentityModel.Tokens.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,19 +49,27 @@ var key = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? "CeciEstUne
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.RequireHttpsMetadata = false;
-        options.SaveToken = true;
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(key),
-            ValidateIssuer = false, // Désactive si l'`Issuer` n'est pas défini
-            ValidateAudience = false, // Désactive si l'`Audience` n'est pas définie
+            ValidateIssuer = true,  // Enable if you have an issuer
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidateAudience = true,  // Enable if you have an audience
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero
         };
 
         // Gestion des erreurs JWT
         options.Events = new JwtBearerEvents
         {
+            OnMessageReceived = context =>
+            {
+                var token = context.Request.Headers["Authorization"].ToString();
+                Console.WriteLine($"🛰️ Raw token received: {token}");
+                return Task.CompletedTask;
+            },
             OnAuthenticationFailed = context =>
             {
                 Console.WriteLine($"🚨 JWT Authentication Failed: {context.Exception.Message}");
@@ -103,6 +112,7 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
 var app = builder.Build();
 

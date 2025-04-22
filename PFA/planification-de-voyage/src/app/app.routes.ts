@@ -38,7 +38,7 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
   { path: 'loginUser', component: LoginUserComponent },
-  { path: 'voyages', component: VoyagesComponent, canActivate: [AuthGuard] },
+
   { path: 'activites', component: ActivitesComponent, canActivate: [AuthGuard] },
   { path: 'restaurant-form', component: RestaurantFormComponent, canActivate: [AuthGuard] },
   { path: 'restaurant-form/:id', component: RestaurantFormComponent, canActivate: [AuthGuard] },

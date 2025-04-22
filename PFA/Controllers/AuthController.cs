@@ -14,7 +14,7 @@ namespace PFA.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly AppDbContext _context;  // ✅ Correction du contexte
+        private readonly AppDbContext _context;
         private readonly IConfiguration _configuration;
 
         public AuthController(AppDbContext context, IConfiguration configuration)
@@ -23,7 +23,7 @@ namespace PFA.Controllers
             _configuration = configuration;
         }
 
-        // 📌 ✅ INSCRIPTION (REGISTER)
+        // ✅ INSCRIPTION
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
@@ -42,7 +42,6 @@ namespace PFA.Controllers
             if (model.Password.Length < 6)
                 return BadRequest("Le mot de passe doit contenir au moins 6 caractères.");
 
-            // 🔹 Hacher le mot de passe avec BCrypt (12 rounds)
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.Password, workFactor: 12);
 
             var admin = new Admin
@@ -60,7 +59,7 @@ namespace PFA.Controllers
             return Ok(new { Message = "Admin enregistré avec succès" });
         }
 
-        // 📌 ✅ CONNEXION (LOGIN)
+        // ✅ CONNEXION
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
@@ -68,39 +67,43 @@ namespace PFA.Controllers
             if (admin == null)
                 return Unauthorized("Email ou mot de passe incorrect.");
 
+            // Vérification du hachage
             if (!admin.MotDePasse.StartsWith("$2"))
-            {
-                return BadRequest("Le mot de passe en base de données n'est pas sécurisé. Veuillez le réinitialiser.");
-            }
+                return BadRequest("Le mot de passe n'est pas sécurisé. Veuillez réinitialiser.");
 
             if (!BCrypt.Net.BCrypt.Verify(model.Password, admin.MotDePasse))
                 return Unauthorized("Email ou mot de passe incorrect.");
 
             var token = GenerateJwtToken(admin);
 
-            Console.WriteLine($"✅ Token généré: {token}"); // 🔹 Log du token pour le debug
-
             return Ok(new
             {
-                Token = token,
-                Role = admin.Role
+                token,
+                role = admin.Role
             });
         }
 
-        // 📌 ✅ GÉNÉRATION DU JWT TOKEN
+        // ✅ JWT TOKEN
         private string GenerateJwtToken(Admin admin)
         {
             var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? "CeciEstUneSuperCleSecreteJWT123456789");
             var issuer = _configuration["Jwt:Issuer"] ?? "https://localhost:5278";
             var audience = _configuration["Jwt:Audience"] ?? "https://localhost:5278";
 
+            //var claims = new List<Claim>
+            //{
+            //    new Claim(ClaimTypes.NameIdentifier, admin.Id.ToString()),
+            //    new Claim(ClaimTypes.Email, admin.Email),
+            //    new Claim(ClaimTypes.Role, admin.Role),
+            //    new Claim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", admin.Role)
+            //};
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, admin.Id.ToString()),
-                new Claim(ClaimTypes.Email, admin.Email),
-                new Claim(ClaimTypes.Role, admin.Role), // ✅ Ajout du rôle dans ClaimTypes.Role
-                new Claim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", admin.Role) // ✅ Ajout correct du rôle pour Angular
+                new Claim("sub", admin.Id.ToString()),
+                new Claim("email", admin.Email),
+                new Claim("role", admin.Role)
             };
+
 
             var token = new JwtSecurityToken(
                 issuer: issuer,
@@ -114,7 +117,7 @@ namespace PFA.Controllers
         }
     }
 
-    // 📌 ✅ Modèle pour l'inscription
+    // ✅ Modèle pour l'inscription
     public class RegisterModel
     {
         public string Nom { get; set; }
@@ -123,7 +126,7 @@ namespace PFA.Controllers
         public string Role { get; set; }
     }
 
-    // 📌 ✅ Modèle pour la connexion
+    // ✅ Modèle pour la connexion
     public class LoginModel
     {
         public string Email { get; set; }

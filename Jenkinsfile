@@ -1,38 +1,44 @@
 pipeline {
   agent any
 
-  // Récupère votre token SonarCloud depuis les Credentials Jenkins (ID = sonarcloud-token)
   environment {
-    SONAR_TOKEN = credentials('sonarcloud-token')
-  }
-
-  options {
-    // optimise la durabilité du job pour éviter les timeouts sur gros volumes de log
-    durabilityHint('PERFORMANCE_OPTIMIZED')
+    SONAR_TOKEN = 'squ_1ff12c102b3b9c50acdd91aa28d76ba11515b23c' // Or the token you've configured in local SonarQube (default user is 'admin' if not changed)
+    SONAR_HOST_URL = 'http://localhost:9000'
   }
 
   stages {
+
     stage('Checkout') {
       steps {
-        // clone votre repo en SSH avec la clé Jenkins (ID = jenkins-rsa)
-        git url:          'git@github.com:Marouanne13/pfa-netjwt-angular.git',
-            credentialsId: 'jenkins-rsa',
-            branch:        'main'
+        git(
+          url: 'git@github.com:Marouanne13/pfa-netjwt-angular.git',
+          credentialsId: 'jenkins-ssh-deploy',
+          branch: 'main'
+        )
       }
     }
 
-    stage('SonarCloud: begin analysis') {
+    stage('Install SonarScanner') {
       steps {
-        // injecte la config SonarCloud et le token dans l’environnement de build
-        withSonarQubeEnv('SonarCloud') {
-          sh """
-            dotnet tool install --global dotnet-sonarscanner --version 5.6.0
-            export PATH=\"\$PATH:\$HOME/.dotnet/tools\"
+        withEnv(["PATH+DOTNET=${HOME}/.dotnet/tools"]) {
+          sh '''
+            export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
+            dotnet tool install --global dotnet-sonarscanner --version 10.1.2 || true
+          '''
+        }
+      }
+    }
+
+    stage('SonarQube: Begin Analysis') {
+      steps {
+        withEnv(["PATH+DOTNET=${HOME}/.dotnet/tools"]) {
+          sh '''
             dotnet sonarscanner begin \
-              /k:\"Marouanne13_pfa-netjwt-angular\" \
-              /o:\"Marouanne13\" \
-              /d:sonar.login=\$SONAR_TOKEN
-          """
+              /k:"pfa-netjwt-angular" \
+              /d:sonar.login=$SONAR_TOKEN \
+              /d:sonar.host.url=$SONAR_HOST_URL \
+              /d:sonar.verbose=true
+          '''
         }
       }
     }
@@ -48,16 +54,28 @@ pipeline {
         sh 'dotnet build PFA.sln --no-restore --verbosity minimal'
       }
     }
+stage('Verify Build Artifact') {
+  steps {
+    script {
+      def dllExists = fileExists 'PFA/bin/Debug/net8.0/PFA.dll'
+      if (!dllExists) {
+        error("❌ Le fichier PFA.dll n'a pas été généré. Échec de la compilation.")
+      } else {
+        echo '✅ Fichier PFA.dll trouvé. Compilation réussie.'
+      }
+    }
+  }
+}
 
     stage('Test') {
       steps {
-        sh 'dotnet test PFA.sln --no-build --verbosity normal'
+        sh 'dotnet test PFA.sln --no-build --verbosity minimal'
       }
     }
 
-    stage('SonarCloud: end analysis') {
+    stage('SonarQube: End Analysis') {
       steps {
-        withSonarQubeEnv('SonarCloud') {
+        withEnv(["PATH+DOTNET=${HOME}/.dotnet/tools"]) {
           sh 'dotnet sonarscanner end /d:sonar.login=$SONAR_TOKEN'
         }
       }
@@ -65,11 +83,14 @@ pipeline {
   }
 
   post {
+    always {
+      echo '📋 Fin de pipeline (succès ou échec).'
+    }
     success {
-      echo '🎉 Build, tests et analyse SonarCloud réussis !'
+      echo '✅ Build et analyse SonarQube réussis.'
     }
     failure {
-      echo '❌ Échec – vérifiez les logs Jenkins et le Quality Gate SonarCloud.'
+      echo '❌ La pipeline a échoué. Vérifiez les logs.'
     }
   }
 }
