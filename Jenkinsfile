@@ -96,6 +96,17 @@ stage('Verify Build Artifact') {
         }
     }
 }
+stage('Tag and Push Docker Image') {
+    steps {
+        script {
+            // Taguer l'image Docker avec le nom de votre repository Docker Hub
+            sh 'docker tag dotnet-backend:latest marouane1302/pfa-voyage:latest'
+
+            // Pousser l'image vers Docker Hub
+            sh 'docker push marouane1302/pfa-voyage:latest'
+        }
+    }
+}
 
   }
 
