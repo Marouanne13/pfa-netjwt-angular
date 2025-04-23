@@ -24,8 +24,8 @@ pipeline {
         // Utilisation des credentials Jenkins de type "Username with password"
         withCredentials([usernamePassword(
           credentialsId: 'docker-hub-credentials',  // ID des credentials que vous avez enregistrés
-          usernameVariable: 'DOCKER_USER',  // Nom d'utilisateur Docker Hub
-          passwordVariable: 'DOCKER_PASS'   // Mot de passe ou token Docker Hub
+          usernameVariable: 'marouane1302',  // Nom d'utilisateur Docker Hub
+          passwordVariable: 'marouane2002'   // Mot de passe ou token Docker Hub
         )]) {
           // Connexion à Docker Hub
           sh "echo ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin"
