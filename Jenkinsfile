@@ -96,34 +96,7 @@ stage('Verify Build Artifact') {
         }
     }
 }
-stage('Build Front Docker Image') {
-    steps {
-        dir('PFA/planification-de-voyage') {  // Assurez-vous que vous êtes dans le bon répertoire pour Angular
-            sh 'ls -la'  // Vérifier que Dockerfile.frontend est là
-            sh 'npm cache clean --force'  // Nettoyer le cache npm
-            sh 'npm config set fetch-timeout 120000'  // Augmenter le timeout
-            sh 'npm config set connect-timeout 120000'  // Augmenter le timeout
-            sh 'npm install'  // Installer les dépendances
-            sh 'npm run lint'  // Vérifier s'il y a des erreurs de syntaxe
-            sh 'npm run test'  // Exécuter les tests pour vérifier le bon fonctionnement
-            // Construire l'image Docker avec le Dockerfile du frontend
-            sh 'docker build -f Dockerfile.frontend -t angular-frontend:latest .'
-        }
-    }
-}
 
-
-
-
-
-    stage('Build and Run with Docker Compose') { 
-      steps {
-        script {
-          // Assurez-vous que Docker Compose est installé sur le serveur Jenkins
-          sh 'docker-compose up --build -d'
-        }
-      }
-    }
   }
 
   post {
