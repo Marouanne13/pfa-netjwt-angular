@@ -87,22 +87,24 @@ stage('Verify Build Artifact') {
                 sh 'pwd'  // Prints the current directory
                 sh 'ls -la'  // Lists the contents of the current directory
             }
-        }
 stage('Build Front Docker Image') {
     steps {
-        // Naviguer vers le répertoire du frontend
-        sh 'cd PFA/planification-de-voyage && ls -la'
-        sh 'docker build -f Dockerfile.frontend -t angular-frontend:latest .'
+        dir('PFA/planification-de-voyage') {  // Assurez-vous que vous êtes dans le bon répertoire pour Angular
+            sh 'ls -la'  // Vérifier que Dockerfile.frontend est là
+            sh 'docker build -f Dockerfile.frontend -t angular-frontend:latest .'
+        }
     }
 }
 
 stage('Build Backend Docker Image') {
     steps {
-        // Naviguer vers le répertoire du backend
-        sh 'cd PFA && ls -la'
-        sh 'docker build -f Dockerfile.backend -t dotnet-backend:latest .'
+        dir('PFA') {  // Assurez-vous que vous êtes dans le bon répertoire pour le backend
+            sh 'ls -la'  // Vérifier que Dockerfile.backend est là
+            sh 'docker build -f Dockerfile.backend -t dotnet-backend:latest .'
+        }
     }
 }
+
 
 
     stage('Build and Run with Docker Compose') { 
