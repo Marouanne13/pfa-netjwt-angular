@@ -105,7 +105,8 @@ stage('Build Front Docker Image') {
             sh 'npm config set connect-timeout 120000'  // Augmenter le timeout
             sh 'npm install'  // Installer les dépendances
             sh 'npm run lint'  // Vérifier s'il y a des erreurs de syntaxe
-            sh 'npm run test' 
+            sh 'npm run test'  // Exécuter les tests pour vérifier le bon fonctionnement
+            // Construire l'image Docker avec le Dockerfile du frontend
             sh 'docker build -f Dockerfile.frontend -t angular-frontend:latest .'
         }
     }
