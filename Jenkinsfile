@@ -82,10 +82,16 @@ stage('Verify Build Artifact') {
         }
       }
     }
+   stage('Print Working Directory') {
+            steps {
+                sh 'pwd'  // Prints the current directory
+                sh 'ls -la'  // Lists the contents of the current directory
+            }
+        }
 stage('Build Front Docker Image') {
     steps {
         // Naviguer vers le répertoire du frontend
-        sh 'cd pfa-netjwt-angular/PFA/planification-de-voyage && ls -la'
+        sh 'cd /home/tika/myproject/pfa-netjwt-angular/PFA/planification-de-voyage && ls -la'
         sh 'docker build -f Dockerfile.frontend -t angular-frontend:latest .'
     }
 }
@@ -93,7 +99,7 @@ stage('Build Front Docker Image') {
 stage('Build Backend Docker Image') {
     steps {
         // Naviguer vers le répertoire du backend
-        sh 'cd pfa-netjwt-angular/PFA && ls -la'
+        sh 'cd /home/tika/myproject/pfa-netjwt-angular/PFA && ls -la'
         sh 'docker build -f Dockerfile.backend -t dotnet-backend:latest .'
     }
 }
