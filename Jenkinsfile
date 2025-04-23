@@ -91,7 +91,7 @@ stage('Verify Build Artifact') {
 stage('Build Front Docker Image') {
     steps {
         // Naviguer vers le répertoire du frontend
-        sh 'cd /home/tika/myproject/pfa-netjwt-angular/PFA/planification-de-voyage && ls -la'
+        sh 'cd PFA/planification-de-voyage && ls -la'
         sh 'docker build -f Dockerfile.frontend -t angular-frontend:latest .'
     }
 }
@@ -99,7 +99,7 @@ stage('Build Front Docker Image') {
 stage('Build Backend Docker Image') {
     steps {
         // Naviguer vers le répertoire du backend
-        sh 'cd /home/tika/myproject/pfa-netjwt-angular/PFA && ls -la'
+        sh 'cd PFA && ls -la'
         sh 'docker build -f Dockerfile.backend -t dotnet-backend:latest .'
     }
 }
