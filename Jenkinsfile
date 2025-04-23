@@ -2,12 +2,11 @@ pipeline {
   agent any
 
   environment {
-    SONAR_TOKEN = 'squ_1ff12c102b3b9c50acdd91aa28d76ba11515b23c' // Or the token you've configured in local SonarQube (default user is 'admin' if not changed)
-    SONAR_HOST_URL = 'http://localhost:9000'
+    SONAR_TOKEN = 'squ_1ff12c102b3b9c50acdd91aa28d76ba11515b23c' // Token SonarQube
+    SONAR_HOST_URL = 'http://localhost:9000'  // URL SonarQube
   }
 
   stages {
-
     stage('Checkout') {
       steps {
         git(
@@ -15,8 +14,22 @@ pipeline {
           credentialsId: 'jenkins-ssh-deploy',
           branch: 'main'
         )
-   sh 'pwd'  // Afficher le répertoire après le checkout
-    sh 'ls -la' 
+        sh 'pwd'  // Afficher le répertoire après le checkout
+        sh 'ls -la'  // Lister les fichiers
+      }
+    }
+
+    stage('Docker Login') {
+      steps {
+        // Utilisation des credentials Jenkins de type "Username with password"
+        withCredentials([usernamePassword(
+          credentialsId: 'docker-hub-credentials',  // ID des credentials que vous avez enregistrés
+          usernameVariable: 'DOCKER_USER',  // Nom d'utilisateur Docker Hub
+          passwordVariable: 'DOCKER_PASS'   // Mot de passe ou token Docker Hub
+        )]) {
+          // Connexion à Docker Hub
+          sh "echo ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin"
+        }
       }
     }
 
@@ -56,18 +69,19 @@ pipeline {
         sh 'dotnet build PFA.sln --no-restore --verbosity minimal'
       }
     }
-stage('Verify Build Artifact') {
-  steps {
-    script {
-      def dllExists = fileExists 'PFA/bin/Debug/net8.0/PFA.dll'
-      if (!dllExists) {
-        error("❌ Le fichier PFA.dll n'a pas été généré. Échec de la compilation.")
-      } else {
-        echo '✅ Fichier PFA.dll trouvé. Compilation réussie.'
+
+    stage('Verify Build Artifact') {
+      steps {
+        script {
+          def dllExists = fileExists 'PFA/bin/Debug/net8.0/PFA.dll'
+          if (!dllExists) {
+            error("❌ Le fichier PFA.dll n'a pas été généré. Échec de la compilation.")
+          } else {
+            echo '✅ Fichier PFA.dll trouvé. Compilation réussie.'
+          }
+        }
       }
     }
-  }
-}
 
     stage('Test') {
       steps {
@@ -82,31 +96,34 @@ stage('Verify Build Artifact') {
         }
       }
     }
-   stage('Print Working Directory') {
-            steps {
-                sh 'pwd'  // Prints the current directory
-                sh 'ls -la'  // Lists the contents of the current directory
-            }
-   }
-   stage('Build Backend Docker Image') {
-    steps {
-        dir('PFA') {  // Assurez-vous que vous êtes dans le bon répertoire pour le backend
-            sh 'ls -la'  // Vérifier que Dockerfile.backend est là
-            sh 'docker build -f Dockerfile.backend -t dotnet-backend:latest .'
-        }
-    }
-}
-stage('Tag and Push Docker Image') {
-    steps {
-        script {
-            // Taguer l'image Docker avec le nom de votre repository Docker Hub
-            sh 'docker tag dotnet-backend:latest marouane1302/pfa-voyage:latest'
 
-            // Pousser l'image vers Docker Hub
-            sh 'docker push marouane1302/pfa-voyage:latest'
-        }
+    stage('Print Working Directory') {
+      steps {
+        sh 'pwd'  // Afficher le répertoire actuel
+        sh 'ls -la'  // Lister les fichiers du répertoire
+      }
     }
-}
+
+    stage('Build Backend Docker Image') {
+      steps {
+        dir('PFA') {  // Assurez-vous que vous êtes dans le bon répertoire pour le backend
+          sh 'ls -la'  // Vérifier que Dockerfile.backend est là
+          sh 'docker build -f Dockerfile.backend -t dotnet-backend:latest .'
+        }
+      }
+    }
+
+    stage('Tag and Push Docker Image') {
+      steps {
+        script {
+          // Taguer l'image Docker avec le nom de votre repository Docker Hub
+          sh 'docker tag dotnet-backend:latest marouane1302/pfa-voyage:latest'
+
+          // Pousser l'image vers Docker Hub
+          sh 'docker push marouane1302/pfa-voyage:latest'
+        }
+      }
+    }
 
   }
 
