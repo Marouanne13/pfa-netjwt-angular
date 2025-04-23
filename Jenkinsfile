@@ -20,18 +20,19 @@ pipeline {
     }
 
     stage('Docker Login') {
-      steps {
-        // Utilisation des credentials Jenkins de type "Username with password"
+    steps {
+        // Utilise des credentials Jenkins de type "Username with password"
         withCredentials([usernamePassword(
-          credentialsId: 'docker-hub-credentials',  // ID des credentials que vous avez enregistrés
-          usernameVariable: 'marouane1302',  // Nom d'utilisateur Docker Hub
-          passwordVariable: 'marouane2002'   // Mot de passe ou token Docker Hub
+            credentialsId: 'docker-hub-credentials',  // Remplacez par l'ID des credentials que vous avez enregistrés
+            usernameVariable: 'DOCKER_USER',  // Nom d'utilisateur Docker Hub
+            passwordVariable: 'DOCKER_PASS'   // Mot de passe ou token Docker Hub
         )]) {
-          // Connexion à Docker Hub
-          sh "echo ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin"
+            // Connexion à Docker Hub
+            sh "echo ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin"
         }
-      }
     }
+}
+
 
     stage('Install SonarScanner') {
       steps {
@@ -112,18 +113,19 @@ pipeline {
         }
       }
     }
-
-    stage('Tag and Push Docker Image') {
-      steps {
+   stage('Tag and Push Docker Image') {
+    steps {
         script {
-          // Taguer l'image Docker avec le nom de votre repository Docker Hub
-          sh 'docker tag dotnet-backend:latest marouane1302/pfa-voyage:latest'
+            // Taguer l'image Docker avec le nom de votre repository Docker Hub
+            sh 'docker tag dotnet-backend:latest marouane1302/pfa-voyage:latest'
 
-          // Pousser l'image vers Docker Hub
-          sh 'docker push marouane1302/pfa-voyage:latest'
+            // Pousser l'image vers Docker Hub
+            sh 'docker push marouane1302/pfa-voyage:latest'
         }
-      }
     }
+}
+
+   
 
   }
 
