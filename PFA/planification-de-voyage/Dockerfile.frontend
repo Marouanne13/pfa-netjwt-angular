@@ -1,12 +1,28 @@
 # Étape 1 : Build Angular
 FROM node:18 as builder
 WORKDIR /app
+
+# Copier les fichiers du projet dans l'image Docker
 COPY . .
+
+# Mettre à jour npm à la dernière version
+RUN npm install -g npm@latest
+
+# Installer les dépendances du projet
 RUN npm install
+
+# Construire l'application Angular en mode production
 RUN npm run build --prod
 
-# Étape 2 : Serveur NGINX
+# Étape 2 : Serveur NGINX pour héberger l'application Angular
 FROM nginx:alpine
+
+# Copier les fichiers de l'application Angular buildée dans l'image NGINX
 COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Exposer le port 80
 EXPOSE 80
+
+# Démarrer NGINX pour servir l'application
 CMD ["nginx", "-g", "daemon off;"]
+
