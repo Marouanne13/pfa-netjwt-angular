@@ -87,6 +87,7 @@ stage('Verify Build Artifact') {
                 sh 'pwd'  // Prints the current directory
                 sh 'ls -la'  // Lists the contents of the current directory
             }
+   }
 stage('Build Front Docker Image') {
     steps {
         dir('PFA/planification-de-voyage') {  // Assurez-vous que vous êtes dans le bon répertoire pour Angular
