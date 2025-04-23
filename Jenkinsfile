@@ -88,6 +88,14 @@ stage('Verify Build Artifact') {
                 sh 'ls -la'  // Lists the contents of the current directory
             }
    }
+   stage('Build Backend Docker Image') {
+    steps {
+        dir('PFA') {  // Assurez-vous que vous êtes dans le bon répertoire pour le backend
+            sh 'ls -la'  // Vérifier que Dockerfile.backend est là
+            sh 'docker build -f Dockerfile.backend -t dotnet-backend:latest .'
+        }
+    }
+}
 stage('Build Front Docker Image') {
     steps {
         dir('PFA/planification-de-voyage') {  // Assurez-vous que vous êtes dans le bon répertoire pour Angular
@@ -100,14 +108,7 @@ stage('Build Front Docker Image') {
     }
 }
 
-stage('Build Backend Docker Image') {
-    steps {
-        dir('PFA') {  // Assurez-vous que vous êtes dans le bon répertoire pour le backend
-            sh 'ls -la'  // Vérifier que Dockerfile.backend est là
-            sh 'docker build -f Dockerfile.backend -t dotnet-backend:latest .'
-        }
-    }
-}
+
 
 
 
