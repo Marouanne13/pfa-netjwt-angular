@@ -92,6 +92,9 @@ stage('Build Front Docker Image') {
     steps {
         dir('PFA/planification-de-voyage') {  // Assurez-vous que vous êtes dans le bon répertoire pour Angular
             sh 'ls -la'  // Vérifier que Dockerfile.frontend est là
+           sh 'npm install'  // Assurez-vous que toutes les dépendances sont installées
+            sh 'npm run lint'  // Vérifier s'il y a des erreurs de syntaxe
+            sh 'npm run test'
             sh 'docker build -f Dockerfile.frontend -t angular-frontend:latest .'
         }
     }
