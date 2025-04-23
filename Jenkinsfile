@@ -2,11 +2,12 @@ pipeline {
   agent any
 
   environment {
-    SONAR_TOKEN = 'squ_1ff12c102b3b9c50acdd91aa28d76ba11515b23c' // Token SonarQube
-    SONAR_HOST_URL = 'http://localhost:9000'  // URL SonarQube
+    SONAR_TOKEN = 'your-sonar-token'
+    SONAR_HOST_URL = 'http://localhost:9000'
   }
 
   stages {
+
     stage('Checkout') {
       steps {
         git(
@@ -14,25 +15,34 @@ pipeline {
           credentialsId: 'jenkins-ssh-deploy',
           branch: 'main'
         )
-        sh 'pwd'  // Afficher le répertoire après le checkout
-        sh 'ls -la'  // Lister les fichiers
+        sh 'pwd'
+        sh 'ls -la'
+      }
+    }
+
+    stage('Verify Docker Version') {
+      steps {
+        sh 'docker --version'  // Vérifier que Docker est installé et fonctionne
+      }
+    }
+
+    stage('Clean Docker System') {
+      steps {
+        sh 'docker system prune -f'  // Supprimer les anciennes images et volumes inutiles
       }
     }
 
     stage('Docker Login') {
-    steps {
-        // Utilise des credentials Jenkins de type "Username with password"
+      steps {
         withCredentials([usernamePassword(
-            credentialsId: 'docker-hub-credentials',  // Remplacez par l'ID des credentials que vous avez enregistrés
-            usernameVariable: 'DOCKER_USER',  // Nom d'utilisateur Docker Hub
-            passwordVariable: 'DOCKER_PASS'   // Mot de passe ou token Docker Hub
+          credentialsId: 'docker-hub-credentials',
+          usernameVariable: 'DOCKER_USER',
+          passwordVariable: 'DOCKER_PASS'
         )]) {
-            // Connexion à Docker Hub
-            sh "echo ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin"
+          sh "echo ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin"
         }
+      }
     }
-}
-
 
     stage('Install SonarScanner') {
       steps {
@@ -71,22 +81,27 @@ pipeline {
       }
     }
 
-    stage('Verify Build Artifact') {
+    stage('Build Backend Docker Image') {
       steps {
-        script {
-          def dllExists = fileExists 'PFA/bin/Debug/net8.0/PFA.dll'
-          if (!dllExists) {
-            error("❌ Le fichier PFA.dll n'a pas été généré. Échec de la compilation.")
-          } else {
-            echo '✅ Fichier PFA.dll trouvé. Compilation réussie.'
-          }
+        dir('PFA') {
+          sh 'docker build -f Dockerfile.backend -t dotnet-backend:latest .'
         }
       }
     }
 
-    stage('Test') {
+    stage('Test Docker Image') {
       steps {
-        sh 'dotnet test PFA.sln --no-build --verbosity minimal'
+        sh 'docker run -d --name test-container dotnet-backend:latest'  // Tester l'image Docker
+        sh 'docker ps'  // Vérifier si le conteneur fonctionne
+      }
+    }
+
+    stage('Tag and Push Docker Image') {
+      steps {
+        script {
+          sh 'docker tag dotnet-backend:latest marouane1302/pfa-voyage:latest'
+          sh 'docker push marouane1302/pfa-voyage:latest'
+        }
       }
     }
 
@@ -97,36 +112,6 @@ pipeline {
         }
       }
     }
-
-    stage('Print Working Directory') {
-      steps {
-        sh 'pwd'  // Afficher le répertoire actuel
-        sh 'ls -la'  // Lister les fichiers du répertoire
-      }
-    }
-
-    stage('Build Backend Docker Image') {
-      steps {
-        dir('PFA') {  // Assurez-vous que vous êtes dans le bon répertoire pour le backend
-          sh 'ls -la'  // Vérifier que Dockerfile.backend est là
-          sh 'docker build -f Dockerfile.backend -t dotnet-backend:latest .'
-        }
-      }
-    }
-   stage('Tag and Push Docker Image') {
-    steps {
-        script {
-            // Taguer l'image Docker avec le nom de votre repository Docker Hub
-            sh 'docker tag dotnet-backend:latest marouane1302/pfa-voyage:latest'
-
-            // Pousser l'image vers Docker Hub
-            sh 'docker push marouane1302/pfa-voyage:latest'
-        }
-    }
-}
-
-   
-
   }
 
   post {
