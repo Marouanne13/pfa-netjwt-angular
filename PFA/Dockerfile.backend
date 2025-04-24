@@ -1,13 +1,26 @@
-# Étape 1 : Build .NET API
+# --- Étape 1 : Build .NET API ---
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
-COPY . .
-RUN dotnet restore
-RUN dotnet publish -c Release -o out
 
-# Étape 2 : Runtime
+# 1️⃣ Copier uniquement la solution et les fichiers de projet
+COPY *.sln ./
+COPY */*.csproj ./
+
+# 2️⃣ Restaurer les packages NuGet (cache long-terme tant que csproj ne change pas)
+RUN dotnet restore --verbosity minimal
+
+# 3️⃣ Copier tout le code source
+COPY . ./
+
+# 4️⃣ Publier en Release sans re-restaurer
+RUN dotnet publish -c Release -o out --no-restore --verbosity minimal
+
+# --- Étape 2 : Runtime ---
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
-COPY --from=build /app/out .
-ENTRYPOINT ["dotnet", "PFA.dll"]
+
+# 5️⃣ Récupérer les artefacts de build
+COPY --from=build /app/out ./
+
 EXPOSE 5278
+ENTRYPOINT ["dotnet", "PFA.dll"]
