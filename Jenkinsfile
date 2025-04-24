@@ -32,17 +32,20 @@ pipeline {
       }
     }
 
-    stage('Docker Login') {
-      steps {
+stage('Docker Login') {
+    steps {
+        // Utilisation des credentials Jenkins de type "Username with password"
         withCredentials([usernamePassword(
-          credentialsId: 'docker-hub-credentials',
-          usernameVariable: 'DOCKER_USER',
-          passwordVariable: 'DOCKER_PASS'
+            credentialsId: 'docker-hub-credentials',  // L'ID des credentials que vous avez enregistrés
+            usernameVariable: 'DOCKER_USER',  // Nom d'utilisateur Docker Hub
+            passwordVariable: 'DOCKER_PASS'   // Mot de passe ou token Docker Hub
         )]) {
-          sh "echo ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin"
+            // Connexion à Docker Hub
+            sh "echo ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin"
         }
-      }
     }
+}
+
 
     stage('Install SonarScanner') {
       steps {
