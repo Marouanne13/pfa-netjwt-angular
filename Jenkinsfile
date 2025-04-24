@@ -7,7 +7,6 @@ pipeline {
   }
 
   stages {
-
     stage('Checkout') {
       steps {
         git(
@@ -15,37 +14,24 @@ pipeline {
           credentialsId: 'jenkins-ssh-deploy',
           branch: 'main'
         )
-        sh 'pwd'
-        sh 'ls -la'
+        sh 'pwd'  // Afficher le répertoire après le checkout
+        sh 'ls -la'  // Lister les fichiers
       }
     }
 
-    stage('Verify Docker Version') {
+    stage('Docker Login') {
       steps {
-        sh 'docker --version'  // Vérifier que Docker est installé et fonctionne
-      }
-    }
-
-    stage('Clean Docker System') {
-      steps {
-        sh 'docker system prune -f'  // Supprimer les anciennes images et volumes inutiles
-      }
-    }
-
-stage('Docker Login') {
-    steps {
         // Utilisation des credentials Jenkins de type "Username with password"
         withCredentials([usernamePassword(
             credentialsId: 'docker-hub-credentials',  // L'ID des credentials que vous avez enregistrés
             usernameVariable: 'DOCKER_USER',  // Nom d'utilisateur Docker Hub
             passwordVariable: 'DOCKER_PASS'   // Mot de passe ou token Docker Hub
         )]) {
-            // Connexion à Docker Hub
-            sh "echo ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin"
+            // Connexion à Docker Hub avec un délai d'attente de 300 secondes
+            sh "timeout 300 sh -c 'echo ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin'"
         }
+      }
     }
-}
-
 
     stage('Install SonarScanner') {
       steps {
@@ -86,7 +72,8 @@ stage('Docker Login') {
 
     stage('Build Backend Docker Image') {
       steps {
-        dir('PFA') {
+        dir('PFA') {  // Assurez-vous que vous êtes dans le bon répertoire pour le backend
+          sh 'ls -la'  // Vérifier que Dockerfile.backend est là
           sh 'docker build -f Dockerfile.backend -t dotnet-backend:latest .'
         }
       }
@@ -115,6 +102,7 @@ stage('Docker Login') {
         }
       }
     }
+
   }
 
   post {
