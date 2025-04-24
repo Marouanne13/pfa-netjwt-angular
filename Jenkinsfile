@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   environment {
-    SONAR_TOKEN = 'your-sonar-token'
+    SONAR_TOKEN = 'squ_1ff12c102b3b9c50acdd91aa28d76ba11515b23c'
     SONAR_HOST_URL = 'http://localhost:9000'
   }
 
