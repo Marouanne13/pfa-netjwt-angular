@@ -1,13 +1,13 @@
-
 ---
 - name: Déployer l’application .NET via Docker
-  hosts: localhost      # puisque vous déployez sur la même machine
+  hosts: localhost
   connection: local
   gather_facts: false
 
   vars:
     docker_image: "marouane1302/pfa-voyage:latest"
     container_name: "pfa-app"
+    test_container_name: "test-container"
 
   tasks:
     - name: Tirer la dernière image depuis Docker Hub
@@ -15,13 +15,19 @@
         name: "{{ docker_image }}"
         source: pull
 
-    - name: Arrêter et supprimer le conteneur existant s’il existe
+    - name: Arrêter et supprimer le conteneur de test s’il existe
+      ansible.builtin.docker_container:
+        name: "{{ test_container_name }}"
+        state: absent
+        force_kill: yes
+
+    - name: Arrêter et supprimer l’ancien conteneur pfa-app s’il existe
       ansible.builtin.docker_container:
         name: "{{ container_name }}"
         state: absent
         force_kill: yes
 
-    - name: Lancer le nouveau conteneur
+    - name: Lancer le nouveau conteneur pfa-app
       ansible.builtin.docker_container:
         name: "{{ container_name }}"
         image: "{{ docker_image }}"
