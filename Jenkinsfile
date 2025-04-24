@@ -79,12 +79,18 @@ pipeline {
       }
     }
 
-    stage('Test Docker Image') {
-      steps {
-        sh 'docker run -d --name test-container dotnet-backend:latest'  // Tester l'image Docker
-        sh 'docker ps'  // Vérifier si le conteneur fonctionne
-      }
+ stage('Test Docker Image') {
+  steps {
+    dir('PFA') {
+      // 1) Supprime l’ancien conteneur s’il existe
+      sh 'docker rm -f test-container || true'
+      // 2) Lance le nouveau
+      sh 'docker run -d --name test-container -p 5278:5278 dotnet-backend:latest'
+      // …
     }
+  }
+}
+
 
     stage('Tag and Push Docker Image') {
       steps {
