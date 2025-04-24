@@ -108,6 +108,16 @@ pipeline {
         }
       }
     }
+   stage('Deploy to Local Server') {
+      steps {
+        dir('.') {
+          // 1) Copier le playbook et l’inventaire si nécessaire
+          writeFile file: 'deploy.yml', text: libraryResource('deploy.yml')
+          // 2) Exécuter ansible en local
+          sh 'ansible-playbook deploy.yml -i localhost,'
+        }
+      }
+    }
 
   }
 
